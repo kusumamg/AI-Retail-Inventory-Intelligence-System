@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.contrib.auth.views import LogoutView
 
 from inventory import views
 
@@ -23,5 +24,25 @@ from inventory import views
 urlpatterns = [
     path("admin/", admin.site.urls),
 
+    path("login/", views.login_view, name="login"),
+
     path("", views.dashboard, name="dashboard"),
+
+    path(
+        "admin-dashboard/",
+        views.admin_dashboard,
+        name="admin_dashboard"
+    ),
+
+    path(
+        "manager-dashboard/",
+        views.manager_dashboard,
+        name="manager_dashboard"
+    ),
+
+    path(
+        "logout/",
+        LogoutView.as_view(next_page="/login/"),
+        name="logout"
+    ),
 ]
