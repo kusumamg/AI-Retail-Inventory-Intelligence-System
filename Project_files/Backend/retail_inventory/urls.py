@@ -14,35 +14,62 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+"""
+URL configuration for retail_inventory project.
+"""
+
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth.views import LogoutView
 
 from inventory import views
 
 
 urlpatterns = [
+
+    # Django Admin
     path("admin/", admin.site.urls),
 
-    path("login/", views.login_view, name="login"),
+    # Login
+    path(
+        "login/",
+        views.login_view,
+        name="login"
+    ),
 
-    path("", views.dashboard, name="dashboard"),
+    # Dashboard
+    path(
+        "",
+        views.dashboard,
+        name="dashboard"
+    ),
 
+    # Admin Dashboard
     path(
         "admin-dashboard/",
         views.admin_dashboard,
         name="admin_dashboard"
     ),
 
+    # Manager Dashboard
     path(
         "manager-dashboard/",
         views.manager_dashboard,
         name="manager_dashboard"
     ),
 
+    # Inventory
+    path(
+        "inventory/",
+        include("inventory.urls")
+    ),
+
+    # Logout
     path(
         "logout/",
-        LogoutView.as_view(next_page="/login/"),
+        LogoutView.as_view(
+            next_page="/login/"
+        ),
         name="logout"
     ),
 ]
