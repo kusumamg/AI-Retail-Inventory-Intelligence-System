@@ -156,57 +156,140 @@ def dashboard(request):
 # ADMIN DASHBOARD
 # ============================================================
 
+# ============================================================
+# ADMIN DASHBOARD
+# ============================================================
+
 @login_required
 def admin_dashboard(request):
 
-    try:
+    # Get all products from all stores
+    products = Product.objects.all()
 
-        profile = request.user.profile
+    # Get all stores
+    stores = Store.objects.all()
 
-        # Only ADMIN can access this page
-        if profile.role != "ADMIN":
+    # Overall statistics
+    total_products = products.count()
 
-            return redirect(
-                "manager_dashboard"
-            )
+    total_stock = sum(
+        product.inventory_level
+        for product in products
+    )
 
-    except Exception:
+    low_stock = products.filter(
+        inventory_level__gt=0,
+        inventory_level__lt=25
+    ).count()
 
-        return redirect("login")
+    out_of_stock = products.filter(
+        inventory_level=0
+    ).count()
+
+    # Number of active stores
+    active_stores = stores.filter(
+        is_active=True
+    ).count()
+
+    # Latest product prediction
+    latest_product = products.order_by(
+        "-updated_at"
+    ).first()
+
+    latest_prediction = None
+
+    if latest_product:
+        latest_prediction = latest_product.predicted_demand
 
     return render(
         request,
-        "admin_dashboard.html"
+        "admin_dashboard.html",
+        {
+            "products": products,
+            "stores": stores,
+
+            "total_products": total_products,
+            "total_stock": total_stock,
+            "low_stock": low_stock,
+            "out_of_stock": out_of_stock,
+
+            "active_stores": active_stores,
+
+            "latest_product": latest_product,
+            "latest_prediction": latest_prediction,
+        }
     )
 
-
 # ============================================================
-# MANAGER DASHBOARD
+# STORE MANAGER DASHBOARD
 # ============================================================
 
 @login_required
 def manager_dashboard(request):
 
-    try:
+    # Get the logged-in user's profile
+    profile = request.user.profile
 
-        profile = request.user.profile
+    # Get the store assigned to this manager
+    store = profile.store
 
-        # Only MANAGER can access this page
-        if profile.role != "MANAGER":
+    # If no store is assigned
+    if store is None:
+        return render(
+            request,
+            "manager_dashboard.html",
+            {
+                "store": None,
+                "error": "No store has been assigned to your account."
+            }
+        )
 
-            return redirect(
-                "admin_dashboard"
-            )
+    # Get products belonging to this manager's store
+    products = Product.objects.filter(
+        store=store
+    )
 
-    except Exception:
+    # Dashboard statistics
+    total_products = products.count()
 
-        return redirect("login")
+    total_stock = sum(
+        product.inventory_level
+        for product in products
+    )
+
+    low_stock = products.filter(
+        inventory_level__gt=0,
+        inventory_level__lt=25
+    ).count()
+
+    out_of_stock = products.filter(
+        inventory_level=0
+    ).count()
+
+    # Get latest product with prediction
+    latest_product = products.order_by(
+        "-updated_at"
+    ).first()
+
+    latest_prediction = None
+
+    if latest_product:
+        latest_prediction = latest_product.predicted_demand
 
     return render(
         request,
-        "manager_dashboard.html"
+        "manager_dashboard.html",
+        {
+            "store": store,
+            "products": products,
+            "total_products": total_products,
+            "total_stock": total_stock,
+            "low_stock": low_stock,
+            "out_of_stock": out_of_stock,
+            "latest_product": latest_product,
+            "latest_prediction": latest_prediction,
+        }
     )
-
 
 # ============================================================
 # INVENTORY / AI DEMAND PREDICTION
