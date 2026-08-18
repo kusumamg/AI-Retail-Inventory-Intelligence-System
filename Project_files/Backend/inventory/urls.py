@@ -1,7 +1,22 @@
 from django.urls import path
+
 from . import views
 
 
 urlpatterns = [
-    path("", views.inventory, name="inventory"),
+
+    # Inventory
+    path(
+        "",
+        views.inventory,
+        name="inventory"
+    ),
+
+    # Analytics
+    path(
+        "analytics/",
+        views.analytics,
+        name="analytics"
+    ),
+
 ]

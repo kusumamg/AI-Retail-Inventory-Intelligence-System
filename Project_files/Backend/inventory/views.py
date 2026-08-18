@@ -156,10 +156,6 @@ def dashboard(request):
 # ADMIN DASHBOARD
 # ============================================================
 
-# ============================================================
-# ADMIN DASHBOARD
-# ============================================================
-
 @login_required
 def admin_dashboard(request):
 
@@ -290,6 +286,146 @@ def manager_dashboard(request):
             "latest_prediction": latest_prediction,
         }
     )
+
+
+# ============================================================
+# ANALYTICS
+# ============================================================
+
+@login_required
+def analytics(request):
+
+    # Get all products
+    products = Product.objects.all()
+
+    # --------------------------------------------------------
+    # Basic inventory statistics
+    # --------------------------------------------------------
+
+    total_products = products.count()
+
+    total_stock = sum(
+        product.inventory_level
+        for product in products
+    )
+
+    low_stock = products.filter(
+        inventory_level__gt=0,
+        inventory_level__lt=25
+    ).count()
+
+    out_of_stock = products.filter(
+        inventory_level=0
+    ).count()
+
+    # --------------------------------------------------------
+    # Price statistics
+    # --------------------------------------------------------
+
+    average_price = 0
+
+    if total_products > 0:
+
+        average_price = sum(
+            product.price
+            for product in products
+        ) / total_products
+
+    average_price = round(
+        average_price,
+        2
+    )
+
+    # --------------------------------------------------------
+    # Demand prediction statistics
+    # --------------------------------------------------------
+
+    predicted_products = products.exclude(
+        predicted_demand__isnull=True
+    )
+
+    total_predicted_demand = sum(
+        product.predicted_demand
+        for product in predicted_products
+    )
+
+    average_predicted_demand = 0
+
+    if predicted_products.exists():
+
+        average_predicted_demand = (
+            total_predicted_demand /
+            predicted_products.count()
+        )
+
+    total_predicted_demand = round(
+        total_predicted_demand,
+        2
+    )
+
+    average_predicted_demand = round(
+        average_predicted_demand,
+        2
+    )
+
+    # --------------------------------------------------------
+    # Store-wise analytics
+    # --------------------------------------------------------
+
+    store_data = []
+
+    stores = Store.objects.all()
+
+    for store in stores:
+
+        store_products = products.filter(
+            store=store
+        )
+
+        store_stock = sum(
+            product.inventory_level
+            for product in store_products
+        )
+
+        store_low_stock = store_products.filter(
+            inventory_level__gt=0,
+            inventory_level__lt=25
+        ).count()
+
+        store_out_of_stock = store_products.filter(
+            inventory_level=0
+        ).count()
+
+        store_data.append({
+            "name": store.name,
+            "code": store.store_code,
+            "products": store_products.count(),
+            "stock": store_stock,
+            "low_stock": store_low_stock,
+            "out_of_stock": store_out_of_stock,
+        })
+
+    return render(
+        request,
+        "analytics.html",
+        {
+            "total_products": total_products,
+            "total_stock": total_stock,
+            "low_stock": low_stock,
+            "out_of_stock": out_of_stock,
+
+            "average_price": average_price,
+
+            "total_predicted_demand":
+                total_predicted_demand,
+
+            "average_predicted_demand":
+                average_predicted_demand,
+
+            "store_data": store_data,
+        }
+    )
+
 
 # ============================================================
 # INVENTORY / AI DEMAND PREDICTION
