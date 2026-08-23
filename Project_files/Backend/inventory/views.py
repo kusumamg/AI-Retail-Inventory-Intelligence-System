@@ -2,11 +2,14 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.http import HttpResponse
+import csv
 
 from .models import Product
 from users.models import Store
 
 from .ai_model import predict_demand
+
 
 
 # ============================================================
@@ -706,3 +709,125 @@ def inventory(request):
             "stores": stores,
         }
     )
+
+    # ============================================================
+# REPORTS
+# ============================================================
+
+@login_required
+def reports(request):
+
+    products = Product.objects.select_related("store").all()
+
+    total_products = products.count()
+
+    total_stock = sum(
+        product.inventory_level
+        for product in products
+    )
+
+    low_stock = sum(
+        1
+        for product in products
+        if product.stock_status == "LOW_STOCK"
+    )
+
+    out_of_stock = sum(
+        1
+        for product in products
+        if product.stock_status == "OUT_OF_STOCK"
+    )
+
+    total_predicted_demand = sum(
+        product.predicted_demand or 0
+        for product in products
+    )
+
+    average_predicted_demand = (
+        total_predicted_demand / total_products
+        if total_products > 0
+        else 0
+    )
+
+    context = {
+        "products": products,
+        "total_products": total_products,
+        "total_stock": total_stock,
+        "low_stock": low_stock,
+        "out_of_stock": out_of_stock,
+        "total_predicted_demand": round(
+            total_predicted_demand, 2
+        ),
+        "average_predicted_demand": round(
+            average_predicted_demand, 2
+        ),
+    }
+
+    return render(
+        request,
+        "reports.html",
+        context
+    )
+
+# ============================================================
+# EXPORT REPORT AS CSV
+# ============================================================
+
+@login_required
+def export_report_csv(request):
+
+    products = Product.objects.select_related("store").all()
+
+    response = HttpResponse(
+        content_type="text/csv"
+    )
+
+    response["Content-Disposition"] = (
+        'attachment; filename="retail_inventory_report.csv"'
+    )
+
+    writer = csv.writer(response)
+
+    # Header
+    writer.writerow([
+        "Product ID",
+        "Store",
+        "Store Code",
+        "Category",
+        "Region",
+        "Inventory Level",
+        "Price",
+        "Discount",
+        "Weather Condition",
+        "Holiday / Promotion",
+        "Competitor Pricing",
+        "Seasonality",
+        "Predicted Demand",
+        "Stock Status",
+    ])
+
+    # Product data
+    for product in products:
+
+        writer.writerow([
+            product.product_id,
+            product.store.name,
+            product.store.store_code,
+            product.category,
+            product.region,
+            product.inventory_level,
+            product.price,
+            product.discount,
+            product.weather_condition,
+            "Yes" if product.holiday_promotion else "No",
+            product.competitor_pricing,
+            product.seasonality,
+            (
+                product.predicted_demand
+                if product.predicted_demand is not None
+                else ""
+            ),
+            product.stock_status,
+        ])
+
+    return response

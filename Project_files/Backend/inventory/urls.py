@@ -19,4 +19,18 @@ urlpatterns = [
         name="analytics"
     ),
 
+    # Reports
+    path(
+        "reports/",
+        views.reports,
+        name="reports"
+    ),
+
+        path(
+        "reports/export/",
+        views.export_report_csv,
+        name="export_report_csv"
+    ),
+
 ]
+
