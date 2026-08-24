@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.http import HttpResponse
 import csv
+from django.db import models
 
 from .models import Product
 from users.models import Store
@@ -831,3 +832,300 @@ def export_report_csv(request):
         ])
 
     return response
+
+# ============================================================
+# PRODUCTS
+# ============================================================
+
+@login_required
+def products(request):
+
+    search = request.GET.get("search", "").strip()
+
+    products = Product.objects.select_related(
+        "store"
+    ).all()
+
+    # Search by Product ID, Store name, Store code, or Category
+    if search:
+
+        products = products.filter(
+            models.Q(product_id__icontains=search)
+            | models.Q(store__name__icontains=search)
+            | models.Q(store__store_code__icontains=search)
+            | models.Q(category__icontains=search)
+        )
+
+    return render(
+        request,
+        "products.html",
+        {
+            "products": products,
+            "search": search,
+        }
+    )
+
+@login_required
+def add_product(request):
+
+    stores = Store.objects.filter(
+        is_active=True
+    )
+
+    error = None
+
+    if request.method == "POST":
+
+        try:
+
+            product_id = request.POST.get("product_id").strip()
+            store_id = request.POST.get("store_id")
+            category = request.POST.get("category").strip()
+            region = request.POST.get("region").strip()
+
+            inventory_level = int(
+                request.POST.get("inventory_level")
+            )
+
+            price = float(
+                request.POST.get("price")
+            )
+
+            discount = float(
+                request.POST.get("discount")
+            )
+
+            weather_condition = request.POST.get(
+                "weather_condition"
+            ).strip()
+
+            holiday_promotion = request.POST.get(
+                "holiday_promotion"
+            ) == "1"
+
+            competitor_pricing = float(
+                request.POST.get("competitor_pricing")
+            )
+
+            seasonality = request.POST.get(
+                "seasonality"
+            ).strip()
+
+            store = Store.objects.get(
+                store_code=store_id
+            )
+
+            # Prevent duplicate product in same store
+            if Product.objects.filter(
+                store=store,
+                product_id=product_id
+            ).exists():
+
+                error = (
+                    f"Product {product_id} already exists "
+                    f"in {store.name}."
+                )
+
+            else:
+
+                Product.objects.create(
+
+                    product_id=product_id,
+
+                    store=store,
+
+                    category=category,
+
+                    region=region,
+
+                    inventory_level=inventory_level,
+
+                    price=price,
+
+                    discount=discount,
+
+                    weather_condition=weather_condition,
+
+                    holiday_promotion=holiday_promotion,
+
+                    competitor_pricing=competitor_pricing,
+
+                    seasonality=seasonality,
+                )
+
+                return redirect("products")
+
+        except Store.DoesNotExist:
+
+            error = "Please select a valid store."
+
+        except (ValueError, TypeError):
+
+            error = (
+                "Please enter valid values for "
+                "inventory, price, discount and "
+                "competitor pricing."
+            )
+
+        except Exception as e:
+
+            error = str(e)
+
+    return render(
+        request,
+        "add_product.html",
+        {
+            "stores": stores,
+            "error": error,
+        }
+    )
+
+
+@login_required
+def edit_product(request, product_id):
+
+    product = Product.objects.get(
+        id=product_id
+    )
+
+    stores = Store.objects.filter(
+        is_active=True
+    )
+
+    error = None
+
+    if request.method == "POST":
+
+        try:
+
+            store_id = request.POST.get("store_id")
+
+            product.product_id = request.POST.get(
+                "product_id"
+            ).strip()
+
+            product.category = request.POST.get(
+                "category"
+            ).strip()
+
+            product.region = request.POST.get(
+                "region"
+            ).strip()
+
+            product.inventory_level = int(
+                request.POST.get("inventory_level")
+            )
+
+            product.price = float(
+                request.POST.get("price")
+            )
+
+            product.discount = float(
+                request.POST.get("discount")
+            )
+
+            product.weather_condition = request.POST.get(
+                "weather_condition"
+            ).strip()
+
+            product.holiday_promotion = (
+                request.POST.get("holiday_promotion") == "1"
+            )
+
+            product.competitor_pricing = float(
+                request.POST.get("competitor_pricing")
+            )
+
+            product.seasonality = request.POST.get(
+                "seasonality"
+            ).strip()
+
+            product.store = Store.objects.get(
+                store_code=store_id
+            )
+
+            # Check duplicate Product ID in same store
+            duplicate = Product.objects.filter(
+                store=product.store,
+                product_id=product.product_id
+            ).exclude(
+                id=product.id
+            ).exists()
+
+            if duplicate:
+
+                error = (
+                    f"Product {product.product_id} "
+                    f"already exists in this store."
+                )
+
+            else:
+
+                product.save()
+
+                return redirect("products")
+
+        except Store.DoesNotExist:
+
+            error = "Please select a valid store."
+
+        except (ValueError, TypeError):
+
+            error = (
+                "Please enter valid numeric values."
+            )
+
+        except Exception as e:
+
+            error = str(e)
+
+    return render(
+        request,
+        "edit_product.html",
+        {
+            "product": product,
+            "stores": stores,
+            "error": error,
+        }
+    )
+
+# ============================================================
+# AI FORECAST
+# ============================================================
+
+@login_required
+def ai_forecast(request):
+
+    products = Product.objects.select_related(
+        "store"
+    ).all()
+
+    predicted_products = products.exclude(
+        predicted_demand__isnull=True
+    )
+
+    total_predicted_demand = sum(
+        product.predicted_demand or 0
+        for product in predicted_products
+    )
+
+    average_predicted_demand = (
+        total_predicted_demand / predicted_products.count()
+        if predicted_products.exists()
+        else 0
+    )
+
+    return render(
+        request,
+        "ai_forecast.html",
+        {
+            "products": products,
+            "predicted_products": predicted_products,
+            "total_predicted_demand": round(
+                total_predicted_demand, 2
+            ),
+            "average_predicted_demand": round(
+                average_predicted_demand, 2
+            ),
+        }
+    )

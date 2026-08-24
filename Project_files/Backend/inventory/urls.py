@@ -12,6 +12,13 @@ urlpatterns = [
         name="inventory"
     ),
 
+    # AI Forecast
+    path(
+        "forecast/",
+        views.ai_forecast,
+        name="ai_forecast"
+    ),
+
     # Analytics
     path(
         "analytics/",
@@ -26,11 +33,32 @@ urlpatterns = [
         name="reports"
     ),
 
-        path(
+    # Export Report
+    path(
         "reports/export/",
         views.export_report_csv,
         name="export_report_csv"
     ),
 
-]
+    # Products
+    path(
+        "products/",
+        views.products,
+        name="products"
+    ),
 
+    # Add Product
+    path(
+        "products/add/",
+        views.add_product,
+        name="add_product"
+    ),
+
+    # Edit Product
+    path(
+        "products/edit/<int:product_id>/",
+        views.edit_product,
+        name="edit_product"
+    ),
+
+]
