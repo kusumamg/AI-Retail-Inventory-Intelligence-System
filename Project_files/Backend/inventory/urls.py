@@ -61,4 +61,17 @@ urlpatterns = [
         name="edit_product"
     ),
 
+    
+    path(
+    "users/",
+    views.users,
+    name="users"
+    ),
+    
+    path(
+    "stores/",
+    views.stores,
+    name="stores"
+),
+
 ]

@@ -1129,3 +1129,65 @@ def ai_forecast(request):
             ),
         }
     )
+
+    # ============================================================
+# USERS
+# ============================================================
+
+@login_required
+def users(request):
+
+    # Only administrators can access Users
+    try:
+        profile = request.user.profile
+
+        if profile.role != "ADMIN":
+            return redirect("dashboard")
+
+    except Exception:
+        return redirect("login")
+
+    # Get all registered users
+    from django.contrib.auth.models import User
+
+    all_users = User.objects.all().order_by(
+        "username"
+    )
+
+    return render(
+        request,
+        "users.html",
+        {
+            "users": all_users,
+        }
+    )
+
+# ============================================================
+# STORES
+# ============================================================
+
+@login_required
+def stores(request):
+
+    # Only administrators can access Stores
+    try:
+        profile = request.user.profile
+
+        if profile.role != "ADMIN":
+            return redirect("dashboard")
+
+    except Exception:
+        return redirect("login")
+
+    # Get all stores
+    all_stores = Store.objects.all().order_by(
+        "store_code"
+    )
+
+    return render(
+        request,
+        "stores.html",
+        {
+            "stores": all_stores,
+        }
+    )
