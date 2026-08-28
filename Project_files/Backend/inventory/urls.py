@@ -74,4 +74,10 @@ urlpatterns = [
     name="stores"
 ),
 
+path(
+    "system-management/",
+    views.system_management,
+    name="system_management"
+),
+
 ]

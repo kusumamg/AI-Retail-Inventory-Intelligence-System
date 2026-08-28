@@ -1191,3 +1191,13 @@ def stores(request):
             "stores": all_stores,
         }
     )
+
+# =========================================================
+# SYSTEM MANAGEMENT
+# =========================================================
+
+def system_management(request):
+    return render(
+        request,
+        "system_management.html"
+    )
