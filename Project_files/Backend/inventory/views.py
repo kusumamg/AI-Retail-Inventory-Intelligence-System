@@ -1201,3 +1201,15 @@ def system_management(request):
         request,
         "system_management.html"
     )
+
+# ============================================================
+# SETTINGS
+# ============================================================
+
+@login_required
+def settings(request):
+
+    return render(
+        request,
+        "settings.html"
+    )
