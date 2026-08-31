@@ -26,6 +26,18 @@ encoders = joblib.load(ENCODER_PATH)
 feature_columns = joblib.load(FEATURE_PATH)
 
 
+print("FEATURE COLUMNS:")
+print(feature_columns)
+
+print("\nENCODER CLASSES:")
+
+for column, encoder in encoders.items():
+    print(
+        column,
+        ":",
+        list(encoder.classes_)
+    )
+
 # ============================================================
 # PREDICTION FUNCTION
 # ============================================================

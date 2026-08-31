@@ -409,6 +409,41 @@ def analytics(request):
             "out_of_stock": store_out_of_stock,
         })
 
+    # --------------------------------------------------------
+    # Product-wise analytics
+    # --------------------------------------------------------
+
+    product_data = []
+
+    for product in products:
+
+        # Determine stock status
+        if product.inventory_level == 0:
+            status = "Out of Stock"
+
+        elif product.inventory_level < 25:
+            status = "Low Stock"
+
+        else:
+            status = "In Stock"
+
+        product_data.append({
+            "id": product.product_id,
+            "category": product.category,
+            "store": product.store.name,
+            "store_code": product.store.store_code,
+            "region": product.region,
+            "stock": product.inventory_level,
+            "price": product.price,
+            "discount": product.discount,
+            "predicted_demand": (
+                product.predicted_demand
+                if product.predicted_demand is not None
+                else 0
+            ),
+            "status": status,
+        })
+
     return render(
         request,
         "analytics.html",
@@ -427,6 +462,7 @@ def analytics(request):
                 average_predicted_demand,
 
             "store_data": store_data,
+            "product_data": product_data,
         }
     )
 
@@ -711,14 +747,23 @@ def inventory(request):
         }
     )
 
-    # ============================================================
+# ============================================================
 # REPORTS
 # ============================================================
-
 @login_required
 def reports(request):
 
-    products = Product.objects.select_related("store").all()
+    # ========================================================
+    # GET PRODUCTS
+    # ========================================================
+
+    products = Product.objects.select_related(
+        "store"
+    ).all()
+
+    # ========================================================
+    # BASIC INVENTORY STATISTICS
+    # ========================================================
 
     total_products = products.count()
 
@@ -739,6 +784,17 @@ def reports(request):
         if product.stock_status == "OUT_OF_STOCK"
     )
 
+    # Products that are currently in stock
+    in_stock = (
+        total_products
+        - low_stock
+        - out_of_stock
+    )
+
+    # ========================================================
+    # AI DEMAND STATISTICS
+    # ========================================================
+
     total_predicted_demand = sum(
         product.predicted_demand or 0
         for product in products
@@ -750,25 +806,164 @@ def reports(request):
         else 0
     )
 
+    # ========================================================
+    # PRODUCT REPORT DATA
+    # ========================================================
+
+    product_report = []
+
+    for product in products:
+
+        # ----------------------------------------------------
+        # Demand Coverage
+        # ----------------------------------------------------
+
+        if (
+            product.predicted_demand
+            and product.predicted_demand > 0
+        ):
+
+            demand_coverage = (
+                product.inventory_level
+                / product.predicted_demand
+            ) * 100
+
+        else:
+
+            demand_coverage = 0
+
+        demand_coverage = round(
+            demand_coverage,
+            1
+        )
+
+        # ----------------------------------------------------
+        # Stock Percentage
+        # ----------------------------------------------------
+
+        if total_stock > 0:
+
+            stock_percentage = (
+                product.inventory_level
+                / total_stock
+            ) * 100
+
+        else:
+
+            stock_percentage = 0
+
+        stock_percentage = round(
+            stock_percentage,
+            1
+        )
+
+        # ----------------------------------------------------
+        # Product Report
+        # ----------------------------------------------------
+
+        product_report.append({
+
+            "product_id":
+                product.product_id,
+
+            "store":
+                product.store.name,
+
+            "store_code":
+                product.store.store_code,
+
+            "category":
+                product.category,
+
+            "region":
+                product.region,
+
+            "inventory":
+                product.inventory_level,
+
+            "price":
+                product.price,
+
+            "discount":
+                product.discount,
+
+            "predicted_demand":
+                product.predicted_demand,
+
+            "demand_coverage":
+                demand_coverage,
+
+            "stock_percentage":
+                stock_percentage,
+
+            "status":
+                product.stock_status,
+
+        })
+
+    # ========================================================
+    # REPORT GENERATED DATE
+    # ========================================================
+
+    from django.utils import timezone
+
+    report_generated_at = timezone.now()
+
+    # ========================================================
+    # CONTEXT
+    # ========================================================
+
     context = {
-        "products": products,
-        "total_products": total_products,
-        "total_stock": total_stock,
-        "low_stock": low_stock,
-        "out_of_stock": out_of_stock,
-        "total_predicted_demand": round(
-            total_predicted_demand, 2
-        ),
-        "average_predicted_demand": round(
-            average_predicted_demand, 2
-        ),
+
+        "products":
+            products,
+
+        "product_report":
+            product_report,
+
+        "total_products":
+            total_products,
+
+        "total_stock":
+            total_stock,
+
+        # IMPORTANT:
+        # This was missing in your previous code.
+        "in_stock":
+            in_stock,
+
+        "low_stock":
+            low_stock,
+
+        "out_of_stock":
+            out_of_stock,
+
+        "total_predicted_demand":
+            round(
+                total_predicted_demand,
+                2
+            ),
+
+        "average_predicted_demand":
+            round(
+                average_predicted_demand,
+                2
+            ),
+
+        "report_generated_at":
+            report_generated_at,
     }
+
+    # ========================================================
+    # RENDER REPORT
+    # ========================================================
 
     return render(
         request,
         "reports.html",
         context
     )
+
 
 # ============================================================
 # EXPORT REPORT AS CSV
@@ -1100,6 +1295,128 @@ def ai_forecast(request):
         "store"
     ).all()
 
+    # ========================================================
+    # GENERATE AI PREDICTIONS
+    # ========================================================
+
+    if request.method == "POST":
+
+        current_date = timezone.now()
+
+        successful_predictions = 0
+        failed_predictions = 0
+
+        for product in products:
+
+            try:
+
+                # ------------------------------------------------
+                # Prepare data in the same format used by the
+                # trained machine learning model
+                # ------------------------------------------------
+
+                data = {
+
+                    "Store ID":
+                        product.store.store_code,
+
+                    "Product ID":
+                        product.product_id,
+
+                    "Category":
+                        product.category,
+
+                    "Region":
+                        product.region,
+
+                    "Inventory Level":
+                        product.inventory_level,
+
+                    "Price":
+                        product.price,
+
+                    "Discount":
+                        product.discount,
+
+                    "Weather Condition":
+                        product.weather_condition,
+
+                    "Holiday/Promotion":
+                        int(product.holiday_promotion),
+
+                    "Competitor Pricing":
+                        product.competitor_pricing,
+
+                    "Seasonality":
+                        product.seasonality,
+
+                    "Month":
+                        current_date.month,
+
+                    "Day":
+                        current_date.day,
+                }
+
+                # ------------------------------------------------
+                # Generate prediction
+                # ------------------------------------------------
+
+                prediction = predict_demand(data)
+
+                # ------------------------------------------------
+                # Save prediction to database
+                # ------------------------------------------------
+
+                product.predicted_demand = round(
+                    prediction,
+                    2
+                )
+
+                product.save(
+                    update_fields=[
+                        "predicted_demand",
+                        "updated_at"
+                    ]
+                )
+
+                successful_predictions += 1
+
+            except Exception as e:
+
+                print(
+                    f"Prediction failed for "
+                    f"{product.product_id}: {e}"
+                )
+
+                failed_predictions += 1
+
+        # ----------------------------------------------------
+        # Show result message
+        # ----------------------------------------------------
+
+        if successful_predictions > 0:
+
+            messages.success(
+                request,
+                f"AI prediction generated successfully "
+                f"for {successful_predictions} product(s)."
+            )
+
+        if failed_predictions > 0:
+
+            messages.warning(
+                request,
+                f"{failed_predictions} product(s) "
+                f"could not be predicted."
+            )
+
+        return redirect("ai_forecast")
+
+
+    # ========================================================
+    # DISPLAY SAVED PREDICTIONS
+    # ========================================================
+
     predicted_products = products.exclude(
         predicted_demand__isnull=True
     )
@@ -1110,7 +1427,8 @@ def ai_forecast(request):
     )
 
     average_predicted_demand = (
-        total_predicted_demand / predicted_products.count()
+        total_predicted_demand /
+        predicted_products.count()
         if predicted_products.exists()
         else 0
     )
@@ -1120,13 +1438,21 @@ def ai_forecast(request):
         "ai_forecast.html",
         {
             "products": products,
-            "predicted_products": predicted_products,
-            "total_predicted_demand": round(
-                total_predicted_demand, 2
-            ),
-            "average_predicted_demand": round(
-                average_predicted_demand, 2
-            ),
+
+            "predicted_products":
+                predicted_products,
+
+            "total_predicted_demand":
+                round(
+                    total_predicted_demand,
+                    2
+                ),
+
+            "average_predicted_demand":
+                round(
+                    average_predicted_demand,
+                    2
+                ),
         }
     )
 

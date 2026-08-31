@@ -53,9 +53,11 @@ class Product(models.Model):
     seasonality = models.CharField(
         max_length=50
     )
-     
+
     predicted_demand = models.FloatField(
-    default=0
+    null=True,
+    blank=True,
+    default=None
 )
 
     created_at = models.DateTimeField(
