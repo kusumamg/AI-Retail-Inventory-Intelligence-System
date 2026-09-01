@@ -10,6 +10,7 @@ from .models import Product
 from users.models import Store
 
 from .ai_model import predict_demand
+from django.utils import timezone
 
 
 
@@ -1069,48 +1070,149 @@ def add_product(request):
 
     error = None
 
+    # Values supported by the trained AI model
+    product_ids = [
+        f"P{i:04d}"
+        for i in range(1, 21)
+    ]
+
+    categories = [
+        "Clothing",
+        "Electronics",
+        "Furniture",
+        "Groceries",
+        "Toys",
+    ]
+
+    regions = [
+        "East",
+        "North",
+        "South",
+        "West",
+    ]
+
+    weather_conditions = [
+        "Cloudy",
+        "Rainy",
+        "Snowy",
+        "Sunny",
+    ]
+
+    seasons = [
+        "Autumn",
+        "Spring",
+        "Summer",
+        "Winter",
+    ]
+
     if request.method == "POST":
 
         try:
 
-            product_id = request.POST.get("product_id").strip()
-            store_id = request.POST.get("store_id")
-            category = request.POST.get("category").strip()
-            region = request.POST.get("region").strip()
+            product_id = request.POST.get(
+                "product_id"
+            ).strip()
+
+            store_id = request.POST.get(
+                "store_id"
+            )
+
+            category = request.POST.get(
+                "category"
+            ).strip()
+
+            region = request.POST.get(
+                "region"
+            ).strip()
 
             inventory_level = int(
-                request.POST.get("inventory_level")
+                request.POST.get(
+                    "inventory_level"
+                )
             )
 
             price = float(
-                request.POST.get("price")
+                request.POST.get(
+                    "price"
+                )
             )
 
             discount = float(
-                request.POST.get("discount")
+                request.POST.get(
+                    "discount"
+                )
             )
 
             weather_condition = request.POST.get(
                 "weather_condition"
             ).strip()
 
-            holiday_promotion = request.POST.get(
-                "holiday_promotion"
-            ) == "1"
+            holiday_promotion = (
+                request.POST.get(
+                    "holiday_promotion"
+                ) == "1"
+            )
 
             competitor_pricing = float(
-                request.POST.get("competitor_pricing")
+                request.POST.get(
+                    "competitor_pricing"
+                )
             )
 
             seasonality = request.POST.get(
                 "seasonality"
             ).strip()
 
+
+            # ------------------------------------------------
+            # Validate AI model supported values
+            # ------------------------------------------------
+
+            if product_id not in product_ids:
+
+                raise ValueError(
+                    "Please select a valid Product ID "
+                    "between P0001 and P0020."
+                )
+
+            if category not in categories:
+
+                raise ValueError(
+                    "Please select a valid category."
+                )
+
+            if region not in regions:
+
+                raise ValueError(
+                    "Please select a valid region."
+                )
+
+            if weather_condition not in weather_conditions:
+
+                raise ValueError(
+                    "Please select a valid weather condition."
+                )
+
+            if seasonality not in seasons:
+
+                raise ValueError(
+                    "Please select a valid season."
+                )
+
+
+            # ------------------------------------------------
+            # Get store
+            # ------------------------------------------------
+
             store = Store.objects.get(
                 store_code=store_id
             )
 
+
+            # ------------------------------------------------
             # Prevent duplicate product in same store
+            # ------------------------------------------------
+
             if Product.objects.filter(
                 store=store,
                 product_id=product_id
@@ -1146,25 +1248,33 @@ def add_product(request):
                     competitor_pricing=competitor_pricing,
 
                     seasonality=seasonality,
+
                 )
 
-                return redirect("products")
+                return redirect(
+                    "products"
+                )
+
 
         except Store.DoesNotExist:
 
-            error = "Please select a valid store."
+            error = (
+                "Please select a valid store."
+            )
+
 
         except (ValueError, TypeError):
 
             error = (
-                "Please enter valid values for "
-                "inventory, price, discount and "
-                "competitor pricing."
+                "Please enter valid values "
+                "for the product details."
             )
+
 
         except Exception as e:
 
             error = str(e)
+
 
     return render(
         request,
@@ -1172,9 +1282,14 @@ def add_product(request):
         {
             "stores": stores,
             "error": error,
+
+            "product_ids": product_ids,
+            "categories": categories,
+            "regions": regions,
+            "weather_conditions": weather_conditions,
+            "seasons": seasons,
         }
     )
-
 
 @login_required
 def edit_product(request, product_id):
