@@ -22,6 +22,11 @@ class Product(models.Model):
         max_length=100
     )
 
+    subcategory = models.CharField(
+    max_length=100,
+    default=""
+    )
+
     region = models.CharField(
         max_length=100
     )

@@ -1121,6 +1121,10 @@ def add_product(request):
                 "category"
             ).strip()
 
+            subcategory = request.POST.get(
+                "subcategory"
+            ).strip()
+
             region = request.POST.get(
                 "region"
             ).strip()
@@ -1232,6 +1236,8 @@ def add_product(request):
                     store=store,
 
                     category=category,
+
+                    subcategory=subcategory,
 
                     region=region,
 
