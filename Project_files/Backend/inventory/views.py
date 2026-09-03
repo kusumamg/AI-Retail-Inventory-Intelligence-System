@@ -431,6 +431,7 @@ def analytics(request):
         product_data.append({
             "id": product.product_id,
             "category": product.category,
+            "subcategory": product.subcategory,
             "store": product.store.name,
             "store_code": product.store.store_code,
             "region": product.region,
@@ -876,6 +877,9 @@ def reports(request):
             "category":
                 product.category,
 
+            "subcategory": 
+                product.subcategory,
+
             "region":
                 product.region,
 
@@ -1297,6 +1301,7 @@ def add_product(request):
         }
     )
 
+
 @login_required
 def edit_product(request, product_id):
 
@@ -1322,6 +1327,10 @@ def edit_product(request, product_id):
 
             product.category = request.POST.get(
                 "category"
+            ).strip()
+
+            product.subcategory = request.POST.get(
+                "subcategory"
             ).strip()
 
             product.region = request.POST.get(
@@ -1412,86 +1421,74 @@ def edit_product(request, product_id):
 @login_required
 def ai_forecast(request):
 
-    products = Product.objects.select_related(
-        "store"
-    ).all()
+    products = Product.objects.select_related("store").all()
 
-    # ========================================================
+    # =====================================================
     # GENERATE AI PREDICTIONS
-    # ========================================================
+    # =====================================================
 
     if request.method == "POST":
 
-        current_date = timezone.now()
+        from django.contrib import messages
+        from django.utils import timezone
+        from .ai_model import predict_demand
 
         successful_predictions = 0
         failed_predictions = 0
+
+        current_date = timezone.now()
 
         for product in products:
 
             try:
 
-                # ------------------------------------------------
-                # Prepare data in the same format used by the
-                # trained machine learning model
-                # ------------------------------------------------
+                # Build input using the same features
+                # used while training the model
 
-                data = {
+                input_data = {
 
-                    "Store ID":
-                        product.store.store_code,
+                    "Store ID": product.store.store_code,
 
-                    "Product ID":
-                        product.product_id,
+                    "Product ID": product.product_id,
 
-                    "Category":
-                        product.category,
+                    "Category": product.category,
 
-                    "Region":
-                        product.region,
+                    "Region": product.region,
 
-                    "Inventory Level":
-                        product.inventory_level,
+                    "Inventory Level": product.inventory_level,
 
-                    "Price":
-                        product.price,
+                    "Price": product.price,
 
-                    "Discount":
-                        product.discount,
+                    "Discount": product.discount,
 
-                    "Weather Condition":
-                        product.weather_condition,
+                    "Weather Condition": product.weather_condition,
 
-                    "Holiday/Promotion":
-                        int(product.holiday_promotion),
+                    "Holiday/Promotion": int(product.holiday_promotion),
 
-                    "Competitor Pricing":
-                        product.competitor_pricing,
+                    "Competitor Pricing": product.competitor_pricing,
 
-                    "Seasonality":
-                        product.seasonality,
+                    "Seasonality": product.seasonality,
 
-                    "Month":
-                        current_date.month,
+                    "Month": current_date.month,
 
-                    "Day":
-                        current_date.day,
+                    "Day": current_date.day,
+
                 }
 
-                # ------------------------------------------------
+
                 # Generate prediction
-                # ------------------------------------------------
 
-                prediction = predict_demand(data)
+                prediction = predict_demand(input_data)
 
-                # ------------------------------------------------
-                # Save prediction to database
-                # ------------------------------------------------
 
-                product.predicted_demand = round(
-                    prediction,
-                    2
-                )
+                # Prevent negative demand
+
+                prediction = max(0, prediction)
+
+
+                # Save prediction
+
+                product.predicted_demand = round(prediction, 2)
 
                 product.save(
                     update_fields=[
@@ -1500,7 +1497,9 @@ def ai_forecast(request):
                     ]
                 )
 
+
                 successful_predictions += 1
+
 
             except Exception as e:
 
@@ -1511,15 +1510,16 @@ def ai_forecast(request):
 
                 failed_predictions += 1
 
-        # ----------------------------------------------------
-        # Show result message
-        # ----------------------------------------------------
+
+        # =================================================
+        # RESULT MESSAGE
+        # =================================================
 
         if successful_predictions > 0:
 
             messages.success(
                 request,
-                f"AI prediction generated successfully "
+                f"AI predictions generated successfully "
                 f"for {successful_predictions} product(s)."
             )
 
@@ -1528,52 +1528,76 @@ def ai_forecast(request):
             messages.warning(
                 request,
                 f"{failed_predictions} product(s) "
-                f"could not be predicted."
+                f"could not be predicted. "
+                f"Check the terminal for details."
             )
+
 
         return redirect("ai_forecast")
 
 
-    # ========================================================
-    # DISPLAY SAVED PREDICTIONS
-    # ========================================================
+    # =====================================================
+    # DISPLAY FORECAST
+    # =====================================================
 
-    predicted_products = products.exclude(
-        predicted_demand__isnull=True
+    predicted_products = products.filter(
+        predicted_demand__isnull=False
     )
+
 
     total_predicted_demand = sum(
         product.predicted_demand or 0
         for product in predicted_products
     )
 
+
     average_predicted_demand = (
+
         total_predicted_demand /
         predicted_products.count()
+
         if predicted_products.exists()
+
         else 0
+
     )
+
+
+    # =====================================================
+    # DEMAND COVERAGE
+    # =====================================================
+
+    for product in predicted_products:
+
+        if product.predicted_demand > 0:
+
+            product.demand_coverage = round(
+                (
+                    product.inventory_level /
+                    product.predicted_demand
+                ) * 100,
+                1
+            )
+
+        else:
+
+            product.demand_coverage = 0
+
 
     return render(
         request,
         "ai_forecast.html",
         {
             "products": products,
-
-            "predicted_products":
-                predicted_products,
-
-            "total_predicted_demand":
-                round(
-                    total_predicted_demand,
-                    2
-                ),
-
-            "average_predicted_demand":
-                round(
-                    average_predicted_demand,
-                    2
-                ),
+            "predicted_products": predicted_products,
+            "total_predicted_demand": round(
+                total_predicted_demand,
+                2
+            ),
+            "average_predicted_demand": round(
+                average_predicted_demand,
+                2
+            ),
         }
     )
 
