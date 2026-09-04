@@ -1601,7 +1601,163 @@ def ai_forecast(request):
         }
     )
 
-    # ============================================================
+
+
+# ============================================================
+# SMART ALERTS
+# ============================================================
+
+@login_required
+def alerts(request):
+
+    products = Product.objects.select_related("store").all()
+
+    alert_filter = request.GET.get("type", "ALL")
+
+    alert_data = []
+
+    for product in products:
+
+        predicted_demand = product.predicted_demand or 0
+        current_stock = product.inventory_level
+
+        # ----------------------------------------------------
+        # Determine alert
+        # ----------------------------------------------------
+
+        if current_stock == 0:
+
+            alert_type = "OUT_OF_STOCK"
+            alert_title = "Out of Stock"
+            alert_message = (
+                "This product currently has no available stock."
+            )
+            alert_priority = "High"
+
+        elif predicted_demand > current_stock:
+
+            alert_type = "REPLENISHMENT"
+            alert_title = "Replenishment Needed"
+            alert_message = (
+                "Predicted demand is greater than "
+                "the current inventory level."
+            )
+            alert_priority = "High"
+
+        elif current_stock < 25:
+
+            alert_type = "LOW_STOCK"
+            alert_title = "Low Stock"
+            alert_message = (
+                "Inventory level is below the "
+                "defined low-stock threshold."
+            )
+            alert_priority = "Medium"
+
+        else:
+
+            # No alert required for this product
+            continue
+
+        # ----------------------------------------------------
+        # Demand coverage
+        # ----------------------------------------------------
+
+        if predicted_demand > 0:
+
+            demand_coverage = round(
+                (current_stock / predicted_demand) * 100,
+                1
+            )
+
+        else:
+
+            demand_coverage = 0
+
+        alert_data.append({
+
+            "product_id": product.product_id,
+
+            "store": product.store.name,
+
+            "store_code": product.store.store_code,
+
+            "category": product.category,
+
+            "subcategory": product.subcategory,
+
+            "inventory": current_stock,
+
+            "predicted_demand": predicted_demand,
+
+            "demand_coverage": demand_coverage,
+
+            "alert_type": alert_type,
+
+            "alert_title": alert_title,
+
+            "alert_message": alert_message,
+
+            "priority": alert_priority,
+
+        })
+
+    # ========================================================
+    # ALERT SUMMARY
+    # ========================================================
+
+    total_alerts = len(alert_data)
+
+    out_of_stock_alerts = sum(
+        1
+        for alert in alert_data
+        if alert["alert_type"] == "OUT_OF_STOCK"
+    )
+
+    replenishment_alerts = sum(
+        1
+        for alert in alert_data
+        if alert["alert_type"] == "REPLENISHMENT"
+    )
+
+    low_stock_alerts = sum(
+        1
+        for alert in alert_data
+        if alert["alert_type"] == "LOW_STOCK"
+    )
+
+    # ========================================================
+    # APPLY FILTER TO TABLE ONLY
+    # ========================================================
+
+    filtered_alert_data = alert_data
+
+    if alert_filter != "ALL":
+
+        filtered_alert_data = [
+            alert
+            for alert in alert_data
+            if alert["alert_type"] == alert_filter
+        ]
+
+    # ========================================================
+    # RENDER ALERTS PAGE
+    # ========================================================
+
+    return render(
+        request,
+        "alerts.html",
+        {
+            "alert_data": filtered_alert_data,
+            "total_alerts": total_alerts,
+            "out_of_stock_alerts": out_of_stock_alerts,
+            "replenishment_alerts": replenishment_alerts,
+            "low_stock_alerts": low_stock_alerts,
+            "alert_filter": alert_filter,
+        }
+    )
+
+# ============================================================
 # USERS
 # ============================================================
 
@@ -1667,12 +1823,17 @@ def stores(request):
 # SYSTEM MANAGEMENT
 # =========================================================
 
+# =========================================================
+# SYSTEM MANAGEMENT
+# =========================================================
+
+@login_required
 def system_management(request):
+
     return render(
         request,
         "system_management.html"
     )
-
 # ============================================================
 # SETTINGS
 # ============================================================

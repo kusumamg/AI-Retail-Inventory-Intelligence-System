@@ -19,6 +19,10 @@ urlpatterns = [
         name="ai_forecast"
     ),
 
+    path("alerts/", 
+         views.alerts, 
+         name="alerts"),
+
     # Analytics
     path(
         "analytics/",
