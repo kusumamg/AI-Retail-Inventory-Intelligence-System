@@ -12,6 +12,8 @@ from users.models import Store
 from .ai_model import predict_demand
 from django.utils import timezone
 
+import math
+
 
 
 # ============================================================
@@ -1606,7 +1608,6 @@ def ai_forecast(request):
 # ============================================================
 # SMART ALERTS
 # ============================================================
-
 @login_required
 def alerts(request):
 
@@ -1674,6 +1675,24 @@ def alerts(request):
 
             demand_coverage = 0
 
+        # ----------------------------------------------------
+        # Recommended reorder quantity
+        # 10% safety stock
+        # ----------------------------------------------------
+
+        safety_stock = predicted_demand * 0.10
+
+        required_stock = predicted_demand + safety_stock
+
+        recommended_reorder = max(
+            0,
+            math.ceil(required_stock - current_stock)
+        )
+
+        # ----------------------------------------------------
+        # Store alert information
+        # ----------------------------------------------------
+
         alert_data.append({
 
             "product_id": product.product_id,
@@ -1691,6 +1710,12 @@ def alerts(request):
             "predicted_demand": predicted_demand,
 
             "demand_coverage": demand_coverage,
+
+            "recommended_reorder": recommended_reorder,
+
+            "safety_stock": round(safety_stock, 2),
+
+            "required_stock": required_stock,
 
             "alert_type": alert_type,
 
