@@ -514,6 +514,10 @@ def inventory(request):
                 "category"
             )
 
+            subcategory = request.POST.get(
+                "subcategory"
+          )
+
             region = request.POST.get(
                 "region"
             )
@@ -632,6 +636,8 @@ def inventory(request):
                 "Product ID": product_id,
 
                 "Category": category,
+
+                "subcategory": subcategory,
 
                 "Region": region,
 
@@ -1859,6 +1865,7 @@ def system_management(request):
         request,
         "system_management.html"
     )
+
 # ============================================================
 # SETTINGS
 # ============================================================
@@ -1866,7 +1873,228 @@ def system_management(request):
 @login_required
 def settings(request):
 
+    user = request.user
+
+    if request.method == "POST":
+
+        action = request.POST.get("action")
+
+        # ====================================================
+        # UPDATE PROFILE
+        # ====================================================
+
+        if action == "profile":
+
+            username = request.POST.get(
+                "username"
+            ).strip()
+
+            email = request.POST.get(
+                "email"
+            ).strip()
+
+            if not username:
+
+                messages.error(
+                    request,
+                    "Username cannot be empty."
+                )
+
+            elif not email:
+
+                messages.error(
+                    request,
+                    "Email cannot be empty."
+                )
+
+            else:
+
+                # Check if username is already used
+                from django.contrib.auth.models import User
+
+                username_exists = User.objects.filter(
+                    username=username
+                ).exclude(
+                    id=user.id
+                ).exists()
+
+                if username_exists:
+
+                    messages.error(
+                        request,
+                        "This username is already in use."
+                    )
+
+                else:
+
+                    user.username = username
+                    user.email = email
+                    user.save()
+
+                    messages.success(
+                        request,
+                        "Profile settings updated successfully."
+                    )
+
+                    return redirect("settings")
+
+
+        # ====================================================
+        # CHANGE PASSWORD
+        # ====================================================
+
+        elif action == "password":
+
+            current_password = request.POST.get(
+                "current_password"
+            )
+
+            new_password = request.POST.get(
+                "new_password"
+            )
+
+            confirm_password = request.POST.get(
+                "confirm_password"
+            )
+
+            if not user.check_password(
+                current_password
+            ):
+
+                messages.error(
+                    request,
+                    "Current password is incorrect."
+                )
+
+            elif len(new_password) < 8:
+
+                messages.error(
+                    request,
+                    "New password must contain at least 8 characters."
+                )
+
+            elif new_password != confirm_password:
+
+                messages.error(
+                    request,
+                    "New passwords do not match."
+                )
+
+            else:
+
+                user.set_password(
+                    new_password
+                )
+
+                user.save()
+
+                # Keep user logged in after password change
+                from django.contrib.auth import update_session_auth_hash
+
+                update_session_auth_hash(
+                    request,
+                    user
+                )
+
+                messages.success(
+                    request,
+                    "Password changed successfully."
+                )
+
+                return redirect("settings")
+
+
+        # ====================================================
+        # APPLICATION PREFERENCES
+        # ====================================================
+
+        elif action == "preferences":
+
+            theme = request.POST.get(
+                "theme",
+                "light"
+            )
+
+            notifications = request.POST.get(
+                "notifications"
+            ) == "on"
+
+            low_stock_threshold = request.POST.get(
+                "low_stock_threshold",
+                "25"
+            )
+
+            try:
+
+                low_stock_threshold = int(
+                    low_stock_threshold
+                )
+
+                if low_stock_threshold < 1:
+
+                    raise ValueError
+
+            except (ValueError, TypeError):
+
+                low_stock_threshold = 25
+
+                messages.error(
+                    request,
+                    "Low-stock threshold must be a positive number."
+                )
+
+            else:
+
+                request.session["theme"] = theme
+
+                request.session["notifications"] = notifications
+
+                request.session[
+                    "low_stock_threshold"
+                ] = low_stock_threshold
+
+                request.session.modified = True
+
+                messages.success(
+                    request,
+                    "Application preferences saved successfully."
+                )
+
+                return redirect("settings")
+
+
+    # ========================================================
+    # CURRENT SETTINGS
+    # ========================================================
+
+    current_theme = request.session.get(
+        "theme",
+        "light"
+    )
+
+    notifications_enabled = request.session.get(
+        "notifications",
+        True
+    )
+
+    low_stock_threshold = request.session.get(
+        "low_stock_threshold",
+        25
+    )
+
+
+    # ========================================================
+    # DISPLAY SETTINGS PAGE
+    # ========================================================
+
     return render(
         request,
-        "settings.html"
+        "settings.html",
+        {
+            "current_theme": current_theme,
+            "notifications_enabled":
+                notifications_enabled,
+            "low_stock_threshold":
+                low_stock_threshold,
+        }
     )
