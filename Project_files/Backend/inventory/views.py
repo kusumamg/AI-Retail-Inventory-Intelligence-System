@@ -1054,7 +1054,10 @@ def products(request):
         "store"
     ).all()
 
-    # Search by Product ID, Store name, Store code, or Category
+    # --------------------------------------------------------
+    # SEARCH
+    # --------------------------------------------------------
+
     if search:
 
         products = products.filter(
@@ -1062,13 +1065,79 @@ def products(request):
             | models.Q(store__name__icontains=search)
             | models.Q(store__store_code__icontains=search)
             | models.Q(category__icontains=search)
+            | models.Q(subcategory__icontains=search)
         )
+
+    # --------------------------------------------------------
+    # CATEGORY ORDER
+    # --------------------------------------------------------
+
+    category_order = [
+        "Electronics",
+        "Clothing",
+        "Groceries",
+        "Toys",
+        "Furniture",
+    ]
+
+    products = products.order_by(
+        "category",
+        "subcategory",
+        "product_id"
+    )
+
+    # --------------------------------------------------------
+    # CATEGORY SECTIONS
+    # --------------------------------------------------------
+
+    category_sections = []
+
+    for category in category_order:
+
+        category_products = products.filter(
+            category=category
+        )
+
+        if category_products.exists():
+
+            category_sections.append({
+                "name": category,
+                "products": category_products,
+            })
+
+    # --------------------------------------------------------
+    # EXTRA CATEGORIES
+    # --------------------------------------------------------
+
+    existing_categories = set(category_order)
+
+    other_categories = (
+        products
+        .values_list("category", flat=True)
+        .distinct()
+    )
+
+    for category in other_categories:
+
+        if category not in existing_categories:
+
+            category_products = products.filter(
+                category=category
+            )
+
+            if category_products.exists():
+
+                category_sections.append({
+                    "name": category,
+                    "products": category_products,
+                })
 
     return render(
         request,
         "products.html",
         {
             "products": products,
+            "category_sections": category_sections,
             "search": search,
         }
     )
@@ -1426,10 +1495,17 @@ def edit_product(request, product_id):
 # AI FORECAST
 # ============================================================
 
+# ============================================================
+# AI FORECAST
+# ============================================================
+
 @login_required
 def ai_forecast(request):
 
-    products = Product.objects.select_related("store").all()
+    products = Product.objects.select_related(
+        "store"
+    ).all()
+
 
     # =====================================================
     # GENERATE AI PREDICTIONS
@@ -1446,57 +1522,80 @@ def ai_forecast(request):
 
         current_date = timezone.now()
 
+
         for product in products:
 
             try:
 
-                # Build input using the same features
-                # used while training the model
+                # Build input using the same
+                # features used during training
 
                 input_data = {
 
-                    "Store ID": product.store.store_code,
+                    "Store ID":
+                        product.store.store_code,
 
-                    "Product ID": product.product_id,
+                    "Product ID":
+                        product.product_id,
 
-                    "Category": product.category,
+                    "Category":
+                        product.category,
 
-                    "Region": product.region,
+                    "Region":
+                        product.region,
 
-                    "Inventory Level": product.inventory_level,
+                    "Inventory Level":
+                        product.inventory_level,
 
-                    "Price": product.price,
+                    "Price":
+                        product.price,
 
-                    "Discount": product.discount,
+                    "Discount":
+                        product.discount,
 
-                    "Weather Condition": product.weather_condition,
+                    "Weather Condition":
+                        product.weather_condition,
 
-                    "Holiday/Promotion": int(product.holiday_promotion),
+                    "Holiday/Promotion":
+                        int(
+                            product.holiday_promotion
+                        ),
 
-                    "Competitor Pricing": product.competitor_pricing,
+                    "Competitor Pricing":
+                        product.competitor_pricing,
 
-                    "Seasonality": product.seasonality,
+                    "Seasonality":
+                        product.seasonality,
 
-                    "Month": current_date.month,
+                    "Month":
+                        current_date.month,
 
-                    "Day": current_date.day,
-
+                    "Day":
+                        current_date.day,
                 }
 
 
                 # Generate prediction
 
-                prediction = predict_demand(input_data)
+                prediction = predict_demand(
+                    input_data
+                )
 
 
                 # Prevent negative demand
 
-                prediction = max(0, prediction)
+                prediction = max(
+                    0,
+                    prediction
+                )
 
 
                 # Save prediction
 
-                product.predicted_demand = round(prediction, 2)
+                product.predicted_demand = round(
+                    prediction,
+                    2
+                )
 
                 product.save(
                     update_fields=[
@@ -1531,6 +1630,7 @@ def ai_forecast(request):
                 f"for {successful_predictions} product(s)."
             )
 
+
         if failed_predictions > 0:
 
             messages.warning(
@@ -1541,7 +1641,9 @@ def ai_forecast(request):
             )
 
 
-        return redirect("ai_forecast")
+        return redirect(
+            "ai_forecast"
+        )
 
 
     # =====================================================
@@ -1553,11 +1655,19 @@ def ai_forecast(request):
     )
 
 
+    # =====================================================
+    # TOTAL PREDICTED DEMAND
+    # =====================================================
+
     total_predicted_demand = sum(
         product.predicted_demand or 0
         for product in predicted_products
     )
 
+
+    # =====================================================
+    # AVERAGE PREDICTED DEMAND
+    # =====================================================
 
     average_predicted_demand = (
 
@@ -1567,7 +1677,6 @@ def ai_forecast(request):
         if predicted_products.exists()
 
         else 0
-
     )
 
 
@@ -1580,10 +1689,12 @@ def ai_forecast(request):
         if product.predicted_demand > 0:
 
             product.demand_coverage = round(
+
                 (
                     product.inventory_level /
                     product.predicted_demand
                 ) * 100,
+
                 1
             )
 
@@ -1592,24 +1703,166 @@ def ai_forecast(request):
             product.demand_coverage = 0
 
 
+    # =====================================================
+    # CATEGORY-WISE FORECAST DATA
+    # =====================================================
+
+    category_order = [
+
+        "Electronics",
+
+        "Clothing",
+
+        "Groceries",
+
+        "Toys",
+
+        "Furniture",
+    ]
+
+
+    category_forecasts = []
+
+
+    for category in category_order:
+
+        category_products = predicted_products.filter(
+            category=category
+        )
+
+
+        if not category_products.exists():
+
+            continue
+
+
+        # -------------------------------------------------
+        # Category predicted demand
+        # -------------------------------------------------
+
+        category_demand = sum(
+
+            product.predicted_demand or 0
+
+            for product in category_products
+        )
+
+
+        # -------------------------------------------------
+        # Category current stock
+        # -------------------------------------------------
+
+        category_stock = sum(
+
+            product.inventory_level
+
+            for product in category_products
+        )
+
+
+        # -------------------------------------------------
+        # Category demand coverage
+        # -------------------------------------------------
+
+        if category_demand > 0:
+
+            category_coverage = (
+
+                category_stock /
+                category_demand
+
+            ) * 100
+
+        else:
+
+            category_coverage = 0
+
+
+        # -------------------------------------------------
+        # Replenishment count
+        # -------------------------------------------------
+
+        replenishment_count = sum(
+
+            1
+
+            for product in category_products
+
+            if (
+                product.predicted_demand or 0
+            ) > product.inventory_level
+        )
+
+
+        # -------------------------------------------------
+        # Store category information
+        # -------------------------------------------------
+
+        category_forecasts.append({
+
+            "name":
+                category,
+
+            "products":
+                category_products,
+
+            "product_count":
+                category_products.count(),
+
+            "predicted_demand":
+                round(
+                    category_demand,
+                    2
+                ),
+
+            "current_stock":
+                category_stock,
+
+            "coverage":
+                round(
+                    category_coverage,
+                    1
+                ),
+
+            "replenishment_count":
+                replenishment_count,
+        })
+
+
+    # =====================================================
+    # RENDER AI FORECAST PAGE
+    # =====================================================
+
     return render(
+
         request,
+
         "ai_forecast.html",
+
         {
-            "products": products,
-            "predicted_products": predicted_products,
-            "total_predicted_demand": round(
-                total_predicted_demand,
-                2
-            ),
-            "average_predicted_demand": round(
-                average_predicted_demand,
-                2
-            ),
+
+            "products":
+                products,
+
+            "predicted_products":
+                predicted_products,
+
+            "total_predicted_demand":
+                round(
+                    total_predicted_demand,
+                    2
+                ),
+
+            "average_predicted_demand":
+                round(
+                    average_predicted_demand,
+                    2
+                ),
+
+            "category_forecasts":
+                category_forecasts,
         }
     )
-
-
 
 # ============================================================
 # SMART ALERTS
@@ -1777,17 +2030,29 @@ def alerts(request):
 
     return render(
         request,
-        "alerts.html",
-        {
-            "alert_data": filtered_alert_data,
-            "total_alerts": total_alerts,
-            "out_of_stock_alerts": out_of_stock_alerts,
-            "replenishment_alerts": replenishment_alerts,
-            "low_stock_alerts": low_stock_alerts,
-            "alert_filter": alert_filter,
-        }
-    )
+    "ai_forecast.html",
+    {
+        "products": products,
 
+        "predicted_products":
+            predicted_products,
+
+        "total_predicted_demand":
+            round(
+                total_predicted_demand,
+                2
+            ),
+
+        "average_predicted_demand":
+            round(
+                average_predicted_demand,
+                2
+            ),
+
+        "category_forecasts":
+            category_forecasts,
+    }
+)
 # ============================================================
 # USERS
 # ============================================================
