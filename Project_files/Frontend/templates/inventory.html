@@ -1,0 +1,1126 @@
+{% extends "base.html" %}
+
+{% block title %}
+Inventory | AI Retail Inventory Intelligence System
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+    /* =========================================
+       INVENTORY PAGE
+       ========================================= */
+
+    .inventory-page {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 36px 0 50px;
+    }
+
+
+    /* =========================================
+       PAGE HEADER
+       ========================================= */
+
+    .inventory-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 30px;
+        gap: 20px;
+    }
+
+    .inventory-label {
+        display: inline-block;
+        color: #b88900;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        margin-bottom: 8px;
+    }
+
+    .inventory-header h1 {
+        margin: 0 0 8px;
+        font-size: 34px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .inventory-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 15px;
+    }
+
+    .inventory-date {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 13px 18px;
+        color: #64748b;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, 0.05);
+        white-space: nowrap;
+    }
+
+    .inventory-date i {
+        color: #b88900;
+        margin-right: 7px;
+    }
+
+
+    /* =========================================
+       MAIN GRID
+       ========================================= */
+
+    .inventory-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.8fr);
+        gap: 24px;
+        align-items: start;
+    }
+
+
+    /* =========================================
+       CARDS
+       ========================================= */
+
+    .inventory-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 28px;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.05);
+    }
+
+    .inventory-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+
+    .inventory-card-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .inventory-card-title .title-icon {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: #fff7dc;
+        color: #b88900;
+        font-size: 20px;
+    }
+
+    .inventory-card-title h2 {
+        margin: 0;
+        font-size: 19px;
+        color: #111827;
+    }
+
+    .inventory-card-title p {
+        margin: 3px 0 0;
+        font-size: 13px;
+        color: #94a3b8;
+    }
+
+
+    /* =========================================
+       FORM
+       ========================================= */
+
+    .inventory-form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #334155;
+    }
+
+    .form-group label i {
+        color: #b88900;
+        margin-right: 5px;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        box-sizing: border-box;
+        height: 45px;
+        padding: 0 13px;
+        border: 1px solid #dbe1e8;
+        border-radius: 10px;
+        background: #f8fafc;
+        color: #111827;
+        font-size: 14px;
+        outline: none;
+        transition: 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: #c69a19;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(198, 154, 25, 0.12);
+    }
+
+
+    /* =========================================
+       BUTTON
+       ========================================= */
+
+    .predict-button {
+        grid-column: 1 / -1;
+        height: 50px;
+        border: none;
+        border-radius: 11px;
+        background: linear-gradient(135deg, #c99718, #a87900);
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 8px 18px rgba(184, 137, 0, 0.22);
+        transition: 0.2s ease;
+    }
+
+    .predict-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(184, 137, 0, 0.28);
+    }
+
+    .predict-button i {
+        margin-right: 8px;
+    }
+
+
+    /* =========================================
+       RESULT CARD
+       ========================================= */
+
+    .prediction-card {
+        min-height: 280px;
+    }
+
+    .prediction-empty {
+        text-align: center;
+        padding: 45px 15px;
+        color: #94a3b8;
+    }
+
+    .prediction-empty .prediction-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #fff8e1;
+        color: #b88900;
+        font-size: 30px;
+    }
+
+    .prediction-empty h3 {
+        margin: 0 0 8px;
+        color: #334155;
+        font-size: 18px;
+    }
+
+    .prediction-empty p {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+
+    .prediction-result {
+        text-align: center;
+        padding: 15px 0;
+    }
+
+    .prediction-result .result-label {
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .prediction-number {
+        margin: 15px 0 8px;
+        font-size: 56px;
+        line-height: 1;
+        font-weight: 800;
+        color: #b88900;
+    }
+
+    .prediction-unit {
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .prediction-status {
+        margin-top: 25px;
+        padding: 13px;
+        border-radius: 10px;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+
+    /* =========================================
+       ERROR
+       ========================================= */
+
+    .prediction-error {
+        padding: 15px;
+        border-radius: 11px;
+        background: #fff1f2;
+        border: 1px solid #fecdd3;
+        color: #be123c;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .prediction-error i {
+        margin-right: 6px;
+    }
+
+
+    /* =========================================
+       INFORMATION CARDS
+       ========================================= */
+
+    .inventory-info {
+        margin-top: 24px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+
+    .info-box {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 6px 22px rgba(15, 23, 42, 0.04);
+    }
+
+    .info-box i {
+        color: #b88900;
+        font-size: 21px;
+    }
+
+    .info-box h3 {
+        margin: 12px 0 6px;
+        font-size: 15px;
+        color: #111827;
+    }
+
+    .info-box p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+
+    /* =========================================
+       RESPONSIVE
+       ========================================= */
+
+    @media (max-width: 1000px) {
+
+        .inventory-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .inventory-info {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+
+    @media (max-width: 700px) {
+
+        .inventory-page {
+            padding: 25px 15px 40px;
+        }
+
+        .inventory-header {
+            flex-direction: column;
+        }
+
+        .inventory-form {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full-width,
+        .predict-button {
+            grid-column: auto;
+        }
+
+        .inventory-card {
+            padding: 20px;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="inventory-page">
+
+
+    <!-- =========================================
+         PAGE HEADER
+         ========================================= -->
+
+    <div class="inventory-header">
+
+        <div>
+
+            <span class="inventory-label">
+                INVENTORY INTELLIGENCE
+            </span>
+
+            <h1>
+                Inventory Management
+            </h1>
+
+            <p>
+                Enter product and market information to predict
+                upcoming demand using AI.
+            </p>
+
+        </div>
+
+
+        <div class="inventory-date">
+
+            <i class="bi bi-calendar3"></i>
+
+            AI Demand Prediction
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================
+         MAIN CONTENT
+         ========================================= -->
+
+    <div class="inventory-layout">
+
+
+        <!-- =====================================
+             INPUT FORM
+             ===================================== -->
+
+        <div class="inventory-card">
+
+            <div class="inventory-card-header">
+
+                <div class="inventory-card-title">
+
+                    <div class="title-icon">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Product Information
+                        </h2>
+
+                        <p>
+                            Enter the required inventory details
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <form method="POST" class="inventory-form">
+
+                {% csrf_token %}
+
+
+                <!-- Store ID -->
+
+<div class="form-group">
+
+    <label>
+        <i class="bi bi-shop"></i>
+        Store ID
+    </label>
+
+    <select name="store_id" required>
+
+        <option value="">
+            Select Store
+        </option>
+
+        {% for store in stores %}
+
+            <option value="{{ store.store_code }}">
+                {{ store.name }} ({{ store.store_code }})
+            </option>
+
+        {% endfor %}
+
+    </select>
+
+</div>
+
+
+                <!-- Product ID -->
+
+                <div class="form-group">
+
+                    <label>
+                        <i class="bi bi-upc-scan"></i>
+                        Product ID
+                    </label>
+
+                    <input
+                        type="text"
+                        name="product_id"
+                        placeholder="Example: P0001"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Category -->
+
+                <div class="form-group">
+
+                    <label>
+                        <i class="bi bi-grid"></i>
+                        Category
+                    </label>
+
+                    <select name="category" required>
+
+                        <option value="">
+                            Select Category
+                        </option>
+
+                        <option value="Clothing">
+                            Clothing
+                        </option>
+
+                        <option value="Electronics">
+                            Electronics
+                        </option>
+
+                        <option value="Furniture">
+                            Furniture
+                        </option>
+
+                        <option value="Groceries">
+                            Groceries
+                        </option>
+
+                        <option value="Toys">
+                            Toys
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <!-- Subcategory -->
+
+<div class="form-group">
+
+    <label>
+        <i class="bi bi-diagram-3"></i>
+        Subcategory
+    </label>
+
+    <select name="subcategory" id="subcategory" required>
+
+        <option value="">
+            Select Subcategory
+        </option>
+
+    </select>
+
+</div>
+
+
+                <!-- Region -->
+
+                <div class="form-group">
+
+                    <label>
+                        <i class="bi bi-geo-alt"></i>
+                        Region
+                    </label>
+
+                    <select name="region" required>
+
+                        <option value="">
+                            Select Region
+                        </option>
+
+                        <option value="East">East</option>
+                        <option value="West">West</option>
+                        <option value="North">North</option>
+                        <option value="South">South</option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Inventory Level -->
+
+                <div class="form-group">
+
+                    <label>
+                        <i class="bi bi-boxes"></i>
+                        Inventory Level
+                    </label>
+
+                    <input
+                        type="number"
+                        name="inventory_level"
+                        min="0"
+                        placeholder="Example: 200"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Price -->
+
+                <div class="form-group">
+
+                    <label>
+                        <i class="bi bi-currency-rupee"></i>
+                        Price
+                    </label>
+
+                    <input
+                        type="number"
+                        name="price"
+                        min="0"
+                        step="0.01"
+                        placeholder="Example: 50"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Discount -->
+
+                <div class="form-group">
+
+                    <label>
+                        <i class="bi bi-percent"></i>
+                        Discount
+                    </label>
+
+                    <input
+                        type="number"
+                        name="discount"
+                        min="0"
+                        step="0.01"
+                        placeholder="Example: 10"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Competitor Pricing -->
+
+                <div class="form-group">
+
+                    <label>
+                        <i class="bi bi-tags"></i>
+                        Competitor Pricing
+                    </label>
+
+                    <input
+                        type="number"
+                        name="competitor_pricing"
+                        min="0"
+                        step="0.01"
+                        placeholder="Example: 48"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Weather -->
+
+                <div class="form-group">
+
+                    <label>
+                        <i class="bi bi-cloud-sun"></i>
+                        Weather Condition
+                    </label>
+
+                    <select
+                        name="weather_condition"
+                        required
+                    >
+
+                        <option value="">
+                            Select Weather
+                        </option>
+
+                        <option value="Sunny">
+                            Sunny
+                        </option>
+
+                        <option value="Cloudy">
+                            Cloudy
+                        </option>
+
+                        <option value="Rainy">
+                            Rainy
+                        </option>
+
+                        <option value="Snowy">
+                            Snowy
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Holiday / Promotion -->
+
+                <div class="form-group">
+
+                    <label>
+                        <i class="bi bi-megaphone"></i>
+                        Holiday / Promotion
+                    </label>
+
+                    <select
+                        name="holiday_promotion"
+                        required
+                    >
+
+                        <option value="0">
+                            No
+                        </option>
+
+                        <option value="1">
+                            Yes
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Seasonality -->
+
+                <div class="form-group">
+
+                    <label>
+                        <i class="bi bi-calendar-range"></i>
+                        Seasonality
+                    </label>
+
+                    <select
+                        name="seasonality"
+                        required
+                    >
+
+                        <option value="">
+                            Select Season
+                        </option>
+
+                        <option value="Spring">
+                            Spring
+                        </option>
+
+                        <option value="Summer">
+                            Summer
+                        </option>
+
+                        <option value="Autumn">
+                            Autumn
+                        </option>
+
+                        <option value="Winter">
+                            Winter
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Month -->
+
+                <div class="form-group">
+
+                    <label>
+                        <i class="bi bi-calendar-month"></i>
+                        Month
+                    </label>
+
+                    <select name="month" required>
+
+                        <option value="">
+                            Select Month
+                        </option>
+
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Day -->
+
+                <div class="form-group">
+
+                    <label>
+                        <i class="bi bi-calendar-day"></i>
+                        Day
+                    </label>
+
+                    <input
+                        type="number"
+                        name="day"
+                        min="1"
+                        max="31"
+                        placeholder="Example: 15"
+                        required
+                    >
+
+                </div>
+<button
+    type="button"
+    id="fillSampleData"
+    class="sample-data-button">
+
+    <i class="bi bi-magic"></i>
+    Fill Sample Data
+
+</button>
+
+                <!-- Submit -->
+
+                <button
+                    type="submit"
+                    class="predict-button"
+                >
+
+                    <i class="bi bi-robot"></i>
+
+                    Predict Demand with AI
+
+                </button>
+
+
+            </form>
+
+        </div>
+
+
+
+        <!-- =====================================
+             AI RESULT
+             ===================================== -->
+
+        <div class="inventory-card prediction-card">
+
+            <div class="inventory-card-header">
+
+                <div class="inventory-card-title">
+
+                    <div class="title-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            AI Prediction
+                        </h2>
+
+                        <p>
+                            Optimized Random Forest
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {% if error %}
+
+                <div class="prediction-error">
+
+                    <i class="bi bi-exclamation-triangle"></i>
+
+                    <strong>
+                        Prediction Error
+                    </strong>
+
+                    <br>
+
+                    {{ error }}
+
+                </div>
+
+
+            {% elif prediction is not None %}
+
+                <div class="prediction-result">
+
+                    <span class="result-label">
+                        Predicted Units Sold
+                    </span>
+
+                    <div class="prediction-number">
+                        {{ prediction }}
+                    </div>
+
+                    <div class="prediction-unit">
+                        units expected to be sold
+                    </div>
+
+
+                    <div class="prediction-status">
+
+                        <i class="bi bi-lightbulb"></i>
+
+                        AI-generated demand estimate based on
+                        inventory, pricing, seasonality,
+                        weather and market conditions.
+
+                    </div>
+
+                </div>
+
+
+            {% else %}
+
+                <div class="prediction-empty">
+
+                    <div class="prediction-icon">
+
+                        <i class="bi bi-robot"></i>
+
+                    </div>
+
+                    <h3>
+                        Ready for Prediction
+                    </h3>
+
+                    <p>
+                        Enter the product information and click
+                        <strong>Predict Demand with AI</strong>
+                        to generate a demand forecast.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================
+         INFORMATION SECTION
+         ========================================= -->
+
+    <div class="inventory-info">
+
+
+        <div class="info-box">
+
+            <i class="bi bi-cpu"></i>
+
+            <h3>
+                AI-Powered Forecasting
+            </h3>
+
+            <p>
+                Uses the optimized Random Forest model
+                trained on your retail inventory dataset.
+            </p>
+
+        </div>
+
+
+        <div class="info-box">
+
+            <i class="bi bi-bar-chart-line"></i>
+
+            <h3>
+                Demand Intelligence
+            </h3>
+
+            <p>
+                Considers pricing, discounts, inventory,
+                weather, seasonality and regional factors.
+            </p>
+
+        </div>
+
+
+        <div class="info-box">
+
+            <i class="bi bi-lightning-charge"></i>
+
+            <h3>
+                Decision Support
+            </h3>
+
+            <p>
+                Predicted demand can help store managers
+                plan inventory and reduce stock shortages.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const categorySelect = document.querySelector(
+        'select[name="category"]'
+    );
+
+    const subcategorySelect = document.getElementById(
+        "subcategory"
+    );
+
+    const subcategories = {
+
+        "Clothing": [
+            "Shirts",
+            "T-Shirts",
+            "Jeans",
+            "Jackets"
+        ],
+
+        "Electronics": [
+            "Smartphones",
+            "Laptops",
+            "Headphones",
+            "Televisions"
+        ],
+
+        "Furniture": [
+            "Chairs",
+            "Tables",
+            "Sofas",
+            "Beds"
+        ],
+
+        "Groceries": [
+            "Rice",
+            "Flour",
+            "Milk",
+            "Cooking Oil"
+        ],
+
+        "Toys": [
+            "Action Figures",
+            "Dolls",
+            "Puzzles",
+            "Board Games"
+        ]
+    };
+
+
+    categorySelect.addEventListener("change", function () {
+
+        const selectedCategory = this.value;
+
+        subcategorySelect.innerHTML =
+            '<option value="">Select Subcategory</option>';
+
+        if (subcategories[selectedCategory]) {
+
+            subcategories[selectedCategory].forEach(
+                function (subcategory) {
+
+                    const option =
+                        document.createElement("option");
+
+                    option.value = subcategory;
+                    option.textContent = subcategory;
+
+                    subcategorySelect.appendChild(option);
+                }
+            );
+        }
+
+    });
+
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,558 @@
+{% extends "base.html" %}
+
+{% block title %}
+Settings | RetailIQ
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-header">
+
+        <div>
+
+            <span class="dashboard-label">
+                SYSTEM SETTINGS
+            </span>
+
+            <h1>
+                Settings
+            </h1>
+
+            <p>
+                Manage your account and configure RetailIQ application preferences.
+            </p>
+
+        </div>
+
+        <div class="dashboard-date">
+
+            <i class="bi bi-gear"></i>
+
+            Settings
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- PROFILE SETTINGS -->
+    <!-- ================================================= -->
+
+    <div class="settings-section">
+
+        <div class="settings-section-header">
+
+            <div class="settings-section-icon">
+                <i class="bi bi-person"></i>
+            </div>
+
+            <div>
+
+                <h2>
+                    Profile Settings
+                </h2>
+
+                <p>
+                    Update your RetailIQ account information.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="action"
+                value="profile"
+            >
+
+
+            <div class="settings-form-grid">
+
+                <!-- USERNAME -->
+
+                <div class="settings-field">
+
+                    <label>
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        name="username"
+                        value="{{ request.user.username }}"
+                        required
+                    >
+
+                    <small>
+                        Your RetailIQ login username.
+                    </small>
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="settings-field">
+
+                    <label>
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        value="{{ request.user.email }}"
+                        required
+                    >
+
+                    <small>
+                        Your registered email address.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="settings-form-actions">
+
+                <button
+                    type="submit"
+                    class="settings-primary-button"
+                >
+
+                    <i class="bi bi-check-lg"></i>
+
+                    Save Profile
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- PASSWORD SETTINGS -->
+    <!-- ================================================= -->
+
+    <div class="settings-section">
+
+        <div class="settings-section-header">
+
+            <div class="settings-section-icon">
+                <i class="bi bi-shield-lock"></i>
+            </div>
+
+            <div>
+
+                <h2>
+                    Security
+                </h2>
+
+                <p>
+                    Change your account password securely.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="action"
+                value="password"
+            >
+
+
+            <div class="settings-form-grid">
+
+                <!-- CURRENT PASSWORD -->
+
+                <div class="settings-field">
+
+                    <label>
+                        Current Password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="current_password"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- NEW PASSWORD -->
+
+                <div class="settings-field">
+
+                    <label>
+                        New Password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="new_password"
+                        minlength="8"
+                        required
+                    >
+
+                    <small>
+                        Minimum 8 characters.
+                    </small>
+
+                </div>
+
+
+                <!-- CONFIRM PASSWORD -->
+
+                <div class="settings-field">
+
+                    <label>
+                        Confirm New Password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="confirm_password"
+                        minlength="8"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="settings-form-actions">
+
+                <button
+                    type="submit"
+                    class="settings-primary-button"
+                >
+
+                    <i class="bi bi-key"></i>
+
+                    Change Password
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- APPLICATION PREFERENCES -->
+    <!-- ================================================= -->
+
+    <div class="settings-section">
+
+        <div class="settings-section-header">
+
+            <div class="settings-section-icon">
+                <i class="bi bi-sliders"></i>
+            </div>
+
+            <div>
+
+                <h2>
+                    Application Preferences
+                </h2>
+
+                <p>
+                    Configure how RetailIQ behaves for your account.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="action"
+                value="preferences"
+            >
+
+
+            <!-- THEME -->
+
+            <div class="settings-option-row">
+
+                <div class="settings-option-info">
+
+                    <div class="settings-option-icon">
+
+                        <i class="bi bi-moon-stars"></i>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Appearance
+                        </strong>
+
+                        <span>
+                            Choose the application theme.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <select
+                    name="theme"
+                    class="settings-select"
+                >
+
+                    <option
+                        value="light"
+                        {% if current_theme == "light" %}
+                        selected
+                        {% endif %}
+                    >
+                        Light
+                    </option>
+
+                    <option
+                        value="dark"
+                        {% if current_theme == "dark" %}
+                        selected
+                        {% endif %}
+                    >
+                        Dark
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <!-- NOTIFICATIONS -->
+
+            <div class="settings-option-row">
+
+                <div class="settings-option-info">
+
+                    <div class="settings-option-icon">
+
+                        <i class="bi bi-bell"></i>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Inventory Notifications
+                        </strong>
+
+                        <span>
+                            Enable inventory alert notifications.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <label class="settings-switch">
+
+                    <input
+                        type="checkbox"
+                        name="notifications"
+                        {% if notifications_enabled %}
+                        checked
+                        {% endif %}
+                    >
+
+                    <span class="settings-slider"></span>
+
+                </label>
+
+            </div>
+
+
+
+            <!-- LOW STOCK THRESHOLD -->
+
+            <div class="settings-option-row">
+
+                <div class="settings-option-info">
+
+                    <div class="settings-option-icon">
+
+                        <i class="bi bi-box-seam"></i>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Low-Stock Threshold
+                        </strong>
+
+                        <span>
+                            Products below this quantity are marked as low stock.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="settings-number-control">
+
+                    <input
+                        type="number"
+                        name="low_stock_threshold"
+                        value="{{ low_stock_threshold }}"
+                        min="1"
+                        required
+                    >
+
+                    <span>
+                        units
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="settings-form-actions">
+
+                <button
+                    type="submit"
+                    class="settings-primary-button"
+                >
+
+                    <i class="bi bi-save"></i>
+
+                    Save Preferences
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- ACCOUNT INFORMATION -->
+    <!-- ================================================= -->
+
+    <div class="settings-section settings-account-summary">
+
+        <div class="settings-section-header">
+
+            <div class="settings-section-icon">
+                <i class="bi bi-info-circle"></i>
+            </div>
+
+            <div>
+
+                <h2>
+                    Account Information
+                </h2>
+
+                <p>
+                    Current account access information.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="settings-info-grid">
+
+            <div class="settings-info-item">
+
+                <span>
+                    Account
+                </span>
+
+                <strong>
+                    {{ request.user.username }}
+                </strong>
+
+            </div>
+
+
+            <div class="settings-info-item">
+
+                <span>
+                    Role
+                </span>
+
+                <strong>
+
+                    {% if request.user.profile.role == "ADMIN" %}
+                        Administrator
+                    {% elif request.user.profile.role == "MANAGER" %}
+                        Store Manager
+                    {% else %}
+                        User
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+
+            <div class="settings-info-item">
+
+                <span>
+                    Account Status
+                </span>
+
+                <strong class="settings-status-active">
+                    Active
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

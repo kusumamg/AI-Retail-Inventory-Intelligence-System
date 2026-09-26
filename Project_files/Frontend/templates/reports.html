@@ -1,0 +1,926 @@
+{% extends "base.html" %}
+
+{% block title %}
+Reports | RetailIQ
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page report-page">
+
+    <!-- ================================================= -->
+    <!-- REPORT HEADER -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-header report-header">
+
+        <div>
+
+            <span class="dashboard-label">
+                INVENTORY REPORTING
+            </span>
+
+            <h1>
+                Inventory Reports
+            </h1>
+
+            <p>
+                Detailed reports on inventory levels,
+                product availability and AI demand forecasting.
+            </p>
+
+        </div>
+
+        <div class="dashboard-date">
+
+            <i class="bi bi-file-earmark-bar-graph"></i>
+
+            Reports
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- REPORT SUMMARY -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-panel report-summary-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h3>
+                    Report Summary
+                </h3>
+
+                <p>
+                    Current inventory position across the system.
+                </p>
+
+            </div>
+
+            <i class="bi bi-clipboard-data"></i>
+
+        </div>
+
+
+        <div class="report-summary-grid">
+
+            <!-- Generated Date -->
+
+            <div class="report-summary-card">
+
+                <div class="report-summary-icon">
+                    <i class="bi bi-calendar3"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Report Generated
+                    </span>
+
+                    <strong>
+                        {{ report_generated_at|date:"d M Y" }}
+                    </strong>
+
+                    <small>
+                        {{ report_generated_at|date:"h:i A" }}
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- Products -->
+
+            <div class="report-summary-card">
+
+                <div class="report-summary-icon">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Products Monitored
+                    </span>
+
+                    <strong>
+                        {{ total_products }}
+                    </strong>
+
+                    <small>
+                        Products in inventory
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- Total Stock -->
+
+            <div class="report-summary-card">
+
+                <div class="report-summary-icon">
+                    <i class="bi bi-boxes"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Total Stock
+                    </span>
+
+                    <strong>
+                        {{ total_stock }}
+                    </strong>
+
+                    <small>
+                        Units currently available
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- Predicted Demand -->
+
+            <div class="report-summary-card">
+
+                <div class="report-summary-icon">
+                    <i class="bi bi-robot"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Predicted Demand
+                    </span>
+
+                    <strong>
+                        {{ total_predicted_demand }}
+                    </strong>
+
+                    <small>
+                        Expected units
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- INVENTORY STATUS REPORT -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-grid report-status-grid">
+
+        <!-- Inventory Status -->
+
+        <div class="dashboard-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Inventory Status
+                    </h3>
+
+                    <p>
+                        Product availability classification.
+                    </p>
+
+                </div>
+
+                <i class="bi bi-pie-chart"></i>
+
+            </div>
+
+
+            <div class="report-status-list">
+
+                <!-- In Stock -->
+
+                <div class="report-status-item">
+
+                    <div class="report-status-left">
+
+                        <span class="report-status-icon success">
+                            <i class="bi bi-check-circle"></i>
+                        </span>
+
+                        <span>
+                            In Stock
+                        </span>
+
+                    </div>
+
+                    <strong>
+                        {{ in_stock }}
+                    </strong>
+
+                </div>
+
+
+                <!-- Low Stock -->
+
+                <div class="report-status-item">
+
+                    <div class="report-status-left">
+
+                        <span class="report-status-icon warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </span>
+
+                        <span>
+                            Low Stock
+                        </span>
+
+                    </div>
+
+                    <strong>
+                        {{ low_stock }}
+                    </strong>
+
+                </div>
+
+
+                <!-- Out of Stock -->
+
+                <div class="report-status-item">
+
+                    <div class="report-status-left">
+
+                        <span class="report-status-icon danger">
+                            <i class="bi bi-x-circle"></i>
+                        </span>
+
+                        <span>
+                            Out of Stock
+                        </span>
+
+                    </div>
+
+                    <strong>
+                        {{ out_of_stock }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- AI DEMAND REPORT -->
+        <!-- ================================================= -->
+
+        <div class="dashboard-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>
+                        AI Demand Report
+                    </h3>
+
+                    <p>
+                        Summary of generated demand predictions.
+                    </p>
+
+                </div>
+
+                <i class="bi bi-robot"></i>
+
+            </div>
+
+
+            <div class="report-demand-grid">
+
+                <!-- Total Demand -->
+
+                <div class="report-demand-card">
+
+                    <span>
+                        Total Predicted Demand
+                    </span>
+
+                    <strong>
+                        {{ total_predicted_demand }}
+                    </strong>
+
+                    <small>
+                        Expected units
+                    </small>
+
+                </div>
+
+
+                <!-- Average Demand -->
+
+                <div class="report-demand-card">
+
+                    <span>
+                        Average Demand
+                    </span>
+
+                    <strong>
+                        {{ average_predicted_demand }}
+                    </strong>
+
+                    <small>
+                        Units per product
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- PRODUCT STOCK REPORT -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-panel product-stock-report">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h3>
+                    Product Stock Report
+                </h3>
+
+                <p>
+                    Individual stock position of every product
+                    currently tracked by RetailIQ.
+                </p>
+
+            </div>
+
+            <i class="bi bi-bar-chart-line"></i>
+
+        </div>
+
+
+        <div class="product-report-list">
+
+            {% for product in product_report %}
+
+            <div class="product-report-item">
+
+                <!-- Product Header -->
+
+                <div class="product-report-header">
+
+                    <div class="product-report-title">
+
+                        <strong>
+                            {{ product.product_id }}
+                        </strong>
+
+                        <span>
+                            {{ product.category }}
+                        </span>
+
+                        <small>
+                            {{ product.subcategory }}
+                        </small>
+
+                    </div>
+
+
+                    <div class="product-report-stock">
+
+                        <strong>
+                            {{ product.inventory }}
+                        </strong>
+
+                        <span>
+                            units
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Product Details -->
+
+                <div class="product-report-details">
+
+                    <!-- Store -->
+
+                    <div>
+
+                        <span>
+                            Store
+                        </span>
+
+                        <strong>
+                            {{ product.store }}
+                        </strong>
+
+                        <small>
+                            {{ product.store_code }}
+                        </small>
+
+                    </div>
+
+
+                    <!-- Category -->
+
+                    <div>
+
+                        <span>
+                            Category
+                        </span>
+
+                        <strong>
+                            {{ product.category }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- Subcategory -->
+
+                    <div>
+
+                        <span>
+                            Subcategory
+                        </span>
+
+                        <strong>
+                            {{ product.subcategory }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- Region -->
+
+                    <div>
+
+                        <span>
+                            Region
+                        </span>
+
+                        <strong>
+                            {{ product.region }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- Predicted Demand -->
+
+                    <div>
+
+                        <span>
+                            Predicted Demand
+                        </span>
+
+                        <strong>
+
+                            {% if product.predicted_demand %}
+
+                                {{ product.predicted_demand }}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+
+                    <!-- Demand Coverage -->
+
+                    <div>
+
+                        <span>
+                            Demand Coverage
+                        </span>
+
+                        <strong>
+
+                            {% if product.predicted_demand %}
+
+                                {{ product.demand_coverage }}%
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Stock Progress -->
+
+                <div class="product-stock-progress">
+
+                    <div class="product-stock-progress-track">
+
+                        <div class="product-stock-progress-fill"></div>
+
+                    </div>
+
+                    <span>
+                        {{ product.stock_percentage }}%
+                        of total inventory
+                    </span>
+
+                </div>
+
+
+                <!-- Product Status -->
+
+                <div class="product-report-footer">
+
+                    <span class="product-status-label">
+                        Inventory Status
+                    </span>
+
+
+                    {% if product.status == "OUT_OF_STOCK" %}
+
+                        <span class="analytics-badge danger">
+
+                            <i class="bi bi-x-circle"></i>
+
+                            Out of Stock
+
+                        </span>
+
+
+                    {% elif product.status == "LOW_STOCK" %}
+
+                        <span class="analytics-badge warning">
+
+                            <i class="bi bi-exclamation-triangle"></i>
+
+                            Low Stock
+
+                        </span>
+
+
+                    {% else %}
+
+                        <span class="analytics-badge">
+
+                            <i class="bi bi-check-circle"></i>
+
+                            In Stock
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            {% empty %}
+
+            <div class="report-empty-state">
+
+                <i class="bi bi-inbox"></i>
+
+                <h3>
+                    No Product Data
+                </h3>
+
+                <p>
+                    There are currently no products available
+                    for reporting.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- DETAILED REPORT TABLE -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-panel detailed-report-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h3>
+                    Detailed Inventory Report
+                </h3>
+
+                <p>
+                    Complete product-level inventory and
+                    demand information.
+                </p>
+
+            </div>
+
+            <i class="bi bi-table"></i>
+
+        </div>
+
+
+        <div class="report-table-wrapper">
+
+            <table class="analytics-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            Store
+                        </th>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th>
+                            Subcategory
+                        </th>
+
+                        <th>
+                            Region
+                        </th>
+
+                        <th>
+                            Stock
+                        </th>
+
+                        <th>
+                            Predicted Demand
+                        </th>
+
+                        <th>
+                            Coverage
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for product in product_report %}
+
+                    <tr>
+
+                        <!-- Product -->
+
+                        <td>
+
+                            <strong>
+                                {{ product.product_id }}
+                            </strong>
+
+                        </td>
+
+
+                        <!-- Store -->
+
+                        <td>
+
+                            {{ product.store }}
+
+                            <small>
+                                ({{ product.store_code }})
+                            </small>
+
+                        </td>
+
+
+                        <!-- Category -->
+
+                        <td>
+                            {{ product.category }}
+                        </td>
+
+
+                        <!-- Subcategory -->
+
+                        <td>
+                            {{ product.subcategory }}
+                        </td>
+
+
+                        <!-- Region -->
+
+                        <td>
+                            {{ product.region }}
+                        </td>
+
+
+                        <!-- Stock -->
+
+                        <td>
+
+                            <strong>
+                                {{ product.inventory }}
+                            </strong>
+
+                            units
+
+                        </td>
+
+
+                        <!-- Predicted Demand -->
+
+                        <td>
+
+                            {% if product.predicted_demand %}
+
+                                {{ product.predicted_demand }}
+
+                                units
+
+                            {% else %}
+
+                                Not available
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Coverage -->
+
+                        <td>
+
+                            {% if product.predicted_demand %}
+
+                                {{ product.demand_coverage }}%
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Status -->
+
+                        <td>
+
+                            {% if product.status == "OUT_OF_STOCK" %}
+
+                                <span class="analytics-badge danger">
+
+                                    Out of Stock
+
+                                </span>
+
+
+                            {% elif product.status == "LOW_STOCK" %}
+
+                                <span class="analytics-badge warning">
+
+                                    Low Stock
+
+                                </span>
+
+
+                            {% else %}
+
+                                <span class="analytics-badge">
+
+                                    In Stock
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="9">
+
+                            No inventory data available.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- REPORT ACTIONS -->
+    <!-- ================================================= -->
+
+    <div class="quick-actions report-actions">
+
+        <h3>
+            Report Actions
+        </h3>
+
+
+        <div class="action-buttons">
+
+            <a
+                href="{% url 'export_report_csv' %}"
+                class="action-button"
+            >
+
+                <i class="bi bi-filetype-csv"></i>
+
+                Download CSV Report
+
+            </a>
+
+
+            <a
+                href="{% url 'analytics' %}"
+                class="action-button"
+            >
+
+                <i class="bi bi-bar-chart-line"></i>
+
+                View Analytics
+
+            </a>
+
+
+            <a
+                href="{% url 'inventory' %}"
+                class="action-button"
+            >
+
+                <i class="bi bi-box-seam"></i>
+
+                Manage Inventory
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

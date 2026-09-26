@@ -1,0 +1,591 @@
+{% extends "base.html" %}
+
+{% block title %}
+Add Product | RetailIQ
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-header">
+
+        <div>
+
+            <span class="dashboard-label">
+                INVENTORY MANAGEMENT
+            </span>
+
+            <h1>
+                Add Product
+            </h1>
+
+            <p>
+                Add a new product and its inventory information.
+            </p>
+
+        </div>
+
+        <div class="dashboard-date">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Add Product
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- FORM PANEL -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h3>
+                    Product Information
+                </h3>
+
+                <p>
+                    Enter the product details used by the
+                    inventory and AI forecasting system.
+                </p>
+
+            </div>
+
+            <i class="bi bi-box-seam"></i>
+
+        </div>
+
+
+        <!-- ERROR -->
+
+        {% if error %}
+
+        <div class="messages">
+
+            <div class="message">
+                {{ error }}
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- FORM -->
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <div class="dashboard-grid">
+
+
+                <!-- ======================================= -->
+                <!-- PRODUCT ID -->
+                <!-- ======================================= -->
+
+                <div class="form-group">
+
+                    <label>
+                        Product ID
+                    </label>
+
+                    <select
+                        name="product_id"
+                        required
+                    >
+
+                        <option value="">
+                            Select Product
+                        </option>
+
+                        {% for product_id in product_ids %}
+
+                        <option value="{{ product_id }}">
+
+                            {{ product_id }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- ======================================= -->
+                <!-- STORE -->
+                <!-- ======================================= -->
+
+                <div class="form-group">
+
+                    <label>
+                        Store
+                    </label>
+
+                    <select
+                        name="store_id"
+                        required
+                    >
+
+                        <option value="">
+                            Select Store
+                        </option>
+
+                        {% for store in stores %}
+
+                        <option value="{{ store.store_code }}">
+
+                            {{ store.name }}
+                            ({{ store.store_code }})
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- ======================================= -->
+                <!-- CATEGORY -->
+                <!-- ======================================= -->
+
+                <div class="form-group">
+
+    <label>
+        Category
+    </label>
+
+    <select
+        name="category"
+        id="category"
+        required
+    >
+
+        <option value="">
+            Select Category
+        </option>
+
+        <option value="Groceries">
+            Groceries
+        </option>
+
+        <option value="Electronics">
+            Electronics
+        </option>
+
+        <option value="Furniture">
+            Furniture
+        </option>
+
+        <option value="Toys">
+            Toys
+        </option>
+
+        <option value="Clothing">
+            Clothing
+        </option>
+
+        <option value="Home Appliances">
+            Home Appliances
+        </option>
+
+    </select>
+
+</div>
+
+<div class="form-group">
+
+    <label>
+        Subcategory
+    </label>
+
+    <select
+        name="subcategory"
+        id="subcategory"
+        required
+    >
+
+        <option value="">
+            Select Category First
+        </option>
+
+    </select>
+
+</div>
+
+                <!-- ======================================= -->
+                <!-- REGION -->
+                <!-- ======================================= -->
+
+                <div class="form-group">
+
+                    <label>
+                        Region
+                    </label>
+
+                    <select
+                        name="region"
+                        required
+                    >
+
+                        <option value="">
+                            Select Region
+                        </option>
+
+                        {% for region in regions %}
+
+                        <option value="{{ region }}">
+
+                            {{ region }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- ======================================= -->
+                <!-- INVENTORY -->
+                <!-- ======================================= -->
+
+                <div class="form-group">
+
+                    <label>
+                        Inventory Level
+                    </label>
+
+                    <input
+                        type="number"
+                        name="inventory_level"
+                        min="0"
+                        placeholder="Example: 150"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- ======================================= -->
+                <!-- PRICE -->
+                <!-- ======================================= -->
+
+                <div class="form-group">
+
+                    <label>
+                        Price
+                    </label>
+
+                    <input
+                        type="number"
+                        name="price"
+                        step="0.01"
+                        min="0"
+                        placeholder="Example: 49.97"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- ======================================= -->
+                <!-- DISCOUNT -->
+                <!-- ======================================= -->
+
+                <div class="form-group">
+
+                    <label>
+                        Discount (%)
+                    </label>
+
+                    <input
+                        type="number"
+                        name="discount"
+                        step="0.01"
+                        min="0"
+                        placeholder="Example: 10"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- ======================================= -->
+                <!-- COMPETITOR PRICE -->
+                <!-- ======================================= -->
+
+                <div class="form-group">
+
+                    <label>
+                        Competitor Pricing
+                    </label>
+
+                    <input
+                        type="number"
+                        name="competitor_pricing"
+                        step="0.01"
+                        min="0"
+                        placeholder="Example: 48.00"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- ======================================= -->
+                <!-- WEATHER -->
+                <!-- ======================================= -->
+
+                <div class="form-group">
+
+                    <label>
+                        Weather Condition
+                    </label>
+
+                    <select
+                        name="weather_condition"
+                        required
+                    >
+
+                        <option value="">
+                            Select Weather
+                        </option>
+
+                        {% for weather in weather_conditions %}
+
+                        <option value="{{ weather }}">
+
+                            {{ weather }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- ======================================= -->
+                <!-- HOLIDAY / PROMOTION -->
+                <!-- ======================================= -->
+
+                <div class="form-group">
+
+                    <label>
+                        Holiday / Promotion
+                    </label>
+
+                    <select
+                        name="holiday_promotion"
+                        required
+                    >
+
+                        <option value="0">
+                            No
+                        </option>
+
+                        <option value="1">
+                            Yes
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- ======================================= -->
+                <!-- SEASONALITY -->
+                <!-- ======================================= -->
+
+                <div class="form-group">
+
+                    <label>
+                        Seasonality
+                    </label>
+
+                    <select
+                        name="seasonality"
+                        required
+                    >
+
+                        <option value="">
+                            Select Season
+                        </option>
+
+                        {% for season in seasons %}
+
+                        <option value="{{ season }}">
+
+                            {{ season }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- ACTIONS -->
+            <!-- ================================================= -->
+
+            <div class="quick-actions">
+
+                <div class="action-buttons">
+
+                    <button
+                        type="submit"
+                        class="action-button"
+                    >
+
+                        <i class="bi bi-plus-circle"></i>
+
+                        Add Product
+
+                    </button>
+
+
+                    <a
+                        href="{% url 'products' %}"
+                        class="action-button"
+                    >
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Back to Products
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+const subcategories = {
+
+    "Groceries": [
+        "Rice",
+        "Flour",
+        "Milk",
+        "Cooking Oil"
+    ],
+
+    "Electronics": [
+        "Smartphones",
+        "Laptops",
+        "Headphones",
+        "Televisions"
+    ],
+
+    "Furniture": [
+        "Chairs",
+        "Tables",
+        "Sofas",
+        "Beds"
+    ],
+
+    "Toys": [
+        "Action Figures",
+        "Dolls",
+        "Puzzles",
+        "Board Games"
+    ],
+
+    "Clothing": [
+        "Shirts",
+        "T-Shirts",
+        "Jeans",
+        "Jackets"
+    ],
+
+    "Home Appliances": [
+        "Refrigerators",
+        "Washing Machines",
+        "Microwaves",
+        "Air Conditioners"
+    ]
+
+};
+
+
+const categorySelect =
+    document.getElementById("category");
+
+const subcategorySelect =
+    document.getElementById("subcategory");
+
+
+categorySelect.addEventListener(
+    "change",
+    function () {
+
+        const selectedCategory =
+            this.value;
+
+        subcategorySelect.innerHTML =
+            '<option value="">Select Subcategory</option>';
+
+        if (
+            selectedCategory &&
+            subcategories[selectedCategory]
+        ) {
+
+            subcategories[selectedCategory].forEach(
+                function (subcategory) {
+
+                    const option =
+                        document.createElement("option");
+
+                    option.value =
+                        subcategory;
+
+                    option.textContent =
+                        subcategory;
+
+                    subcategorySelect.appendChild(
+                        option
+                    );
+
+                }
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+{% endblock %}

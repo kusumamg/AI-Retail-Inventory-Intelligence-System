@@ -302,12 +302,15 @@ def manager_dashboard(request):
 @login_required
 def analytics(request):
 
-    # Get all products
-    products = Product.objects.all()
+    # =====================================================
+    # GET ALL PRODUCTS
+    # =====================================================
 
-    # --------------------------------------------------------
-    # Basic inventory statistics
-    # --------------------------------------------------------
+    products = Product.objects.select_related("store").all()
+
+    # =====================================================
+    # OVERALL SUMMARY
+    # =====================================================
 
     total_products = products.count()
 
@@ -325,151 +328,170 @@ def analytics(request):
         inventory_level=0
     ).count()
 
-    # --------------------------------------------------------
-    # Price statistics
-    # --------------------------------------------------------
+    # =====================================================
+    # CATEGORY ORDER
+    # =====================================================
 
-    average_price = 0
+    category_order = [
+        "Electronics",
+        "Clothing",
+        "Groceries",
+        "Toys",
+        "Furniture",
+    ]
 
-    if total_products > 0:
+    category_data = []
 
-        average_price = sum(
-            product.price
-            for product in products
-        ) / total_products
+    # =====================================================
+    # BUILD CATEGORY-WISE DATA
+    # =====================================================
 
-    average_price = round(
-        average_price,
-        2
-    )
+    for category_name in category_order:
 
-    # --------------------------------------------------------
-    # Demand prediction statistics
-    # --------------------------------------------------------
-
-    predicted_products = products.exclude(
-        predicted_demand__isnull=True
-    )
-
-    total_predicted_demand = sum(
-        product.predicted_demand
-        for product in predicted_products
-    )
-
-    average_predicted_demand = 0
-
-    if predicted_products.exists():
-
-        average_predicted_demand = (
-            total_predicted_demand /
-            predicted_products.count()
+        category_products = products.filter(
+            category=category_name
         )
 
-    total_predicted_demand = round(
-        total_predicted_demand,
-        2
-    )
+        # Do not display categories with no products
+        if not category_products.exists():
+            continue
 
-    average_predicted_demand = round(
-        average_predicted_demand,
-        2
-    )
+        # -------------------------------------------------
+        # CATEGORY TOTALS
+        # -------------------------------------------------
 
-    # --------------------------------------------------------
-    # Store-wise analytics
-    # --------------------------------------------------------
-
-    store_data = []
-
-    stores = Store.objects.all()
-
-    for store in stores:
-
-        store_products = products.filter(
-            store=store
-        )
-
-        store_stock = sum(
+        category_stock = sum(
             product.inventory_level
-            for product in store_products
+            for product in category_products
         )
 
-        store_low_stock = store_products.filter(
-            inventory_level__gt=0,
-            inventory_level__lt=25
-        ).count()
+        category_demand = sum(
+            product.predicted_demand or 0
+            for product in category_products
+        )
 
-        store_out_of_stock = store_products.filter(
-            inventory_level=0
-        ).count()
+        category_product_count = category_products.count()
 
-        store_data.append({
-            "name": store.name,
-            "code": store.store_code,
-            "products": store_products.count(),
-            "stock": store_stock,
-            "low_stock": store_low_stock,
-            "out_of_stock": store_out_of_stock,
-        })
+        # -------------------------------------------------
+        # CATEGORY COVERAGE
+        # -------------------------------------------------
 
-    # --------------------------------------------------------
-    # Product-wise analytics
-    # --------------------------------------------------------
-
-    product_data = []
-
-    for product in products:
-
-        # Determine stock status
-        if product.inventory_level == 0:
-            status = "Out of Stock"
-
-        elif product.inventory_level < 25:
-            status = "Low Stock"
-
+        if category_demand > 0:
+            category_coverage = (
+                category_stock / category_demand
+            ) * 100
         else:
-            status = "In Stock"
+            category_coverage = 0
 
-        product_data.append({
-            "id": product.product_id,
-            "category": product.category,
-            "subcategory": product.subcategory,
-            "store": product.store.name,
-            "store_code": product.store.store_code,
-            "region": product.region,
-            "stock": product.inventory_level,
-            "price": product.price,
-            "discount": product.discount,
-            "predicted_demand": (
-                product.predicted_demand
-                if product.predicted_demand is not None
-                else 0
-            ),
-            "status": status,
+        # -------------------------------------------------
+        # CATEGORY PRODUCTS
+        # -------------------------------------------------
+
+        category_items = []
+
+        for product in category_products:
+
+            # Determine stock status
+            if product.inventory_level == 0:
+
+                status = "OUT_OF_STOCK"
+
+            elif product.inventory_level < 25:
+
+                status = "LOW_STOCK"
+
+            else:
+
+                status = "IN_STOCK"
+
+            category_items.append({
+
+                "subcategory": (
+                    product.subcategory
+                    if product.subcategory
+                    else product.category
+                ),
+
+                "region": product.region,
+
+                "inventory": product.inventory_level,
+
+                "predicted_demand": (
+                    product.predicted_demand or 0
+                ),
+
+                "status": status,
+
+            })
+
+        # -------------------------------------------------
+        # STORE CATEGORY DATA
+        # -------------------------------------------------
+
+        category_data.append({
+
+            "name": category_name,
+
+            "product_count": category_product_count,
+
+            "stock": category_stock,
+
+            "demand": category_demand,
+
+            "coverage": category_coverage,
+
+            "items": category_items,
+
         })
+
+    # =====================================================
+    # BAR CHART SCALE
+    # =====================================================
+
+    if category_data:
+
+        maximum_value = max(
+            max(
+                category["stock"],
+                category["demand"]
+            )
+            for category in category_data
+        )
+
+        if maximum_value <= 0:
+            maximum_value = 1
+
+        for category in category_data:
+
+            category["chart_stock_height"] = (
+                category["stock"] / maximum_value
+            ) * 100
+
+            category["chart_demand_height"] = (
+                category["demand"] / maximum_value
+            ) * 100
+
+    # =====================================================
+    # RENDER ANALYTICS PAGE
+    # =====================================================
 
     return render(
         request,
         "analytics.html",
         {
+            "products": products,
+
             "total_products": total_products,
+
             "total_stock": total_stock,
+
             "low_stock": low_stock,
+
             "out_of_stock": out_of_stock,
 
-            "average_price": average_price,
-
-            "total_predicted_demand":
-                total_predicted_demand,
-
-            "average_predicted_demand":
-                average_predicted_demand,
-
-            "store_data": store_data,
-            "product_data": product_data,
+            "category_data": category_data,
         }
     )
-
 
 # ============================================================
 # INVENTORY / AI DEMAND PREDICTION
@@ -1726,12 +1748,14 @@ def ai_forecast(request):
 
     for category in category_order:
 
-        category_products = predicted_products.filter(
-            category=category
-        )
+        category_products = [
+    product
+    for product in predicted_products
+    if product.category == category
+]
 
 
-        if not category_products.exists():
+        if not category_products:
 
             continue
 
@@ -1807,7 +1831,7 @@ def ai_forecast(request):
                 category_products,
 
             "product_count":
-                category_products.count(),
+                len(category_products),
 
             "predicted_demand":
                 round(

@@ -1,0 +1,612 @@
+{% extends "base.html" %}
+
+{% block title %}
+Store Manager Dashboard | RetailIQ
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- HEADER -->
+    <div class="dashboard-header">
+
+        <div>
+            <span class="dashboard-label">
+                STORE INVENTORY INTELLIGENCE
+            </span>
+
+            <h1>Store Manager Dashboard</h1>
+
+            {% if store %}
+                <p>
+                    Welcome, {{ request.user.username }}.
+                    Managing <strong>{{ store.name }}</strong>
+                    ({{ store.store_code }})
+                </p>
+            {% else %}
+                <p>
+                    Welcome, {{ request.user.username }}.
+                </p>
+            {% endif %}
+        </div>
+
+        <div class="dashboard-date">
+            <i class="bi bi-shop"></i>
+
+            {% if store %}
+                {{ store.name }}
+            {% else %}
+                No Store Assigned
+            {% endif %}
+        </div>
+
+    </div>
+
+
+    <!-- ERROR -->
+    {% if error %}
+
+        <div class="alert-item">
+
+            <i class="bi bi-exclamation-circle"></i>
+
+            <div>
+                <strong>Store Assignment</strong>
+
+                <p>
+                    {{ error }}
+                </p>
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    {% if store %}
+
+    <!-- KPI CARDS -->
+    <div class="dashboard-cards">
+
+
+        <!-- TOTAL PRODUCTS -->
+        <div class="dashboard-card">
+
+            <div class="card-icon">
+                <i class="bi bi-box-seam"></i>
+            </div>
+
+            <div class="card-content">
+
+                <span class="card-title">
+                    Total Products
+                </span>
+
+                <h2>
+                    {{ total_products }}
+                </h2>
+
+                <p>
+                    Products in your store
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL STOCK -->
+        <div class="dashboard-card">
+
+            <div class="card-icon">
+                <i class="bi bi-boxes"></i>
+            </div>
+
+            <div class="card-content">
+
+                <span class="card-title">
+                    Total Stock
+                </span>
+
+                <h2>
+                    {{ total_stock }}
+                </h2>
+
+                <p>
+                    Units currently available
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOW STOCK -->
+        <div class="dashboard-card warning-card">
+
+            <div class="card-icon">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+
+            <div class="card-content">
+
+                <span class="card-title">
+                    Low Stock
+                </span>
+
+                <h2>
+                    {{ low_stock }}
+                </h2>
+
+                <p>
+                    Products need attention
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- OUT OF STOCK -->
+        <div class="dashboard-card danger-card">
+
+            <div class="card-icon">
+                <i class="bi bi-x-circle"></i>
+            </div>
+
+            <div class="card-content">
+
+                <span class="card-title">
+                    Out of Stock
+                </span>
+
+                <h2>
+                    {{ out_of_stock }}
+                </h2>
+
+                <p>
+                    Products unavailable
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SECOND ROW -->
+    <div class="dashboard-grid">
+
+
+        <!-- INVENTORY OVERVIEW -->
+        <div class="dashboard-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Inventory Overview
+                    </h3>
+
+                    <p>
+                        Current inventory status
+                    </p>
+
+                </div>
+
+                <i class="bi bi-boxes"></i>
+
+            </div>
+
+
+            <div class="inventory-stats">
+
+                <div>
+
+                    <span>
+                        Total Products
+                    </span>
+
+                    <strong>
+                        {{ total_products }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Total Stock
+                    </span>
+
+                    <strong>
+                        {{ total_stock }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Low Stock
+                    </span>
+
+                    <strong>
+                        {{ low_stock }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Out of Stock
+                    </span>
+
+                    <strong>
+                        {{ out_of_stock }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- AI DEMAND FORECAST -->
+        <div class="dashboard-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>
+                        AI Demand Forecast
+                    </h3>
+
+                    <p>
+                        Latest prediction for your store
+                    </p>
+
+                </div>
+
+                <i class="bi bi-robot"></i>
+
+            </div>
+
+
+            {% if latest_prediction != None %}
+
+                <div class="forecast-content">
+
+                    <div class="forecast-number">
+
+                        {{ latest_prediction }}
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Predicted Units Sold
+                        </strong>
+
+                        {% if latest_product %}
+
+                            <p>
+                                Latest prediction for
+                                <strong>
+                                    {{ latest_product.product_id }}
+                                </strong>.
+                            </p>
+
+                        {% else %}
+
+                            <p>
+                                Latest demand prediction
+                                generated by the AI model.
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="forecast-content">
+
+                    <div class="forecast-number">
+                        --
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            No Prediction Available
+                        </strong>
+
+                        <p>
+                            Use Inventory to generate
+                            an AI demand prediction.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- THIRD ROW -->
+    <div class="dashboard-grid">
+
+
+        <!-- SMART ALERTS -->
+        <div class="dashboard-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Smart Alerts
+                    </h3>
+
+                    <p>
+                        Inventory notifications
+                    </p>
+
+                </div>
+
+
+                <span class="alert-count">
+
+                    {{ low_stock|add:out_of_stock }}
+
+                </span>
+
+            </div>
+
+
+            {% if out_of_stock > 0 %}
+
+                <div class="alert-item">
+
+                    <i class="bi bi-x-circle"></i>
+
+                    <div>
+
+                        <strong>
+                            Out of Stock
+                        </strong>
+
+                        <p>
+                            {{ out_of_stock }}
+                            product{{ out_of_stock|pluralize }}
+                            currently unavailable.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+            {% if low_stock > 0 %}
+
+                <div class="alert-item">
+
+                    <i class="bi bi-exclamation-circle"></i>
+
+                    <div>
+
+                        <strong>
+                            Low Stock Alert
+                        </strong>
+
+                        <p>
+                            {{ low_stock }}
+                            product{{ low_stock|pluralize }}
+                            below the recommended stock level.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+            {% if low_stock == 0 and out_of_stock == 0 %}
+
+                <div class="alert-item">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    <div>
+
+                        <strong>
+                            Inventory Healthy
+                        </strong>
+
+                        <p>
+                            No stock-related alerts
+                            at the moment.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- STORE INFORMATION -->
+        <div class="dashboard-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Store Information
+                    </h3>
+
+                    <p>
+                        Your assigned store
+                    </p>
+
+                </div>
+
+                <i class="bi bi-shop"></i>
+
+            </div>
+
+
+            <div class="inventory-stats">
+
+                <div>
+
+                    <span>
+                        Store Name
+                    </span>
+
+                    <strong>
+                        {{ store.name }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Store Code
+                    </span>
+
+                    <strong>
+                        {{ store.store_code }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Location
+                    </span>
+
+                    <strong>
+                        {{ store.location }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Status
+                    </span>
+
+                    <strong>
+                        {% if store.is_active %}
+                            Active
+                        {% else %}
+                            Inactive
+                        {% endif %}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- QUICK ACTIONS -->
+    <div class="quick-actions">
+
+        <h3>
+            Quick Actions
+        </h3>
+
+
+        <div class="action-buttons">
+
+
+            <a
+                href="{% url 'inventory' %}"
+                class="action-button"
+            >
+
+                <i class="bi bi-box-seam"></i>
+
+                Manage Inventory
+
+            </a>
+
+
+            <a
+                href="#"
+                class="action-button"
+            >
+
+                <i class="bi bi-graph-up"></i>
+
+                View Forecast
+
+            </a>
+
+
+            <a
+                href="#"
+                class="action-button"
+            >
+
+                <i class="bi bi-bell"></i>
+
+                View Alerts
+
+            </a>
+
+
+            <a
+                href="#"
+                class="action-button"
+            >
+
+                <i class="bi bi-file-earmark-bar-graph"></i>
+
+                Generate Report
+
+            </a>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

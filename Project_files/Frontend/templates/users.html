@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}
+Users | RetailIQ
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- ============================== -->
+    <!-- HEADER -->
+    <!-- ============================== -->
+
+    <div class="dashboard-header">
+
+        <div>
+
+            <span class="dashboard-label">
+                ADMINISTRATION
+            </span>
+
+            <h1>Users</h1>
+
+            <p>
+                View and manage users registered in the system.
+            </p>
+
+        </div>
+
+        <div class="dashboard-date">
+
+            <i class="bi bi-people"></i>
+
+            Users
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================== -->
+    <!-- USER LIST -->
+    <!-- ============================== -->
+
+    <div class="dashboard-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h3>
+                    User List
+                </h3>
+
+                <p>
+                    Users currently registered in RetailIQ.
+                </p>
+
+            </div>
+
+            <i class="bi bi-people"></i>
+
+        </div>
+
+
+        <!-- ============================== -->
+        <!-- USER TABLE -->
+        <!-- ============================== -->
+
+        <div style="overflow-x:auto;">
+
+            <table class="analytics-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Username
+                        </th>
+
+                        <th>
+                            Role
+                        </th>
+
+                        <th>
+                            Store
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for user in users %}
+
+                    <tr>
+
+                        <!-- Username -->
+
+                        <td>
+
+                            <strong>
+                                {{ user.username }}
+                            </strong>
+
+                        </td>
+
+
+                        <!-- Role -->
+
+                        <td>
+
+                            {% if user.profile.role == "ADMIN" %}
+
+                                Administrator
+
+                            {% elif user.profile.role == "MANAGER" %}
+
+                                Store Manager
+
+                            {% else %}
+
+                                User
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Store -->
+
+                        <td>
+
+                            {% if user.profile.store %}
+
+                                {{ user.profile.store.name }}
+
+                                ({{ user.profile.store.store_code }})
+
+                            {% else %}
+
+                                All Stores
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Email -->
+
+                        <td>
+
+                            {% if user.email %}
+
+                                {{ user.email }}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Status -->
+
+                        <td>
+
+                            {% if user.is_active %}
+
+                                <span class="analytics-badge">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="analytics-badge danger">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="5">
+
+                            No users available.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

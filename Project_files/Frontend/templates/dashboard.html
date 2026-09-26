@@ -1,0 +1,783 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard | RetailIQ
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- ================================================= -->
+    <!-- WELCOME SECTION -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-welcome">
+
+        <div class="welcome-content">
+
+            <span class="welcome-badge">
+                AI-POWERED RETAIL INTELLIGENCE
+            </span>
+
+            <h1>
+                Welcome back,
+                {{ request.user.username }} 👋
+            </h1>
+
+            <h2>
+                Intelligent Inventory Management
+            </h2>
+
+            <p>
+                RetailIQ combines inventory management,
+                artificial intelligence, demand forecasting
+                and business analytics to help retailers make
+                smarter inventory decisions.
+            </p>
+
+            <div class="welcome-actions">
+
+                <a
+                    href="{% url 'inventory' %}"
+                    class="dashboard-primary-button"
+                >
+                    <i class="bi bi-box-seam"></i>
+                    Manage Inventory
+                </a>
+
+                <a
+                    href="{% url 'ai_forecast' %}"
+                    class="dashboard-secondary-button"
+                >
+                    <i class="bi bi-robot"></i>
+                    AI Forecast
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="welcome-visual">
+
+            <div class="ai-orbit">
+
+                <div class="orbit-circle orbit-one"></div>
+
+                <div class="orbit-circle orbit-two"></div>
+
+                <div class="orbit-center">
+
+                    <i class="bi bi-robot"></i>
+
+                    <span>
+                        AI
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- PROJECT INTRODUCTION -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-panel project-introduction">
+
+        <div class="panel-header">
+
+            <div>
+
+                <span class="section-label">
+                    ABOUT RETAILIQ
+                </span>
+
+                <h3>
+                    AI-Based Retail Inventory Intelligence
+                </h3>
+
+                <p>
+                    A centralized platform designed to monitor
+                    inventory, understand demand and support
+                    better retail decisions.
+                </p>
+
+            </div>
+
+            <i class="bi bi-cpu"></i>
+
+        </div>
+
+
+        <div class="project-highlights">
+
+            <div class="highlight-item">
+
+                <div class="highlight-icon">
+                    <i class="bi bi-database"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        Centralized Data
+                    </strong>
+
+                    <p>
+                        Manage products, stores and inventory
+                        information from one system.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="highlight-item">
+
+                <div class="highlight-icon">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        AI Predictions
+                    </strong>
+
+                    <p>
+                        Predict future product demand using
+                        the trained machine learning model.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="highlight-item">
+
+                <div class="highlight-icon">
+                    <i class="bi bi-lightbulb"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        Decision Support
+                    </strong>
+
+                    <p>
+                        Identify inventory conditions and
+                        support timely stock decisions.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- PROJECT FEATURES -->
+    <!-- ================================================= -->
+
+    <section class="project-features-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="section-label">
+                    SYSTEM CAPABILITIES
+                </span>
+
+                <h2>
+                    Everything You Need to Manage Inventory
+                </h2>
+
+                <p>
+                    Explore the major modules available in
+                    the RetailIQ intelligence system.
+                </p>
+
+            </div>
+
+            <i class="bi bi-grid-3x3-gap"></i>
+
+        </div>
+
+
+        <div class="project-feature-grid">
+
+
+            <!-- INVENTORY -->
+
+            <a
+                href="{% url 'inventory' %}"
+                class="project-feature-card"
+            >
+
+                <div class="feature-card-top">
+
+                    <div class="project-feature-icon inventory-icon">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+
+                    <i class="bi bi-arrow-up-right feature-arrow"></i>
+
+                </div>
+
+                <h3>
+                    Inventory Management
+                </h3>
+
+                <p>
+                    Track products, stock levels, prices,
+                    discounts and inventory status across
+                    different stores.
+                </p>
+
+                <span class="feature-link">
+                    Manage Inventory
+                    <i class="bi bi-arrow-right"></i>
+                </span>
+
+            </a>
+
+
+            <!-- AI FORECAST -->
+
+            <a
+                href="{% url 'ai_forecast' %}"
+                class="project-feature-card feature-highlight"
+            >
+
+                <div class="feature-card-top">
+
+                    <div class="project-feature-icon ai-icon">
+                        <i class="bi bi-robot"></i>
+                    </div>
+
+                    <i class="bi bi-arrow-up-right feature-arrow"></i>
+
+                </div>
+
+                <h3>
+                    AI Demand Forecasting
+                </h3>
+
+                <p>
+                    Use the trained machine learning model
+                    to predict expected product demand and
+                    identify possible stock shortages.
+                </p>
+
+                <span class="feature-link">
+                    View AI Forecast
+                    <i class="bi bi-arrow-right"></i>
+                </span>
+
+            </a>
+
+
+            <!-- ANALYTICS -->
+
+            <a
+                href="{% url 'analytics' %}"
+                class="project-feature-card"
+            >
+
+                <div class="feature-card-top">
+
+                    <div class="project-feature-icon analytics-icon">
+                        <i class="bi bi-bar-chart-line"></i>
+                    </div>
+
+                    <i class="bi bi-arrow-up-right feature-arrow"></i>
+
+                </div>
+
+                <h3>
+                    Business Analytics
+                </h3>
+
+                <p>
+                    Analyze inventory performance using
+                    stock statistics, demand information
+                    and store-level insights.
+                </p>
+
+                <span class="feature-link">
+                    View Analytics
+                    <i class="bi bi-arrow-right"></i>
+                </span>
+
+            </a>
+
+
+            <!-- REPORTS -->
+
+            <a
+                href="{% url 'reports' %}"
+                class="project-feature-card"
+            >
+
+                <div class="feature-card-top">
+
+                    <div class="project-feature-icon report-icon">
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+                    </div>
+
+                    <i class="bi bi-arrow-up-right feature-arrow"></i>
+
+                </div>
+
+                <h3>
+                    Inventory Reports
+                </h3>
+
+                <p>
+                    Generate structured inventory reports
+                    containing stock status, demand forecasts
+                    and product-level information.
+                </p>
+
+                <span class="feature-link">
+                    View Reports
+                    <i class="bi bi-arrow-right"></i>
+                </span>
+
+            </a>
+
+
+            <!-- SMART ALERTS -->
+
+            <a
+                href="{% url 'alerts' %}"
+                class="project-feature-card"
+            >
+
+                <div class="feature-card-top">
+
+                    <div class="project-feature-icon alert-icon">
+                        <i class="bi bi-bell"></i>
+                    </div>
+
+                    <i class="bi bi-arrow-up-right feature-arrow"></i>
+
+                </div>
+
+                <h3>
+                    Smart Alerts
+                </h3>
+
+                <p>
+                    Monitor inventory conditions and highlight
+                    products that require attention because of
+                    low or unavailable stock.
+                </p>
+
+                <span class="feature-link">
+                    View Alerts
+                    <i class="bi bi-arrow-right"></i>
+                </span>
+
+            </a>
+
+
+            <!-- STORE MANAGEMENT -->
+
+            <a
+                href="{% url 'stores' %}"
+                class="project-feature-card"
+            >
+
+                <div class="feature-card-top">
+
+                    <div class="project-feature-icon store-icon">
+                        <i class="bi bi-buildings"></i>
+                    </div>
+
+                    <i class="bi bi-arrow-up-right feature-arrow"></i>
+
+                </div>
+
+                <h3>
+                    Store Management
+                </h3>
+
+                <p>
+                    Manage multiple retail stores and organize
+                    inventory information according to store
+                    and region.
+                </p>
+
+                <span class="feature-link">
+                    Manage Stores
+                    <i class="bi bi-arrow-right"></i>
+                </span>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- SYSTEM WORKFLOW -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-panel system-workflow">
+
+        <div class="panel-header">
+
+            <div>
+
+                <span class="section-label">
+                    SYSTEM WORKFLOW
+                </span>
+
+                <h3>
+                    From Inventory Data to Intelligent Decisions
+                </h3>
+
+                <p>
+                    RetailIQ follows a simple workflow to transform
+                    retail data into useful inventory intelligence.
+                </p>
+
+            </div>
+
+            <i class="bi bi-diagram-3"></i>
+
+        </div>
+
+
+        <div class="workflow-container">
+
+
+            <div class="workflow-step">
+
+                <div class="workflow-number">
+                    01
+                </div>
+
+                <div class="workflow-icon">
+                    <i class="bi bi-database"></i>
+                </div>
+
+                <h4>
+                    Data Input
+                </h4>
+
+                <p>
+                    Product, store and inventory information
+                    is collected by the system.
+                </p>
+
+            </div>
+
+
+            <div class="workflow-line"></div>
+
+
+            <div class="workflow-step">
+
+                <div class="workflow-number">
+                    02
+                </div>
+
+                <div class="workflow-icon">
+                    <i class="bi bi-cpu"></i>
+                </div>
+
+                <h4>
+                    AI Processing
+                </h4>
+
+                <p>
+                    The trained machine learning model analyzes
+                    the available product information.
+                </p>
+
+            </div>
+
+
+            <div class="workflow-line"></div>
+
+
+            <div class="workflow-step">
+
+                <div class="workflow-number">
+                    03
+                </div>
+
+                <div class="workflow-icon">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+
+                <h4>
+                    Demand Prediction
+                </h4>
+
+                <p>
+                    The system generates predicted demand
+                    for the selected products.
+                </p>
+
+            </div>
+
+
+            <div class="workflow-line"></div>
+
+
+            <div class="workflow-step">
+
+                <div class="workflow-number">
+                    04
+                </div>
+
+                <div class="workflow-icon">
+                    <i class="bi bi-lightbulb"></i>
+                </div>
+
+                <h4>
+                    Decision Support
+                </h4>
+
+                <p>
+                    Analytics, reports and alerts help users
+                    make better inventory decisions.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- CURRENT SYSTEM STATUS -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-status-section">
+
+        <div class="status-header">
+
+            <div>
+
+                <span class="section-label">
+                    CURRENT SYSTEM
+                </span>
+
+                <h2>
+                    RetailIQ at a Glance
+                </h2>
+
+            </div>
+
+            <div class="system-online">
+
+                <span class="online-dot"></span>
+
+                System Active
+
+            </div>
+
+        </div>
+
+
+        <div class="status-grid">
+
+
+            <div class="status-card">
+
+                <div class="status-icon">
+                    <i class="bi bi-shop"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        {{ active_stores }}
+                    </strong>
+
+                    <span>
+                        Active Stores
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-card">
+
+                <div class="status-icon">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        {{ total_products }}
+                    </strong>
+
+                    <span>
+                        Products Managed
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-card">
+
+                <div class="status-icon">
+                    <i class="bi bi-layers"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        {{ total_stock }}
+                    </strong>
+
+                    <span>
+                        Units in Inventory
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-card">
+
+                <div class="status-icon warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        {{ low_stock }}
+                    </strong>
+
+                    <span>
+                        Low Stock Items
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-card">
+
+                <div class="status-icon danger">
+                    <i class="bi bi-x-circle"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        {{ out_of_stock }}
+                    </strong>
+
+                    <span>
+                        Out of Stock
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- QUICK ACTIONS -->
+    <!-- ================================================= -->
+
+    <div class="quick-actions">
+
+        <h3>
+            Quick Actions
+        </h3>
+
+        <div class="action-buttons">
+
+
+            <a
+                href="/admin/"
+                class="action-button"
+            >
+
+                <i class="bi bi-gear"></i>
+
+                Django Administration
+
+            </a>
+
+
+            <a
+                href="{% url 'inventory' %}"
+                class="action-button"
+            >
+
+                <i class="bi bi-box-seam"></i>
+
+                Manage Inventory
+
+            </a>
+
+
+            <a
+                href="{% url 'ai_forecast' %}"
+                class="action-button"
+            >
+
+                <i class="bi bi-graph-up"></i>
+
+                View Forecast
+
+            </a>
+
+
+            <a
+                href="{% url 'reports' %}"
+                class="action-button"
+            >
+
+                <i class="bi bi-file-earmark-bar-graph"></i>
+
+                Generate Report
+
+            </a>
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,1100 @@
+{% extends "base.html" %}
+
+{% block title %}
+AI Forecast | RetailIQ
+{% endblock %}
+
+{% block content %}
+
+<div class="ai-forecast-page">
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <section class="ai-forecast-hero">
+
+        <div class="ai-hero-left">
+
+            <span class="ai-hero-eyebrow">
+                AI DEMAND INTELLIGENCE
+            </span>
+
+            <h1>
+                Product Demand Forecast
+            </h1>
+
+            <p>
+                Leverage AI to predict future demand, monitor stock
+                coverage and identify replenishment needs — category by category.
+            </p>
+
+
+            <!-- Feature Pills -->
+
+            <div class="ai-feature-pills">
+
+                <span class="ai-feature-pill">
+                    <i class="bi bi-cpu"></i>
+                    Machine Learning
+                </span>
+
+                <span class="ai-feature-pill">
+                    <i class="bi bi-shield-check"></i>
+                    Real-time Insights
+                </span>
+
+                <span class="ai-feature-pill">
+                    <i class="bi bi-stars"></i>
+                    Smarter Decisions
+                </span>
+
+                <span class="ai-feature-pill">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    Higher Profitability
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- AI VISUAL -->
+
+        <div class="ai-hero-visual">
+
+            <div class="ai-hero-orbit orbit-one"></div>
+            <div class="ai-hero-orbit orbit-two"></div>
+
+            <div class="ai-chart-visual">
+
+                <div class="ai-chart-bar bar-small"></div>
+                <div class="ai-chart-bar bar-medium"></div>
+                <div class="ai-chart-bar bar-large"></div>
+
+                <div class="ai-chart-line">
+                    <i class="bi bi-arrow-up-right"></i>
+                </div>
+
+            </div>
+
+
+            <div class="ai-robot-bubble">
+
+                <i class="bi bi-stars"></i>
+
+                <span>
+                    Predict<br>
+                    Plan<br>
+                    Grow
+                </span>
+
+            </div>
+
+
+            <div class="ai-robot">
+
+                <div class="robot-eye"></div>
+                <div class="robot-eye"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Hero Controls -->
+
+        <div class="ai-hero-right">
+
+            <div class="forecast-period-card">
+
+                <i class="bi bi-calendar3"></i>
+
+                <div>
+
+                    <span>
+                        Forecast Period
+                    </span>
+
+                    <strong>
+                        Next 4 Weeks
+                    </strong>
+
+                </div>
+
+                <i class="bi bi-chevron-down period-arrow"></i>
+
+            </div>
+
+
+            <a href="{% url 'ai_forecast' %}"
+               class="generate-forecast-btn">
+
+                <i class="bi bi-stars"></i>
+
+                Generate Forecast
+
+            </a>
+
+
+            <div class="forecast-quote">
+
+                <i class="bi bi-quote"></i>
+
+                <p>
+                    Smarter forecasting today,
+                    a more profitable tomorrow.
+                </p>
+
+                <span>
+                    — Retail IQ
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SUMMARY CARDS
+         ===================================================== -->
+
+    <section class="ai-summary-grid">
+
+
+        <!-- Total Products -->
+
+        <div class="ai-summary-card summary-products">
+
+            <div class="ai-summary-icon">
+                <i class="bi bi-box-seam"></i>
+            </div>
+
+            <div class="ai-summary-content">
+
+                <span>
+                    Total Products
+                </span>
+
+                <strong>
+                    {{ predicted_products|length }}
+                </strong>
+
+                <small>
+                    With AI predictions
+                </small>
+
+            </div>
+
+            <div class="ai-summary-growth growth-green">
+                <i class="bi bi-arrow-up"></i>
+                AI
+            </div>
+
+        </div>
+
+
+        <!-- Total Demand -->
+
+        <div class="ai-summary-card summary-demand">
+
+            <div class="ai-summary-icon">
+                <i class="bi bi-graph-up-arrow"></i>
+            </div>
+
+            <div class="ai-summary-content">
+
+                <span>
+                    Total Predicted Demand
+                </span>
+
+                <strong>
+                    {{ total_predicted_demand|floatformat:2 }}
+                </strong>
+
+                <small>
+                    Expected units
+                </small>
+
+            </div>
+
+            <div class="ai-summary-growth growth-green">
+                <i class="bi bi-arrow-up"></i>
+                AI
+            </div>
+
+        </div>
+
+
+        <!-- Average Demand -->
+
+        <div class="ai-summary-card summary-average">
+
+            <div class="ai-summary-icon">
+                <i class="bi bi-bar-chart-line-fill"></i>
+            </div>
+
+            <div class="ai-summary-content">
+
+                <span>
+                    Average Product Demand
+                </span>
+
+                <strong>
+                    {{ average_predicted_demand|floatformat:2 }}
+                </strong>
+
+                <small>
+                    Units per product
+                </small>
+
+            </div>
+
+            <div class="ai-summary-growth growth-green">
+                <i class="bi bi-arrow-up"></i>
+                AI
+            </div>
+
+        </div>
+
+
+        <!-- Replenishment -->
+
+        <div class="ai-summary-card summary-replenishment">
+
+            <div class="ai-summary-icon">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+
+            <div class="ai-summary-content">
+
+                <span>
+                    Replenishment Needed
+                </span>
+
+                <strong>
+
+                    {% widthratio 1 1 0 %}
+
+                    {% with count=0 %}
+                    {% for product in predicted_products %}
+                        {% if product.predicted_demand > product.inventory_level %}
+                            {% with count=count|add:"1" %}
+                            {% endwith %}
+                        {% endif %}
+                    {% endfor %}
+                    {% endwith %}
+
+                    {{ replenishment_count|default:"0" }}
+
+                </strong>
+
+                <small>
+                    Products need attention
+                </small>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CATEGORY NAVIGATION
+         ===================================================== -->
+
+    <section class="ai-category-toolbar">
+
+        <div class="ai-category-tabs">
+
+            <a href="#all-categories"
+               class="ai-category-tab active">
+
+                <i class="bi bi-grid-fill"></i>
+
+                All Categories
+
+            </a>
+
+
+            {% for category in category_forecasts %}
+
+                <a href="#forecast-{{ forloop.counter }}"
+                   class="ai-category-tab">
+
+                    {% if category.name == "Electronics" %}
+
+                        <i class="bi bi-cpu"></i>
+
+                    {% elif category.name == "Clothing" %}
+
+                        <i class="bi bi-person-standing"></i>
+
+                    {% elif category.name == "Groceries" %}
+
+                        <i class="bi bi-cart3"></i>
+
+                    {% elif category.name == "Toys" %}
+
+                        <i class="bi bi-controller"></i>
+
+                    {% elif category.name == "Furniture" %}
+
+                        <i class="bi bi-house-door"></i>
+
+                    {% else %}
+
+                        <i class="bi bi-box"></i>
+
+                    {% endif %}
+
+                    {{ category.name }}
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+
+        <div class="ai-product-search">
+
+            <i class="bi bi-search"></i>
+
+            <input
+                type="text"
+                placeholder="Search products..."
+                aria-label="Search products"
+            >
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CATEGORY FORECASTS
+         ===================================================== -->
+
+    <div id="all-categories"
+         class="ai-category-sections">
+
+
+        {% for category in category_forecasts %}
+
+        <section
+            id="forecast-{{ forloop.counter }}"
+            class="ai-category-card"
+        >
+
+
+            <!-- =================================================
+                 CATEGORY HEADER
+                 ================================================= -->
+
+            <div class="ai-category-header">
+
+                <div class="ai-category-title-area">
+
+                    <div class="ai-category-main-icon">
+
+                        {% if category.name == "Electronics" %}
+
+                            <i class="bi bi-cpu"></i>
+
+                        {% elif category.name == "Clothing" %}
+
+                            <i class="bi bi-person-standing"></i>
+
+                        {% elif category.name == "Groceries" %}
+
+                            <i class="bi bi-cart3"></i>
+
+                        {% elif category.name == "Toys" %}
+
+                            <i class="bi bi-controller"></i>
+
+                        {% elif category.name == "Furniture" %}
+
+                            <i class="bi bi-house-door"></i>
+
+                        {% else %}
+
+                            <i class="bi bi-box"></i>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="category-eyebrow">
+                            AI FORECAST CATEGORY
+                        </span>
+
+                        <h2>
+                            {{ category.name }}
+                        </h2>
+
+                        <p>
+                            {{ category.product_count }}
+                            products included in this forecast.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ai-category-actions">
+
+                    <span class="ai-product-count">
+
+                        {{ category.product_count }}
+                        Products
+
+                    </span>
+
+                    <a href="#forecast-{{ forloop.counter }}"
+                       class="category-details-btn">
+
+                        View Category Details
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 CATEGORY METRICS
+                 ================================================= -->
+
+            <div class="ai-category-metrics">
+
+
+                <!-- Current Stock -->
+
+                <div class="ai-metric-card metric-stock">
+
+                    <div class="metric-icon">
+
+                        <i class="bi bi-boxes"></i>
+
+                    </div>
+
+                    <div class="metric-info">
+
+                        <span>
+                            Current Stock
+                        </span>
+
+                        <strong>
+                            {{ category.current_stock }}
+                        </strong>
+
+                        <small>
+                            units available
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Predicted Demand -->
+
+                <div class="ai-metric-card metric-demand">
+
+                    <div class="metric-icon">
+
+                        <i class="bi bi-bar-chart-line"></i>
+
+                    </div>
+
+                    <div class="metric-info">
+
+                        <span>
+                            Predicted Demand
+                        </span>
+
+                        <strong>
+                            {{ category.predicted_demand }}
+                        </strong>
+
+                        <small>
+                            expected units
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Coverage -->
+
+                <div class="ai-metric-card metric-coverage">
+
+                    <div class="metric-icon">
+
+                        <i class="bi bi-shield-fill-check"></i>
+
+                    </div>
+
+                    <div class="metric-info">
+
+                        <span>
+                            Stock Coverage
+                        </span>
+
+                        <strong>
+                            {{ category.coverage }}%
+                        </strong>
+
+                        <small>
+                            inventory vs demand
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Replenishment -->
+
+                <div class="ai-metric-card metric-replenishment">
+
+                    <div class="metric-icon">
+
+                        <i class="bi bi-cart-check"></i>
+
+                    </div>
+
+                    <div class="metric-info">
+
+                        <span>
+                            Replenishment
+                        </span>
+
+                        <strong>
+                            {{ category.replenishment_count }}
+                        </strong>
+
+                        <small>
+                            product{{ category.replenishment_count|pluralize }}
+                            need attention
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 AI INSIGHTS
+                 ================================================= -->
+
+            <div class="ai-insights-section">
+
+                <div class="ai-insights-header">
+
+                    <div>
+
+                        <i class="bi bi-lightbulb-fill"></i>
+
+                        <strong>
+                            AI Insights for {{ category.name }}
+                        </strong>
+
+                    </div>
+
+                    <i class="bi bi-three-dots"></i>
+
+                </div>
+
+
+                <div class="ai-insights-grid">
+
+
+                    <!-- Insight 1 -->
+
+                    <div class="ai-insight-card insight-positive">
+
+                        <div class="insight-icon">
+
+                            <i class="bi bi-arrow-up"></i>
+
+                        </div>
+
+                        <div>
+
+                            {% if category.coverage >= 100 %}
+
+                                <strong>
+                                    Strong inventory position
+                                </strong>
+
+                                <p>
+                                    {{ category.coverage }}%
+                                    coverage across
+                                    {{ category.product_count }}
+                                    products.
+                                </p>
+
+                            {% else %}
+
+                                <strong>
+                                    Inventory needs attention
+                                </strong>
+
+                                <p>
+                                    Current stock is below
+                                    predicted demand.
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Insight 2 -->
+
+                    <div class="ai-insight-card insight-demand">
+
+                        <div class="insight-icon">
+
+                            <i class="bi bi-bar-chart-line"></i>
+
+                        </div>
+
+                        <div>
+
+                            {% if category.predicted_demand > category.current_stock %}
+
+                                <strong>
+                                    Demand exceeds stock
+                                </strong>
+
+                                <p>
+                                    Consider increasing inventory
+                                    for upcoming demand.
+                                </p>
+
+                            {% else %}
+
+                                <strong>
+                                    Demand is covered
+                                </strong>
+
+                                <p>
+                                    Current inventory can support
+                                    predicted demand.
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Insight 3 -->
+
+                    <div class="ai-insight-card insight-warning">
+
+                        <div class="insight-icon">
+
+                            <i class="bi bi-exclamation-circle"></i>
+
+                        </div>
+
+                        <div>
+
+                            {% if category.replenishment_count > 0 %}
+
+                                <strong>
+                                    Replenishment attention
+                                </strong>
+
+                                <p>
+                                    {{ category.replenishment_count }}
+                                    product{{ category.replenishment_count|pluralize }}
+                                    need attention.
+                                </p>
+
+                            {% else %}
+
+                                <strong>
+                                    Inventory balanced
+                                </strong>
+
+                                <p>
+                                    No immediate replenishment
+                                    requirement detected.
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PRODUCT FORECAST DETAILS
+                 ================================================= -->
+
+            <div class="ai-product-forecast">
+
+                <div class="ai-table-header">
+
+                    <div>
+
+                        <span>
+                            PRODUCT FORECAST DETAILS
+                        </span>
+
+                        <h3>
+                            Demand &amp; Stock Outlook
+                        </h3>
+
+                    </div>
+
+                    
+
+                </div>
+
+
+                <div class="ai-table-container">
+
+                    <table class="ai-forecast-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Product ID
+                                </th>
+
+                                <th>
+                                    Product Name
+                                </th>
+
+                                <th>
+                                    Subcategory
+                                </th>
+
+                                <th>
+                                    Store
+                                </th>
+
+                                <th>
+                                    Current Stock
+                                </th>
+
+                                <th>
+                                    Predicted Demand
+                                </th>
+
+                                <th>
+                                    Coverage
+                                </th>
+
+                                <th>
+                                    Stock Outlook
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for product in category.products %}
+
+                            <tr>
+
+
+                                <!-- Product ID -->
+
+                                <td>
+
+                                    <strong class="table-product-id">
+                                        {{ product.product_id }}
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- Product Name -->
+
+                                <td>
+
+                                    <div class="table-product-name">
+
+                                        <strong>
+                                            {{ product.subcategory|default:product.category }}
+                                        </strong>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Subcategory -->
+
+                                <td>
+
+                                    <span class="table-subcategory">
+
+                                        {{ product.subcategory|default:"—" }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Store -->
+
+                                <td>
+
+                                    <div class="table-store">
+
+                                        <span>
+                                            {{ product.store.name }}
+                                        </span>
+
+                                        <small>
+                                            ({{ product.store.store_code }})
+                                        </small>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Current Stock -->
+
+                                <td>
+
+                                    <strong class="table-stock">
+                                        {{ product.inventory_level }}
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- Predicted Demand -->
+
+                                <td>
+
+                                    <strong class="table-demand">
+                                        {{ product.predicted_demand|floatformat:2 }}
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- Coverage -->
+
+                                <td>
+
+                                    <strong
+                                        class="
+                                            table-coverage
+
+                                            {% if product.predicted_demand > product.inventory_level %}
+                                                coverage-danger
+                                            {% else %}
+                                                coverage-good
+                                            {% endif %}
+                                        "
+                                    >
+
+                                        {% if product.predicted_demand > 0 %}
+
+                                            {{ product.demand_coverage }}%
+
+                                        {% else %}
+
+                                            —
+
+                                        {% endif %}
+
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- Outlook -->
+
+                                <td>
+
+                                    {% if product.predicted_demand > product.inventory_level %}
+
+                                        <span class="table-status status-danger">
+
+                                            <i class="bi bi-exclamation-triangle"></i>
+
+                                            Replenishment Needed
+
+                                        </span>
+
+
+                                    {% elif product.inventory_level == 0 %}
+
+                                        <span class="table-status status-danger">
+
+                                            <i class="bi bi-x-circle"></i>
+
+                                            Out of Stock
+
+                                        </span>
+
+
+                                    {% elif product.inventory_level < 25 %}
+
+                                        <span class="table-status status-warning">
+
+                                            <i class="bi bi-exclamation-circle"></i>
+
+                                            Low Stock
+
+                                        </span>
+
+
+                                    {% else %}
+
+                                        <span class="table-status status-good">
+
+                                            <i class="bi bi-check-circle"></i>
+
+                                            Stock Sufficient
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td colspan="8"
+                                    class="empty-category-row">
+
+                                    No products available for this category.
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        {% empty %}
+
+
+        <!-- =================================================
+             EMPTY STATE
+             ================================================= -->
+
+        <section class="ai-empty-state">
+
+            <div class="ai-empty-icon">
+
+                <i class="bi bi-graph-up-arrow"></i>
+
+            </div>
+
+            <h2>
+                No Forecast Data Available
+            </h2>
+
+            <p>
+                Generate an AI forecast to view category-wise
+                demand predictions and inventory insights.
+            </p>
+
+            <a href="{% url 'ai_forecast' %}"
+               class="generate-forecast-btn">
+
+                <i class="bi bi-stars"></i>
+
+                Generate Forecast
+
+            </a>
+
+        </section>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- =====================================================
+         FORECAST INFORMATION
+         ===================================================== -->
+
+    {% if predicted_products %}
+
+    <section class="ai-forecast-note">
+
+        <div class="forecast-note-icon">
+
+            <i class="bi bi-info-circle"></i>
+
+        </div>
+
+        <div>
+
+            <strong>
+                About AI Demand Forecasting
+            </strong>
+
+            <p>
+                Predicted demand represents the AI model's estimated
+                product demand based on available inventory and product
+                attributes. Stock coverage compares current inventory
+                with predicted demand to help identify products that
+                may require replenishment.
+            </p>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

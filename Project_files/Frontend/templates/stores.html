@@ -1,0 +1,1015 @@
+{% extends "base.html" %}
+
+{% block title %}
+Stores | RetailIQ
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-header">
+
+        <div>
+
+            <span class="dashboard-label">
+                ADMINISTRATION
+            </span>
+
+            <h1>Stores</h1>
+
+            <p>
+                View and monitor all stores connected to the RetailIQ system.
+            </p>
+
+        </div>
+
+
+        <div class="dashboard-date">
+
+            <i class="bi bi-shop"></i>
+
+            Stores
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- STORE SUMMARY -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-panel store-summary-panel">
+
+        <div class="store-summary-item">
+
+            <div class="store-summary-icon">
+                <i class="bi bi-shop"></i>
+            </div>
+
+            <div>
+
+                <span class="store-summary-label">
+                    Total Stores
+                </span>
+
+                <strong class="store-summary-value">
+                    {{ stores|length }}
+                </strong>
+
+                <span class="store-summary-description">
+                    Registered stores
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="store-summary-divider"></div>
+
+
+        <div class="store-summary-item">
+
+            <div class="store-summary-icon active-icon">
+                <i class="bi bi-check-circle"></i>
+            </div>
+
+            <div>
+
+                <span class="store-summary-label">
+                    Store Network
+                </span>
+
+                <strong class="store-summary-value">
+                    RetailIQ
+                </strong>
+
+                <span class="store-summary-description">
+                    Inventory connected
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="store-summary-divider"></div>
+
+
+        <div class="store-summary-item">
+
+            <div class="store-summary-icon region-icon">
+                <i class="bi bi-geo-alt"></i>
+            </div>
+
+            <div>
+
+                <span class="store-summary-label">
+                    Store Management
+                </span>
+
+                <strong class="store-summary-value">
+                    Centralized
+                </strong>
+
+                <span class="store-summary-description">
+                    Managed by administrators
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- STORE LIST -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-panel stores-list-panel">
+
+        <div class="panel-header stores-panel-header">
+
+            <div>
+
+                <h3>
+                    Store List
+                </h3>
+
+                <p>
+                    All registered stores in the inventory system.
+                </p>
+
+            </div>
+
+
+            <!-- ADD STORE -->
+
+            <button
+                type="button"
+                class="store-add-button"
+                onclick="alert('Store creation will be added next.')"
+            >
+
+                <i class="bi bi-plus-lg"></i>
+
+                Add Store
+
+            </button>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- STORE CARDS -->
+        <!-- ================================================= -->
+
+        <div class="store-list">
+
+            {% for store in stores %}
+
+            <div class="store-card">
+
+                <!-- Store Icon -->
+
+                <div class="store-card-icon">
+
+                    <i class="bi bi-shop"></i>
+
+                </div>
+
+
+                <!-- Store Information -->
+
+                <div class="store-card-content">
+
+                    <div class="store-card-title-row">
+
+                        <h3>
+                            {{ store.name }}
+                            <span>
+                                ({{ store.store_code }})
+                            </span>
+                        </h3>
+
+
+                        {% if store.is_active %}
+
+                            <span class="store-status active">
+                                <span class="status-dot"></span>
+                                Active
+                            </span>
+
+                        {% else %}
+
+                            <span class="store-status inactive">
+                                <span class="status-dot"></span>
+                                Inactive
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="store-card-details">
+
+                        <!-- Region -->
+
+                        <span>
+
+                            <i class="bi bi-geo-alt"></i>
+
+                            {{ store.region|default:"Region not specified" }}
+
+                        </span>
+
+
+                        <span class="store-detail-separator">
+                            |
+                        </span>
+
+
+                        <!-- Store Code -->
+
+                        <span>
+
+                            <i class="bi bi-upc-scan"></i>
+
+                            {{ store.store_code }}
+
+                        </span>
+
+
+                        <span class="store-detail-separator">
+                            |
+                        </span>
+
+
+                        <!-- Status -->
+
+                        <span>
+
+                            <i class="bi bi-shield-check"></i>
+
+                            {% if store.is_active %}
+                                Currently Active
+                            {% else %}
+                                Currently Inactive
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- More Options -->
+
+                <button
+                    type="button"
+                    class="store-more-button"
+                    title="More options"
+                >
+
+                    <i class="bi bi-three-dots-vertical"></i>
+
+                </button>
+
+            </div>
+
+
+            {% empty %}
+
+            <!-- EMPTY STATE -->
+
+            <div class="store-empty-state">
+
+                <div class="store-empty-icon">
+
+                    <i class="bi bi-shop"></i>
+
+                </div>
+
+                <h3>
+                    No Stores Available
+                </h3>
+
+                <p>
+                    There are currently no stores registered in RetailIQ.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- FOOTER -->
+        <!-- ================================================= -->
+
+        {% if stores %}
+
+        <div class="stores-list-footer">
+
+            <span>
+                Showing 1 to {{ stores|length }} of {{ stores|length }} stores
+            </span>
+
+            <div class="store-pagination">
+
+                <button
+                    type="button"
+                    disabled
+                    title="Previous"
+                >
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+
+                <button
+                    type="button"
+                    class="current-page"
+                >
+                    1
+                </button>
+
+                <button
+                    type="button"
+                    disabled
+                    title="Next"
+                >
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- STORES PAGE STYLING -->
+<!-- ================================================= -->
+
+<style>
+
+    /* ================================================= */
+    /* SUMMARY */
+    /* ================================================= */
+
+    .store-summary-panel {
+
+        display: flex;
+        align-items: center;
+        padding: 28px 32px;
+        margin-bottom: 30px;
+        gap: 28px;
+
+    }
+
+
+    .store-summary-item {
+
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        min-width: 0;
+
+    }
+
+
+    .store-summary-divider {
+
+        width: 1px;
+        height: 72px;
+        background: #e5e7eb;
+        flex-shrink: 0;
+
+    }
+
+
+    .store-summary-icon {
+
+        width: 64px;
+        height: 64px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 15px;
+
+        background: #fff7df;
+
+        color: #c99400;
+
+        font-size: 27px;
+
+        flex-shrink: 0;
+
+    }
+
+
+    .store-summary-icon.active-icon {
+
+        background: #eaf9ef;
+        color: #2eaf62;
+
+    }
+
+
+    .store-summary-icon.region-icon {
+
+        background: #edf5ff;
+        color: #2478d7;
+
+    }
+
+
+    .store-summary-label {
+
+        display: block;
+
+        font-size: 14px;
+
+        color: #64748b;
+
+        margin-bottom: 5px;
+
+    }
+
+
+    .store-summary-value {
+
+        display: block;
+
+        font-size: 24px;
+
+        color: #111827;
+
+        margin-bottom: 3px;
+
+    }
+
+
+    .store-summary-description {
+
+        display: block;
+
+        font-size: 13px;
+
+        color: #94a3b8;
+
+    }
+
+
+    /* ================================================= */
+    /* STORE LIST */
+    /* ================================================= */
+
+    .stores-list-panel {
+
+        padding: 30px;
+
+    }
+
+
+    .stores-panel-header {
+
+        margin-bottom: 25px;
+
+    }
+
+
+    .store-add-button {
+
+        display: flex;
+        align-items: center;
+        gap: 9px;
+
+        border: none;
+
+        border-radius: 9px;
+
+        padding: 13px 20px;
+
+        background: #d9a400;
+
+        color: white;
+
+        font-size: 14px;
+
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition: 0.2s ease;
+
+    }
+
+
+    .store-add-button:hover {
+
+        transform: translateY(-1px);
+
+        opacity: 0.92;
+
+    }
+
+
+    /* ================================================= */
+    /* STORE CARD */
+    /* ================================================= */
+
+    .store-list {
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 15px;
+
+    }
+
+
+    .store-card {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 22px;
+
+        min-height: 112px;
+
+        padding: 20px;
+
+        background: #ffffff;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 15px;
+
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+
+    }
+
+
+    .store-card:hover {
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 8px 22px rgba(15, 23, 42, 0.08);
+
+    }
+
+
+    /* ================================================= */
+    /* STORE ICON */
+    /* ================================================= */
+
+    .store-card-icon {
+
+        width: 74px;
+        height: 74px;
+
+        flex-shrink: 0;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 14px;
+
+        background: #fff8e5;
+
+        color: #d49b00;
+
+        font-size: 31px;
+
+    }
+
+
+    /* ================================================= */
+    /* STORE CONTENT */
+    /* ================================================= */
+
+    .store-card-content {
+
+        flex: 1;
+
+        min-width: 0;
+
+    }
+
+
+    .store-card-title-row {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 15px;
+
+        margin-bottom: 13px;
+
+    }
+
+
+    .store-card-title-row h3 {
+
+        margin: 0;
+
+        font-size: 20px;
+
+        font-weight: 700;
+
+        color: #172033;
+
+    }
+
+
+    .store-card-title-row h3 span {
+
+        font-weight: 500;
+
+        color: #475569;
+
+    }
+
+
+    /* ================================================= */
+    /* STATUS */
+    /* ================================================= */
+
+    .store-status {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 7px;
+
+        padding: 6px 12px;
+
+        border-radius: 20px;
+
+        font-size: 13px;
+
+        font-weight: 600;
+
+        white-space: nowrap;
+
+    }
+
+
+    .store-status.active {
+
+        background: #e9f9ef;
+
+        color: #287a4b;
+
+    }
+
+
+    .store-status.inactive {
+
+        background: #feecef;
+
+        color: #c63d50;
+
+    }
+
+
+    .status-dot {
+
+        width: 8px;
+        height: 8px;
+
+        border-radius: 50%;
+
+        background: currentColor;
+
+    }
+
+
+    /* ================================================= */
+    /* DETAILS */
+    /* ================================================= */
+
+    .store-card-details {
+
+        display: flex;
+
+        align-items: center;
+
+        flex-wrap: wrap;
+
+        gap: 12px;
+
+        color: #64748b;
+
+        font-size: 14px;
+
+    }
+
+
+    .store-card-details span {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 7px;
+
+    }
+
+
+    .store-card-details i {
+
+        font-size: 15px;
+
+    }
+
+
+    .store-detail-separator {
+
+        color: #cbd5e1;
+
+    }
+
+
+    /* ================================================= */
+    /* MORE BUTTON */
+    /* ================================================= */
+
+    .store-more-button {
+
+        width: 42px;
+        height: 42px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border: none;
+
+        background: transparent;
+
+        color: #64748b;
+
+        font-size: 21px;
+
+        cursor: pointer;
+
+        border-radius: 8px;
+
+        flex-shrink: 0;
+
+    }
+
+
+    .store-more-button:hover {
+
+        background: #f1f5f9;
+
+        color: #111827;
+
+    }
+
+
+    /* ================================================= */
+    /* FOOTER */
+    /* ================================================= */
+
+    .stores-list-footer {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-top: 25px;
+
+        padding-top: 20px;
+
+        border-top: 1px solid #e5e7eb;
+
+        color: #64748b;
+
+        font-size: 14px;
+
+    }
+
+
+    .store-pagination {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+    }
+
+
+    .store-pagination button {
+
+        width: 40px;
+        height: 40px;
+
+        border: 1px solid #e2e8f0;
+
+        border-radius: 8px;
+
+        background: white;
+
+        color: #64748b;
+
+        cursor: pointer;
+
+        font-size: 15px;
+
+    }
+
+
+    .store-pagination button:disabled {
+
+        opacity: 0.5;
+
+        cursor: not-allowed;
+
+    }
+
+
+    .store-pagination button.current-page {
+
+        background: #d9a400;
+
+        border-color: #d9a400;
+
+        color: white;
+
+        font-weight: 600;
+
+    }
+
+
+    /* ================================================= */
+    /* EMPTY STATE */
+    /* ================================================= */
+
+    .store-empty-state {
+
+        text-align: center;
+
+        padding: 70px 20px;
+
+        color: #64748b;
+
+    }
+
+
+    .store-empty-icon {
+
+        width: 70px;
+        height: 70px;
+
+        margin: 0 auto 18px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #fff8e5;
+
+        color: #d49b00;
+
+        font-size: 30px;
+
+    }
+
+
+    .store-empty-state h3 {
+
+        margin-bottom: 8px;
+
+        color: #172033;
+
+    }
+
+
+    .store-empty-state p {
+
+        margin: 0;
+
+    }
+
+
+    /* ================================================= */
+    /* RESPONSIVE */
+    /* ================================================= */
+
+    @media (max-width: 900px) {
+
+        .store-summary-panel {
+
+            flex-direction: column;
+
+            align-items: stretch;
+
+        }
+
+
+        .store-summary-divider {
+
+            width: 100%;
+
+            height: 1px;
+
+        }
+
+    }
+
+
+    @media (max-width: 650px) {
+
+        .store-card {
+
+            align-items: flex-start;
+
+        }
+
+
+        .store-card-title-row {
+
+            align-items: flex-start;
+
+            flex-direction: column;
+
+        }
+
+
+        .store-card-details {
+
+            flex-direction: column;
+
+            align-items: flex-start;
+
+        }
+
+
+        .store-detail-separator {
+
+            display: none !important;
+
+        }
+
+
+        .stores-list-footer {
+
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            gap: 15px;
+
+        }
+
+    }
+
+</style>
+
+{% endblock %}

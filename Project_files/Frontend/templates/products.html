@@ -1,0 +1,589 @@
+{% extends "base.html" %}
+
+{% block title %}
+Products | RetailIQ
+{% endblock %}
+
+{% block content %}
+
+<div class="products-page">
+
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <div class="products-header">
+
+        <div class="products-header-content">
+
+            <span class="dashboard-label">
+                INVENTORY MANAGEMENT
+            </span>
+
+            <h1>
+                Product Inventory
+            </h1>
+
+            <p>
+                Explore and manage products organized by retail
+                category, just like sections in a modern store.
+            </p>
+
+        </div>
+
+
+        <a href="{% url 'add_product' %}"
+           class="products-add-button">
+
+            <i class="bi bi-plus-lg"></i>
+
+            <span>
+                Add Product
+            </span>
+
+        </a>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         SEARCH BAR
+         ===================================================== -->
+
+    <div class="products-search-panel">
+
+        <form method="get"
+              class="products-search-form">
+
+            <div class="products-search-input">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Search by Product ID, Store, Category or Subcategory..."
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="products-search-button">
+
+                <i class="bi bi-search"></i>
+
+                <span>
+                    Search
+                </span>
+
+            </button>
+
+
+            {% if search %}
+
+                <a href="{% url 'products' %}"
+                   class="products-clear-button">
+
+                    <i class="bi bi-x-lg"></i>
+
+                    Clear
+
+                </a>
+
+            {% endif %}
+
+        </form>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CATEGORY NAVIGATION
+         ===================================================== -->
+
+    <div class="products-category-nav">
+
+        <span class="category-nav-label">
+            Browse Sections
+        </span>
+
+
+        <div class="category-nav-list">
+
+            {% for section in category_sections %}
+
+                <a href="#category-{{ forloop.counter }}"
+                   class="category-nav-item">
+
+                    {% if section.name == "Electronics" %}
+
+                        <i class="bi bi-phone"></i>
+
+                    {% elif section.name == "Clothing" %}
+
+                        <i class="bi bi-person"></i>
+
+                    {% elif section.name == "Groceries" %}
+
+                        <i class="bi bi-basket"></i>
+
+                    {% elif section.name == "Toys" %}
+
+                        <i class="bi bi-controller"></i>
+
+                    {% elif section.name == "Furniture" %}
+
+                        <i class="bi bi-house"></i>
+
+                    {% else %}
+
+                        <i class="bi bi-box-seam"></i>
+
+                    {% endif %}
+
+                    <span>
+                        {{ section.name }}
+                    </span>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CATEGORY RACKS
+         ===================================================== -->
+
+    <div class="product-racks">
+
+
+        {% for section in category_sections %}
+
+        <section
+            class="product-rack"
+            id="category-{{ forloop.counter }}"
+        >
+
+
+            <!-- =================================================
+                 RACK HEADER
+                 ================================================= -->
+
+            <div class="product-rack-header">
+
+
+                <div class="product-rack-title">
+
+
+                    <div class="product-rack-icon">
+
+                        {% if section.name == "Electronics" %}
+
+                            <i class="bi bi-phone"></i>
+
+                        {% elif section.name == "Clothing" %}
+
+                            <i class="bi bi-person"></i>
+
+                        {% elif section.name == "Groceries" %}
+
+                            <i class="bi bi-basket"></i>
+
+                        {% elif section.name == "Toys" %}
+
+                            <i class="bi bi-controller"></i>
+
+                        {% elif section.name == "Furniture" %}
+
+                            <i class="bi bi-house"></i>
+
+                        {% else %}
+
+                            <i class="bi bi-box-seam"></i>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            RETAIL SECTION
+                        </span>
+
+                        <h2>
+                            {{ section.name }}
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="product-rack-count">
+
+                    <strong>
+                        {{ section.products|length }}
+                    </strong>
+
+                    <span>
+                        Products
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 SUBCATEGORY DESCRIPTION
+                 ================================================= -->
+
+            <div class="product-rack-description">
+
+                {% if section.name == "Electronics" %}
+
+                    <span>
+                        Smartphones, laptops, headphones and televisions
+                    </span>
+
+                {% elif section.name == "Clothing" %}
+
+                    <span>
+                        Shirts, T-Shirts, jeans and jackets
+                    </span>
+
+                {% elif section.name == "Groceries" %}
+
+                    <span>
+                        Rice, flour, milk, cooking oil and daily essentials
+                    </span>
+
+                {% elif section.name == "Toys" %}
+
+                    <span>
+                        Action figures, dolls, puzzles and board games
+                    </span>
+
+                {% elif section.name == "Furniture" %}
+
+                    <span>
+                        Chairs, tables, sofas and beds
+                    </span>
+
+                {% else %}
+
+                    <span>
+                        Products available in this inventory section
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PRODUCT CARDS
+                 ================================================= -->
+
+            <div class="product-rack-grid">
+
+
+                {% for product in section.products %}
+
+                <article class="retail-product-card">
+
+
+                    <!-- Product top -->
+
+                    <div class="retail-product-top">
+
+
+                        <div class="retail-product-category-icon">
+
+                            {% if section.name == "Electronics" %}
+
+                                <i class="bi bi-cpu"></i>
+
+                            {% elif section.name == "Clothing" %}
+
+                                <i class="bi bi-bag"></i>
+
+                            {% elif section.name == "Groceries" %}
+
+                                <i class="bi bi-cart3"></i>
+
+                            {% elif section.name == "Toys" %}
+
+                                <i class="bi bi-controller"></i>
+
+                            {% elif section.name == "Furniture" %}
+
+                                <i class="bi bi-lamp"></i>
+
+                            {% else %}
+
+                                <i class="bi bi-box"></i>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <span class="retail-product-id">
+
+                            {{ product.product_id }}
+
+                        </span>
+
+
+                        <a
+                            href="{% url 'edit_product' product.id %}"
+                            class="retail-product-edit"
+                            title="Edit Product"
+                        >
+
+                            <i class="bi bi-pencil"></i>
+
+                        </a>
+
+                    </div>
+
+
+
+                    <!-- Product information -->
+
+                    <div class="retail-product-info">
+
+                        <span class="retail-product-category">
+
+                            {{ product.category }}
+
+                        </span>
+
+
+                        <h3>
+
+                            {{ product.subcategory|default:"Product" }}
+
+                        </h3>
+
+
+                        <div class="retail-product-store">
+
+                            <i class="bi bi-shop"></i>
+
+                            <span>
+                                {{ product.store.name }}
+                            </span>
+
+                            <small>
+                                ({{ product.store.store_code }})
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Product details -->
+
+                    <div class="retail-product-details">
+
+
+                        <div class="retail-detail">
+
+                            <span>
+                                Region
+                            </span>
+
+                            <strong>
+                                {{ product.region }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="retail-detail">
+
+                            <span>
+                                Inventory
+                            </span>
+
+                            <strong>
+                                {{ product.inventory_level }}
+                                <small>units</small>
+                            </strong>
+
+                        </div>
+
+
+                        <div class="retail-detail">
+
+                            <span>
+                                Price
+                            </span>
+
+                            <strong>
+                                ₹{{ product.price|floatformat:2 }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="retail-detail">
+
+                            <span>
+                                Discount
+                            </span>
+
+                            <strong>
+                                {{ product.discount }}%
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Inventory status -->
+
+                    <div class="retail-product-footer">
+
+
+                        {% if product.inventory_level == 0 %}
+
+                            <span class="retail-stock-status status-out">
+
+                                <i class="bi bi-x-circle"></i>
+
+                                Out of Stock
+
+                            </span>
+
+
+                        {% elif product.inventory_level < 25 %}
+
+                            <span class="retail-stock-status status-low">
+
+                                <i class="bi bi-exclamation-circle"></i>
+
+                                Low Stock
+
+                            </span>
+
+
+                        {% else %}
+
+                            <span class="retail-stock-status status-in">
+
+                                <i class="bi bi-check-circle"></i>
+
+                                In Stock
+
+                            </span>
+
+                        {% endif %}
+
+
+                        <span class="retail-product-location">
+
+                            <i class="bi bi-geo-alt"></i>
+
+                            {{ product.region }}
+
+                        </span>
+
+                    </div>
+
+
+                </article>
+
+                {% endfor %}
+
+
+            </div>
+
+
+            <!-- Rack bottom -->
+
+            <div class="rack-base">
+
+                <span></span>
+
+            </div>
+
+
+        </section>
+
+        {% empty %}
+
+
+        <!-- =================================================
+             EMPTY STATE
+             ================================================= -->
+
+        <div class="products-empty">
+
+            <div class="products-empty-icon">
+
+                <i class="bi bi-box-seam"></i>
+
+            </div>
+
+            <h2>
+                No Products Found
+            </h2>
+
+            <p>
+                There are no products matching your search.
+            </p>
+
+
+            {% if search %}
+
+                <a href="{% url 'products' %}"
+                   class="products-empty-button">
+
+                    View All Products
+
+                </a>
+
+            {% else %}
+
+                <a href="{% url 'add_product' %}"
+                   class="products-empty-button">
+
+                    Add Your First Product
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

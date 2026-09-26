@@ -1,0 +1,804 @@
+{% extends "base.html" %}
+
+{% block title %}
+Smart Alerts | RetailIQ
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-header">
+
+        <div>
+
+            <span class="dashboard-label">
+                INVENTORY INTELLIGENCE
+            </span>
+
+            <h1>
+                Smart Alerts
+            </h1>
+
+            <p>
+                Monitor inventory conditions and identify
+                products requiring immediate attention.
+            </p>
+
+        </div>
+
+        <div class="dashboard-date">
+
+            <i class="bi bi-bell"></i>
+
+            Alerts
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ALERT SUMMARY -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-cards">
+
+        <!-- TOTAL ALERTS -->
+
+        <div class="dashboard-card">
+
+            <div class="card-icon">
+                <i class="bi bi-bell"></i>
+            </div>
+
+            <div class="card-content">
+
+                <span class="card-title">
+                    Active Alerts
+                </span>
+
+                <h2>
+                    {{ total_alerts }}
+                </h2>
+
+                <p>
+                    Products requiring attention
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- REPLENISHMENT -->
+
+        <div class="dashboard-card danger-card">
+
+            <div class="card-icon">
+                <i class="bi bi-arrow-repeat"></i>
+            </div>
+
+            <div class="card-content">
+
+                <span class="card-title">
+                    Replenishment
+                </span>
+
+                <h2>
+                    {{ replenishment_alerts }}
+                </h2>
+
+                <p>
+                    AI-based stock requirements
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOW STOCK -->
+
+        <div class="dashboard-card warning-card">
+
+            <div class="card-icon">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+
+            <div class="card-content">
+
+                <span class="card-title">
+                    Low Stock
+                </span>
+
+                <h2>
+                    {{ low_stock_alerts }}
+                </h2>
+
+                <p>
+                    Below inventory threshold
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- OUT OF STOCK -->
+
+        <div class="dashboard-card danger-card">
+
+            <div class="card-icon">
+                <i class="bi bi-x-circle"></i>
+            </div>
+
+            <div class="card-content">
+
+                <span class="card-title">
+                    Out of Stock
+                </span>
+
+                <h2>
+                    {{ out_of_stock_alerts }}
+                </h2>
+
+                <p>
+                    Products unavailable
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ALERT LIST -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-panel">
+
+        <!-- ALERT FILTERS -->
+
+        <div class="alert-filters">
+
+            <a href="{% url 'alerts' %}"
+               class="alert-filter-button {% if alert_filter == 'ALL' %}active{% endif %}">
+                <i class="bi bi-list"></i>
+                All Alerts
+            </a>
+
+            <a href="{% url 'alerts' %}?type=REPLENISHMENT"
+               class="alert-filter-button {% if alert_filter == 'REPLENISHMENT' %}active{% endif %}">
+                <i class="bi bi-arrow-repeat"></i>
+                Replenishment
+            </a>
+
+            <a href="{% url 'alerts' %}?type=LOW_STOCK"
+               class="alert-filter-button {% if alert_filter == 'LOW_STOCK' %}active{% endif %}">
+                <i class="bi bi-exclamation-triangle"></i>
+                Low Stock
+            </a>
+
+            <a href="{% url 'alerts' %}?type=OUT_OF_STOCK"
+               class="alert-filter-button {% if alert_filter == 'OUT_OF_STOCK' %}active{% endif %}">
+                <i class="bi bi-x-circle"></i>
+                Out of Stock
+            </a>
+
+        </div>
+
+
+        <div class="products-table-container">
+
+            <table class="analytics-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            Store
+                        </th>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th>
+                            Subcategory
+                        </th>
+
+                        <th>
+                            Current Stock
+                        </th>
+
+                        <th>
+                            Predicted Demand
+                        </th>
+
+                        <th>
+                            Coverage
+                        </th>
+
+                        <th>
+                            Recommended Reorder
+                        </th>
+
+                        <th>
+                            Alert
+                        </th>
+
+                        <th>
+                            Priority
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for alert in alert_data %}
+
+                    <tr>
+
+                        <!-- PRODUCT -->
+
+                        <td>
+
+                            <strong>
+                                {{ alert.product_id }}
+                            </strong>
+
+                        </td>
+
+
+                        <!-- STORE -->
+
+                        <td>
+
+                            {{ alert.store }}
+
+                            <small>
+                                ({{ alert.store_code }})
+                            </small>
+
+                        </td>
+
+
+                        <!-- CATEGORY -->
+
+                        <td>
+                            {{ alert.category }}
+                        </td>
+
+
+                        <!-- SUBCATEGORY -->
+
+                        <td>
+                            {{ alert.subcategory }}
+                        </td>
+
+
+                        <!-- CURRENT STOCK -->
+
+                        <td>
+
+                            <strong>
+                                {{ alert.inventory }}
+                            </strong>
+
+                            units
+
+                        </td>
+
+
+                        <!-- PREDICTED DEMAND -->
+
+                        <td>
+
+                            {% if alert.predicted_demand > 0 %}
+
+                                {{ alert.predicted_demand|floatformat:2 }}
+
+                                units
+
+                            {% else %}
+
+                                Not available
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- COVERAGE -->
+
+                        <td>
+
+                            {% if alert.predicted_demand > 0 %}
+
+                                {{ alert.demand_coverage }}%
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- RECOMMENDED REORDER -->
+
+                        <td>
+
+                            {% if alert.recommended_reorder > 0 %}
+
+                                <strong>
+                                    {{ alert.recommended_reorder }}
+                                </strong>
+
+                                units
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- ALERT -->
+
+                        <td>
+
+                            {% if alert.alert_type == "OUT_OF_STOCK" %}
+
+                                <span class="analytics-badge danger">
+
+                                    <i class="bi bi-x-circle"></i>
+
+                                    Out of Stock
+
+                                </span>
+
+
+                            {% elif alert.alert_type == "REPLENISHMENT" %}
+
+                                <span class="analytics-badge danger">
+
+                                    <i class="bi bi-arrow-repeat"></i>
+
+                                    Replenishment Needed
+
+                                </span>
+
+
+                            {% elif alert.alert_type == "LOW_STOCK" %}
+
+                                <span class="analytics-badge warning">
+
+                                    <i class="bi bi-exclamation-triangle"></i>
+
+                                    Low Stock
+
+                                </span>
+
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- PRIORITY -->
+
+                        <td>
+
+                            {% if alert.priority == "High" %}
+
+                                <span class="analytics-badge danger">
+                                    High
+                                </span>
+
+                            {% elif alert.priority == "Medium" %}
+
+                                <span class="analytics-badge warning">
+                                    Medium
+                                </span>
+
+                            {% else %}
+
+                                <span class="analytics-badge">
+                                    Normal
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="10"
+                            class="forecast-empty"
+                        >
+
+                            <i class="bi bi-check-circle"></i>
+
+                            <strong>
+                                No Inventory Alerts
+                            </strong>
+
+                            <span>
+                                All currently tracked products
+                                have sufficient inventory.
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- REORDER RECOMMENDATION -->
+    <!-- ================================================= -->
+
+    <!-- ================================================= -->
+<!-- REORDER RECOMMENDATION -->
+<!-- ================================================= -->
+
+<div class="dashboard-panel reorder-panel">
+
+    <div class="panel-header">
+
+        <div>
+
+            <h3>
+                Reorder Recommendations
+            </h3>
+
+            <p>
+                Recommended quantities based on AI predicted
+                demand and a 10% safety stock buffer.
+            </p>
+
+        </div>
+
+        <i class="bi bi-cart-check"></i>
+
+    </div>
+
+
+    <div class="reorder-grid">
+
+        {% for alert in alert_data %}
+
+            {% if alert.recommended_reorder > 0 %}
+
+            <div class="reorder-card">
+
+                <!-- CARD HEADER -->
+
+                <div class="reorder-card-header">
+
+                    <div>
+
+                        <strong class="reorder-product">
+                            {{ alert.product_id }}
+                        </strong>
+
+                        <span class="reorder-category">
+                            {{ alert.category }} • {{ alert.subcategory }}
+                        </span>
+
+                    </div>
+
+
+                    {% if alert.priority == "High" %}
+
+                        <span class="analytics-badge danger">
+                            High Priority
+                        </span>
+
+                    {% elif alert.priority == "Medium" %}
+
+                        <span class="analytics-badge warning">
+                            Medium Priority
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- INVENTORY DETAILS -->
+
+                <div class="reorder-details">
+
+                    <div class="reorder-detail">
+
+                        <span>
+                            Current Stock
+                        </span>
+
+                        <strong>
+                            {{ alert.inventory }}
+                        </strong>
+
+                        <small>
+                            units
+                        </small>
+
+                    </div>
+
+
+                    <div class="reorder-detail">
+
+                        <span>
+                            Predicted Demand
+                        </span>
+
+                        <strong>
+                            {{ alert.predicted_demand|floatformat:2 }}
+                        </strong>
+
+                        <small>
+                            units
+                        </small>
+
+                    </div>
+
+
+                    <div class="reorder-detail">
+
+                        <span>
+                            Safety Stock
+                        </span>
+
+                        <strong>
+                            {{ alert.safety_stock|floatformat:2 }}
+                        </strong>
+
+                        <small>
+                            units
+                        </small>
+
+                    </div>
+
+
+                    <div class="reorder-detail">
+
+                        <span>
+                            Required Stock
+                        </span>
+
+                        <strong>
+                            {{ alert.required_stock|floatformat:2 }}
+                        </strong>
+
+                        <small>
+                            units
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- REORDER RESULT -->
+
+                <div class="reorder-result">
+
+                    <div>
+
+                        <span>
+                            Recommended Reorder
+                        </span>
+
+                        <small>
+                            Quantity to restore required inventory
+                        </small>
+
+                    </div>
+
+
+                    <strong>
+                        {{ alert.recommended_reorder }}
+                        <small>units</small>
+                    </strong>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        {% empty %}
+
+            <div class="reorder-empty">
+
+                <i class="bi bi-check-circle"></i>
+
+                <strong>
+                    No Reorder Required
+                </strong>
+
+                <span>
+                    Current inventory levels are sufficient
+                    based on predicted demand.
+                </span>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+    <!-- ================================================= -->
+    <!-- ALERT EXPLANATION -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h3>
+                    Alert Logic
+                </h3>
+
+                <p>
+                    How RetailIQ determines inventory alerts.
+                </p>
+
+            </div>
+
+            <i class="bi bi-cpu"></i>
+
+        </div>
+
+
+        <div class="feature-list">
+
+            <div class="feature-item">
+
+                <i class="bi bi-x-circle"></i>
+
+                <span>
+                    <strong>Out of Stock:</strong>
+                    Current inventory is zero.
+                </span>
+
+            </div>
+
+
+            <div class="feature-item">
+
+                <i class="bi bi-arrow-repeat"></i>
+
+                <span>
+                    <strong>Replenishment Needed:</strong>
+                    AI predicted demand is greater than
+                    current inventory.
+                </span>
+
+            </div>
+
+
+            <div class="feature-item">
+
+                <i class="bi bi-exclamation-triangle"></i>
+
+                <span>
+                    <strong>Low Stock:</strong>
+                    Inventory is below the 25-unit
+                    threshold.
+                </span>
+
+            </div>
+
+
+            <div class="feature-item">
+
+                <i class="bi bi-check-circle"></i>
+
+                <span>
+                    <strong>Stock Sufficient:</strong>
+                    Current inventory is sufficient
+                    compared with predicted demand.
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- QUICK ACTIONS -->
+    <!-- ================================================= -->
+
+    <div class="quick-actions">
+
+        <h3>
+            Quick Actions
+        </h3>
+
+
+        <div class="action-buttons">
+
+            <a
+                href="{% url 'ai_forecast' %}"
+                class="action-button"
+            >
+
+                <i class="bi bi-robot"></i>
+
+                AI Forecast
+
+            </a>
+
+
+            <a
+                href="{% url 'products' %}"
+                class="action-button"
+            >
+
+                <i class="bi bi-box-seam"></i>
+
+                View Products
+
+            </a>
+
+
+            <a
+                href="{% url 'reports' %}"
+                class="action-button"
+            >
+
+                <i class="bi bi-file-earmark-bar-graph"></i>
+
+                View Reports
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,180 @@
+<!-- ==============================
+     TOP NAVBAR
+     ============================== -->
+
+<header class="top-navbar">
+
+    <!-- Sidebar Toggle -->
+    <button
+        type="button"
+        class="sidebar-toggle"
+        id="sidebarToggle"
+        aria-label="Toggle sidebar"
+        title="Toggle sidebar">
+
+        <i class="bi bi-list"></i>
+
+    </button>
+
+
+    <!-- Page / Brand Area -->
+    <div class="navbar-brand-area">
+
+        <span class="navbar-brand-name">
+            AI Retail Inventory
+        </span>
+
+        <span class="navbar-divider">
+            /
+        </span>
+
+        <span
+            class="navbar-page-name"
+            id="currentPageName">
+
+            Dashboard
+
+        </span>
+
+    </div>
+
+
+    <!-- Right Side Actions -->
+    <div class="navbar-actions">
+
+
+        <!-- Search -->
+        <button
+            type="button"
+            class="navbar-icon-button"
+            title="Search"
+            aria-label="Search">
+
+            <i class="bi bi-search"></i>
+
+        </button>
+
+
+        <!-- Notifications -->
+        <!-- Notifications -->
+<a
+    href="{% url 'alerts' %}"
+    class="navbar-icon-button notification-button"
+    title="Notifications"
+    aria-label="Notifications">
+
+    <i class="bi bi-bell"></i>
+
+    {% if total_alerts > 0 %}
+        <span class="notification-badge">
+            {{ total_alerts }}
+        </span>
+    {% endif %}
+
+</a>
+
+
+        <!-- Theme Toggle -->
+        <button
+            type="button"
+            class="navbar-icon-button"
+            id="themeToggle"
+            title="Toggle theme"
+            aria-label="Toggle dark and light theme">
+
+            <i class="bi bi-moon"></i>
+
+        </button>
+
+
+        <!-- User Profile -->
+        <div class="user-profile">
+
+
+            <!-- Avatar -->
+            <div class="user-avatar">
+
+                <i class="bi bi-person"></i>
+
+            </div>
+
+
+            <!-- User Information -->
+            <div class="user-info">
+
+                <span class="user-name">
+                    User
+                </span>
+
+                <span class="user-role">
+                    Administrator
+                </span>
+
+            </div>
+
+
+            <!-- Profile Menu Button -->
+            <button
+                type="button"
+                class="profile-menu-button"
+                id="profileMenuButton"
+                aria-label="Open profile menu">
+
+                <i class="bi bi-chevron-down"></i>
+
+            </button>
+
+
+            <!-- Profile Dropdown -->
+            <div
+                class="profile-dropdown"
+                id="profileDropdown">
+
+
+                <!-- Profile -->
+                <a href="#">
+                    <i class="bi bi-person"></i>
+                    <span>My Profile</span>
+                </a>
+
+
+                <!-- Settings -->
+                <a href="#">
+                    <i class="bi bi-gear"></i>
+                    <span>Settings</span>
+                </a>
+
+
+                <div class="dropdown-divider"></div>
+
+
+                <!-- Logout -->
+                <form
+                    method="post"
+                    action="{% url 'logout' %}"
+                    class="logout-form">
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="dropdown-item logout-item">
+
+                        <i class="bi bi-box-arrow-right"></i>
+
+                        <span>
+                            Logout
+                        </span>
+
+                    </button>
+
+                </form>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>

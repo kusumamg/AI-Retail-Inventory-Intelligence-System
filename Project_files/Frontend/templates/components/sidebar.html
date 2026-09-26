@@ -1,0 +1,313 @@
+<!-- ==============================
+     SIDEBAR
+     ============================== -->
+{% load static %}
+
+<aside class="sidebar" id="sidebar">
+
+    <!-- ==============================
+         SIDEBAR BRAND
+         ============================== -->
+
+    <div class="sidebar-brand">
+
+        <div class="sidebar-logo">
+            <img
+                src="{% static 'images/logo-placeholder.png' %}"
+                alt="AI Retail Inventory Logo">
+        </div>
+
+        <div class="sidebar-brand-text">
+
+            <span class="brand-title">
+                Retail IQ
+            </span>
+
+            <span class="brand-subtitle">
+                Inventory Intelligence
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================
+         SIDEBAR NAVIGATION
+         ============================== -->
+
+    <nav class="sidebar-navigation">
+
+        <!-- MAIN -->
+        <div class="sidebar-section-title">
+            MAIN
+        </div>
+
+
+        <!-- HOME -->
+<a
+    href="{% url 'dashboard' %}"
+    class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+    title="Home">
+
+    <span class="sidebar-icon">
+        <i class="bi bi-house-door"></i>
+    </span>
+
+    <span class="sidebar-link-text">
+        Home
+    </span>
+
+</a>
+
+        <!-- INVENTORY -->
+
+        <div class="sidebar-menu-item">
+
+            <!-- Main Inventory -->
+
+            <a
+    href="{% url 'inventory' %}"
+    class="sidebar-link {% if request.resolver_match.url_name == 'inventory' %}active{% endif %}">
+
+                <span class="sidebar-icon">
+                    <i class="bi bi-box-seam"></i>
+                </span>
+
+                <span class="sidebar-link-text">
+                    Inventory
+                </span>
+
+            </a>
+
+
+            <!-- Inventory Submenu -->
+
+            <div class="sidebar-submenu">
+
+                <a
+    href="{% url 'products' %}"
+    class="sidebar-sub-link {% if request.resolver_match.url_name == 'products' %}active{% endif %}">
+
+                    <i class="bi bi-boxes"></i>
+
+                    <span>
+                        Products
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- AI FORECAST -->
+
+      <a
+    href="{% url 'ai_forecast' %}"
+    class="sidebar-link {% if request.resolver_match.url_name == 'ai_forecast' %}active{% endif %}"
+    title="AI Demand Forecast">
+
+    <span class="sidebar-icon">
+        <i class="bi bi-robot"></i>
+    </span>
+
+    <span class="sidebar-link-text">
+        AI Forecast
+    </span>
+
+</a>
+
+        <!-- ANALYTICS -->
+
+        <a
+    href="{% url 'analytics' %}"
+    class="sidebar-link {% if request.resolver_match.url_name == 'analytics' %}active{% endif %}"
+    title="Analytics">
+
+            <span class="sidebar-icon">
+                <i class="bi bi-bar-chart-line"></i>
+            </span>
+
+            <span class="sidebar-link-text">
+                Analytics
+            </span>
+
+        </a>
+
+
+        <!-- REPORTS -->
+
+        <a
+    href="{% url 'reports' %}"
+    class="sidebar-link {% if request.resolver_match.url_name == 'reports' %}active{% endif %}"
+    title="Reports">
+
+            <span class="sidebar-icon">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+            </span>
+
+            <span class="sidebar-link-text">
+                Reports
+            </span>
+
+        </a>
+
+
+        <!-- ALERTS -->
+
+       <a href="{% url 'alerts' %}"
+   class="sidebar-link {% if request.resolver_match.url_name == 'alerts' %}active{% endif %}">
+    <i class="bi bi-bell sidebar-icon"></i>
+    <span class="sidebar-link-text">Alerts</span>
+
+    {% if total_alerts > 0 %}
+        <span class="alert-badge">{{ total_alerts }}</span>
+    {% endif %}
+</a>
+
+
+        <!-- ==============================
+             ADMIN SECTION
+             ============================== -->
+
+        <div class="sidebar-section-title admin-only">
+            ADMINISTRATION
+        </div>
+
+
+        <!-- USERS -->
+<a
+    href="{% url 'users' %}"
+    class="sidebar-link admin-only {% if request.resolver_match.url_name == 'users' %}active{% endif %}"
+    title="Users">
+
+    <span class="sidebar-icon">
+        <i class="bi bi-people"></i>
+    </span>
+
+    <span class="sidebar-link-text">
+        Users
+    </span>
+
+</a>
+
+
+
+
+        <!-- STORES -->
+
+<a
+    href="{% url 'stores' %}"
+    class="sidebar-link admin-only {% if request.resolver_match.url_name == 'stores' %}active{% endif %}"
+    title="Stores">
+
+    <span class="sidebar-icon">
+        <i class="bi bi-shop"></i>
+    </span>
+
+    <span class="sidebar-link-text">
+        Stores
+    </span>
+
+</a>
+
+
+        <!-- SYSTEM MANAGEMENT -->
+<a
+    href="{% url 'system_management' %}"
+    class="sidebar-link admin-only {% if request.resolver_match.url_name == 'system_management' %}active{% endif %}"
+    title="System Management">
+
+    <span class="sidebar-icon">
+        <i class="bi bi-sliders"></i>
+    </span>
+
+    <span class="sidebar-link-text">
+        System Management
+    </span>
+
+</a>
+
+        <!-- ==============================
+             SETTINGS
+             ============================== -->
+
+        <div class="sidebar-section-title">
+            SYSTEM
+        </div>
+
+
+        <!-- SETTINGS -->
+
+<a
+    href="{% url 'settings' %}"
+    class="sidebar-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}"
+    title="Settings">
+
+    <span class="sidebar-icon">
+        <i class="bi bi-gear"></i>
+    </span>
+
+    <span class="sidebar-link-text">
+        Settings
+    </span>
+
+</a>
+
+    </nav>
+
+
+    <!-- ==============================
+         SIDEBAR BOTTOM
+         ============================== -->
+
+    <div class="sidebar-bottom">
+
+        <!-- HELP -->
+
+        <a
+            href="#"
+            class="sidebar-link"
+            title="Help & Support">
+
+            <span class="sidebar-icon">
+                <i class="bi bi-question-circle"></i>
+            </span>
+
+            <span class="sidebar-link-text">
+                Help & Support
+            </span>
+
+        </a>
+
+
+        <!-- LOGOUT -->
+
+        <form
+            method="post"
+            action="{% url 'logout' %}"
+            class="sidebar-logout-form">
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="sidebar-link logout-sidebar-link">
+
+                <span class="sidebar-icon">
+                    <i class="bi bi-box-arrow-right"></i>
+                </span>
+
+                <span class="sidebar-link-text">
+                    Logout
+                </span>
+
+            </button>
+
+        </form>
+
+    </div>
+
+</aside>

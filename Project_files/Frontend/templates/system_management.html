@@ -1,0 +1,627 @@
+{% extends "base.html" %}
+
+{% block title %}
+System Management | RetailIQ
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- ================================================= -->
+    <!-- PAGE HEADER -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-header">
+
+        <div>
+
+            <span class="dashboard-label">
+                SYSTEM ADMINISTRATION
+            </span>
+
+            <h1>
+                System Management
+            </h1>
+
+            <p>
+                Monitor and manage the configuration and core
+                components of the RetailIQ inventory intelligence system.
+            </p>
+
+        </div>
+
+        <div class="dashboard-date">
+
+            <i class="bi bi-sliders"></i>
+
+            System
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- SYSTEM OVERVIEW -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-cards">
+
+        <div class="dashboard-card">
+
+            <div class="card-icon">
+                <i class="bi bi-server"></i>
+            </div>
+
+            <div class="card-content">
+
+                <span class="card-title">
+                    System Status
+                </span>
+
+                <h2>
+                    Active
+                </h2>
+
+                <p>
+                    RetailIQ is running normally
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <div class="card-icon">
+                <i class="bi bi-box-seam"></i>
+            </div>
+
+            <div class="card-content">
+
+                <span class="card-title">
+                    Inventory Module
+                </span>
+
+                <h2>
+                    Active
+                </h2>
+
+                <p>
+                    Product and stock management
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <div class="card-icon">
+                <i class="bi bi-robot"></i>
+            </div>
+
+            <div class="card-content">
+
+                <span class="card-title">
+                    AI Forecasting
+                </span>
+
+                <h2>
+                    Ready
+                </h2>
+
+                <p>
+                    Random Forest demand prediction
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <div class="card-icon">
+                <i class="bi bi-database"></i>
+            </div>
+
+            <div class="card-content">
+
+                <span class="card-title">
+                    Database
+                </span>
+
+                <h2>
+                    Connected
+                </h2>
+
+                <p>
+                    Inventory data storage
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- CORE SYSTEM MODULES -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h3>
+                    Core System Modules
+                </h3>
+
+                <p>
+                    Main components currently available in RetailIQ.
+                </p>
+
+            </div>
+
+            <i class="bi bi-grid"></i>
+
+        </div>
+
+
+        <div class="system-module-grid">
+
+
+            <!-- Inventory -->
+
+            <div class="system-module-card">
+
+                <div class="system-module-icon">
+                    <i class="bi bi-boxes"></i>
+                </div>
+
+                <div>
+
+                    <h4>
+                        Inventory Management
+                    </h4>
+
+                    <p>
+                        Manage products, stock levels,
+                        pricing and inventory information.
+                    </p>
+
+                    <span class="system-status active">
+                        Active
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- AI Forecast -->
+
+            <div class="system-module-card">
+
+                <div class="system-module-icon">
+                    <i class="bi bi-robot"></i>
+                </div>
+
+                <div>
+
+                    <h4>
+                        AI Demand Forecasting
+                    </h4>
+
+                    <p>
+                        Predict product demand using the
+                        trained Random Forest model.
+                    </p>
+
+                    <span class="system-status ready">
+                        Ready
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Analytics -->
+
+            <div class="system-module-card">
+
+                <div class="system-module-icon">
+                    <i class="bi bi-bar-chart"></i>
+                </div>
+
+                <div>
+
+                    <h4>
+                        Analytics
+                    </h4>
+
+                    <p>
+                        Analyze inventory levels, demand
+                        predictions and store information.
+                    </p>
+
+                    <span class="system-status active">
+                        Active
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Reports -->
+
+            <div class="system-module-card">
+
+                <div class="system-module-icon">
+                    <i class="bi bi-file-earmark-bar-graph"></i>
+                </div>
+
+                <div>
+
+                    <h4>
+                        Reports
+                    </h4>
+
+                    <p>
+                        View inventory reports and export
+                        product information as CSV.
+                    </p>
+
+                    <span class="system-status active">
+                        Active
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Smart Alerts -->
+
+            <div class="system-module-card">
+
+                <div class="system-module-icon">
+                    <i class="bi bi-bell"></i>
+                </div>
+
+                <div>
+
+                    <h4>
+                        Smart Alerts
+                    </h4>
+
+                    <p>
+                        Identify out-of-stock, low-stock and
+                        replenishment requirements.
+                    </p>
+
+                    <span class="system-status active">
+                        Active
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- User Management -->
+
+            <div class="system-module-card">
+
+                <div class="system-module-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+
+                <div>
+
+                    <h4>
+                        User & Store Management
+                    </h4>
+
+                    <p>
+                        Manage system users, roles and
+                        registered retail stores.
+                    </p>
+
+                    <span class="system-status active">
+                        Active
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- AI MODEL INFORMATION -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h3>
+                    AI Model Information
+                </h3>
+
+                <p>
+                    Configuration of the demand forecasting component.
+                </p>
+
+            </div>
+
+            <i class="bi bi-cpu"></i>
+
+        </div>
+
+
+        <div class="system-info-grid">
+
+            <div class="system-info-item">
+
+                <span>
+                    Model
+                </span>
+
+                <strong>
+                    Random Forest
+                </strong>
+
+            </div>
+
+
+            <div class="system-info-item">
+
+                <span>
+                    Model Type
+                </span>
+
+                <strong>
+                    Regression
+                </strong>
+
+            </div>
+
+
+            <div class="system-info-item">
+
+                <span>
+                    Prediction Target
+                </span>
+
+                <strong>
+                    Units Sold / Demand
+                </strong>
+
+            </div>
+
+
+            <div class="system-info-item">
+
+                <span>
+                    Forecasting Module
+                </span>
+
+                <strong>
+                    AI Demand Forecasting
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- APPLICATION INFORMATION -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h3>
+                    Application Information
+                </h3>
+
+                <p>
+                    Current technology configuration of RetailIQ.
+                </p>
+
+            </div>
+
+            <i class="bi bi-info-circle"></i>
+
+        </div>
+
+
+        <div class="system-info-grid">
+
+            <div class="system-info-item">
+
+                <span>
+                    Application
+                </span>
+
+                <strong>
+                    RetailIQ
+                </strong>
+
+            </div>
+
+
+            <div class="system-info-item">
+
+                <span>
+                    Backend
+                </span>
+
+                <strong>
+                    Django / Python
+                </strong>
+
+            </div>
+
+
+            <div class="system-info-item">
+
+                <span>
+                    Database
+                </span>
+
+                <strong>
+                    SQLite
+                </strong>
+
+            </div>
+
+
+            <div class="system-info-item">
+
+                <span>
+                    Frontend
+                </span>
+
+                <strong>
+                    HTML / CSS / JavaScript
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- SYSTEM HEALTH -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h3>
+                    System Health
+                </h3>
+
+                <p>
+                    Current operational status of major components.
+                </p>
+
+            </div>
+
+            <i class="bi bi-heart-pulse"></i>
+
+        </div>
+
+
+        <div class="system-health-list">
+
+            <div class="system-health-item">
+
+                <div>
+
+                    <i class="bi bi-database"></i>
+
+                    <span>
+                        Database
+                    </span>
+
+                </div>
+
+                <span class="system-status active">
+                    Connected
+                </span>
+
+            </div>
+
+
+            <div class="system-health-item">
+
+                <div>
+
+                    <i class="bi bi-box-seam"></i>
+
+                    <span>
+                        Inventory Service
+                    </span>
+
+                </div>
+
+                <span class="system-status active">
+                    Running
+                </span>
+
+            </div>
+
+
+            <div class="system-health-item">
+
+                <div>
+
+                    <i class="bi bi-robot"></i>
+
+                    <span>
+                        AI Prediction Model
+                    </span>
+
+                </div>
+
+                <span class="system-status ready">
+                    Ready
+                </span>
+
+            </div>
+
+
+            <div class="system-health-item">
+
+                <div>
+
+                    <i class="bi bi-shield-check"></i>
+
+                    <span>
+                        Authentication
+                    </span>
+
+                </div>
+
+                <span class="system-status active">
+                    Enabled
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

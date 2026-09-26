@@ -1,0 +1,524 @@
+{% extends "base.html" %}
+
+{% block title %}
+RetailIQ | Analytics
+{% endblock %}
+
+{% block content %}
+
+<div class="analytics-page">
+
+    <!-- =====================================================
+         ANALYTICS HERO
+         ===================================================== -->
+
+    <section class="analytics-hero">
+
+        <div class="analytics-hero-content">
+
+            <span class="analytics-eyebrow">
+                BUSINESS INTELLIGENCE
+            </span>
+
+            <h1>Analytics</h1>
+
+            <p>
+                Get deep insights into inventory performance with
+                category-wise analysis, stock trends and AI-powered
+                demand predictions.
+            </p>
+
+        </div>
+
+        <div class="analytics-hero-visual">
+
+            <div class="analytics-bars">
+
+                <span class="analytics-bar bar-small"></span>
+                <span class="analytics-bar bar-medium"></span>
+                <span class="analytics-bar bar-large"></span>
+                <span class="analytics-bar bar-tall"></span>
+
+                <div class="analytics-growth-line">
+                    <i class="bi bi-arrow-up-right"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="analytics-hero-message">
+
+            <div class="analytics-message-icon">
+                <i class="bi bi-lightbulb"></i>
+            </div>
+
+            <div>
+                <strong>
+                    Make Smarter<br>
+                    Inventory Decisions
+                </strong>
+
+                <p>
+                    Analyze trends, identify opportunities
+                    and keep your stock optimised.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SUMMARY CARDS
+         ===================================================== -->
+
+    <section class="analytics-summary-grid">
+
+        <div class="analytics-summary-card">
+
+            <div class="summary-icon summary-gold">
+                <i class="bi bi-box"></i>
+            </div>
+
+            <div class="summary-content">
+
+                <span class="summary-label">
+                    TOTAL PRODUCTS
+                </span>
+
+                <strong>
+                    {{ total_products|default:"0" }}
+                </strong>
+
+                <small>
+                    Across all active categories
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="analytics-summary-card">
+
+            <div class="summary-icon summary-green">
+                <i class="bi bi-boxes"></i>
+            </div>
+
+            <div class="summary-content">
+
+                <span class="summary-label">
+                    TOTAL STOCK
+                </span>
+
+                <strong>
+                    {{ total_stock|default:"0" }}
+                </strong>
+
+                <small>
+                    Units currently available
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="analytics-summary-card">
+
+            <div class="summary-icon summary-warning">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+
+            <div class="summary-content">
+
+                <span class="summary-label">
+                    LOW STOCK ITEMS
+                </span>
+
+                <strong class="summary-danger-text">
+                    {{ low_stock|default:"0" }}
+                </strong>
+
+                <small>
+                    Need attention
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="analytics-summary-card">
+
+            <div class="summary-icon summary-red">
+                <i class="bi bi-x-circle"></i>
+            </div>
+
+            <div class="summary-content">
+
+                <span class="summary-label">
+                    OUT OF STOCK ITEMS
+                </span>
+
+                <strong class="summary-danger-text">
+                    {{ out_of_stock|default:"0" }}
+                </strong>
+
+                <small>
+                    Currently unavailable
+                </small>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CATEGORY-WISE STOCK VS DEMAND
+         ===================================================== -->
+
+    <section class="analytics-chart-card">
+
+        <div class="analytics-section-heading">
+
+            <div class="analytics-heading-icon blue-icon">
+                <i class="bi bi-bar-chart-line"></i>
+            </div>
+
+            <div>
+                <h2>
+                    Current Stock vs Predicted Demand
+                    <span>(Category Wise)</span>
+                </h2>
+
+                <p>
+                    Compare available stock with AI-predicted demand
+                    for each active category.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="analytics-chart">
+
+            <div class="chart-y-axis">
+
+                <span>250</span>
+                <span>200</span>
+                <span>150</span>
+                <span>100</span>
+                <span>50</span>
+                <span>0</span>
+
+            </div>
+
+
+            <div class="chart-area">
+
+                <div class="chart-grid-line line-1"></div>
+                <div class="chart-grid-line line-2"></div>
+                <div class="chart-grid-line line-3"></div>
+                <div class="chart-grid-line line-4"></div>
+                <div class="chart-grid-line line-5"></div>
+                <div class="chart-grid-line line-6"></div>
+
+
+                <div class="chart-columns">
+
+                    {% for category in category_data %}
+
+                    <div class="chart-category">
+
+                        <div class="chart-column-pair">
+
+                            <div class="chart-column stock-column"
+                                 style="height: {{ category.chart_stock_height|default:0 }}%;">
+                                <strong>{{ category.stock }}</strong>
+                            </div>
+
+                            <div class="chart-column demand-column"
+                                 style="height: {{ category.chart_demand_height|default:0 }}%;">
+                                <strong>{{ category.demand|floatformat:1 }}</strong>
+                            </div>
+
+                        </div>
+
+                        <span class="chart-category-name">
+                            {{ category.name }}
+                        </span>
+
+                    </div>
+
+                    {% empty %}
+
+                    <div class="analytics-empty-chart">
+                        No category data available yet.
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="chart-legend">
+
+            <span>
+                <i class="legend-dot legend-stock"></i>
+                Current Stock
+            </span>
+
+            <span>
+                <i class="legend-dot legend-demand"></i>
+                Predicted Demand
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CATEGORY-WISE ANALYSIS TABLES
+         ===================================================== -->
+
+    <section class="category-analysis-section">
+
+        <div class="category-analysis-heading">
+
+            <span>
+                CATEGORY-WISE INVENTORY ANALYSIS
+            </span>
+
+            <h2>
+                Stock Status by Category
+            </h2>
+
+            <p>
+                Detailed inventory and AI demand analysis for
+                every active retail category.
+            </p>
+
+        </div>
+
+
+        {% for category in category_data %}
+
+        <article class="category-analysis-card"
+                 id="category-{{ forloop.counter }}">
+
+            <!-- Category heading -->
+
+            <div class="category-card-header">
+
+                <div class="category-title-group">
+
+                    <div class="category-icon">
+
+                        {% if category.name == "Electronics" %}
+                            <i class="bi bi-cpu"></i>
+                        {% elif category.name == "Clothing" %}
+                            <i class="bi bi-person"></i>
+                        {% elif category.name == "Groceries" %}
+                            <i class="bi bi-basket"></i>
+                        {% elif category.name == "Toys" %}
+                            <i class="bi bi-puzzle"></i>
+                        {% elif category.name == "Furniture" %}
+                            <i class="bi bi-house"></i>
+                        {% else %}
+                            <i class="bi bi-grid"></i>
+                        {% endif %}
+
+                    </div>
+
+                    <div>
+
+                        <span class="category-eyebrow">
+                            INVENTORY CATEGORY
+                        </span>
+
+                        <h3>
+                            {{ category.name }}
+                        </h3>
+
+                        <p>
+                            {{ category.product_count }}
+                            product{{ category.product_count|pluralize }}
+                            included in this category
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="category-summary">
+
+                    <div class="category-mini-stat">
+                        <span>Current Stock</span>
+                        <strong>{{ category.stock }}</strong>
+                    </div>
+
+                    <div class="category-mini-stat">
+                        <span>Predicted Demand</span>
+                        <strong>{{ category.demand|floatformat:2 }}</strong>
+                    </div>
+
+                    <div class="category-mini-stat">
+                        <span>Coverage</span>
+                        <strong>{{ category.coverage|floatformat:1 }}%</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Category table -->
+
+            <div class="category-table-wrapper">
+
+                <table class="category-analysis-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>SUBCATEGORY</th>
+
+                            <th>REGION</th>
+
+                            <th>CURRENT STOCK</th>
+
+                            <th>PREDICTED DEMAND</th>
+
+                            <th>STATUS</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for item in category.items %}
+
+                        <tr>
+
+                            <td>
+                                <strong class="subcategory-name">
+                                    {{ item.subcategory }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                <span class="region-name">
+                                    {{ item.region }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <strong class="stock-value">
+                                    {{ item.inventory }}
+                                </strong>
+                                <span class="unit-label">
+                                    units
+                                </span>
+                            </td>
+
+                            <td>
+                                <strong class="demand-value">
+                                    {{ item.predicted_demand|floatformat:2 }}
+                                </strong>
+                            </td>
+
+                            <td>
+
+                                {% if item.status == "IN_STOCK" %}
+
+                                <span class="analytics-status status-in-stock">
+                                    <i class="bi bi-check-circle"></i>
+                                    In Stock
+                                </span>
+
+                                {% elif item.status == "LOW_STOCK" %}
+
+                                <span class="analytics-status status-low-stock">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    Low Stock
+                                </span>
+
+                                {% elif item.status == "OUT_OF_STOCK" %}
+
+                                <span class="analytics-status status-out-stock">
+                                    <i class="bi bi-x-circle"></i>
+                                    Out of Stock
+                                </span>
+
+                                {% else %}
+
+                                <span class="analytics-status status-low-stock">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    Attention
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="5" class="category-empty-row">
+                                No products available in this category.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </article>
+
+        {% empty %}
+
+        <div class="analytics-no-data">
+
+            <i class="bi bi-bar-chart"></i>
+
+            <h3>
+                No Category Data Available
+            </h3>
+
+            <p>
+                Add inventory products to generate category-wise
+                analytics.
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </section>
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,115 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="AI Retail Inventory Intelligence System">
+
+    <meta name="author"
+          content="AI Retail Inventory Intelligence System">
+
+    <title>
+        {% block title %}
+        AI Retail Inventory Intelligence System
+        {% endblock %}
+    </title>
+
+    <!-- Favicon -->
+    <link rel="icon"
+          type="image/png"
+          href="{% static 'images/logo-placeholder.png' %}">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet"
+          href="{% static 'css/style.css' %}">
+
+    <!-- Page-specific CSS -->
+    {% block extra_css %}
+    {% endblock %}
+</head>
+
+
+<body>
+
+    <!-- ==============================
+         MAIN APPLICATION WRAPPER
+         ============================== -->
+
+    <div class="app-wrapper">
+
+
+        <!-- ==============================
+             SIDEBAR
+             ============================== -->
+
+        {% include 'components/sidebar.html' %}
+
+
+        <!-- ==============================
+             MAIN CONTENT AREA
+             ============================== -->
+
+        <div class="main-wrapper">
+
+
+            <!-- ==============================
+                 TOP NAVBAR
+                 ============================== -->
+
+            {% include 'components/navbar.html' %}
+
+
+            <!-- ==============================
+                 PAGE CONTENT
+                 ============================== -->
+
+            <main class="main-content">
+
+                {% block content %}
+
+                <!-- Individual pages will appear here -->
+
+                {% endblock %}
+
+            </main>
+
+
+            <!-- ==============================
+                 FOOTER
+                 ============================== -->
+
+            {% include 'components/footer.html' %}
+
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================
+         GLOBAL JAVASCRIPT
+         ============================== -->
+
+    <script src="{% static 'js/script.js' %}"></script>
+
+
+    <!-- Page-specific JavaScript -->
+
+    {% block extra_js %}
+    {% endblock %}
+
+
+</body>
+
+</html>
