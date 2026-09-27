@@ -174,19 +174,19 @@ Smart Alerts | RetailIQ
                 All Alerts
             </a>
 
-            <a href="{% url 'alerts' %}?type=REPLENISHMENT"
+            <a href="{% url 'alerts' %}?type=REPLENISHMENT{% if selected_category %}&category={{ selected_category|urlencode }}{% endif %}"
                class="alert-filter-button {% if alert_filter == 'REPLENISHMENT' %}active{% endif %}">
                 <i class="bi bi-arrow-repeat"></i>
                 Replenishment
             </a>
 
-            <a href="{% url 'alerts' %}?type=LOW_STOCK"
+            <a href="{% url 'alerts' %}?type=LOW_STOCK{% if selected_category %}&category={{ selected_category|urlencode }}{% endif %}"
                class="alert-filter-button {% if alert_filter == 'LOW_STOCK' %}active{% endif %}">
                 <i class="bi bi-exclamation-triangle"></i>
                 Low Stock
             </a>
 
-            <a href="{% url 'alerts' %}?type=OUT_OF_STOCK"
+            <a href="{% url 'alerts' %}?type=OUT_OF_STOCK{% if selected_category %}&category={{ selected_category|urlencode }}{% endif %}"
                class="alert-filter-button {% if alert_filter == 'OUT_OF_STOCK' %}active{% endif %}">
                 <i class="bi bi-x-circle"></i>
                 Out of Stock
@@ -195,274 +195,342 @@ Smart Alerts | RetailIQ
         </div>
 
 
-        <div class="products-table-container">
+        <!-- CATEGORY FILTER -->
 
-            <table class="analytics-table">
+        <form method="get" class="alert-category-filter">
 
-                <thead>
+            <div class="alert-category-filter-group">
 
-                    <tr>
+                <label for="category">
+                    Filter by Category
+                </label>
 
-                        <th>
-                            Product
-                        </th>
+                <select
+                    name="category"
+                    id="category"
+                    onchange="this.form.submit()"
+                >
 
-                        <th>
-                            Store
-                        </th>
+                    <option value="">
+                        All Categories
+                    </option>
 
-                        <th>
-                            Category
-                        </th>
+                    {% for category in available_categories %}
 
-                        <th>
-                            Subcategory
-                        </th>
-
-                        <th>
-                            Current Stock
-                        </th>
-
-                        <th>
-                            Predicted Demand
-                        </th>
-
-                        <th>
-                            Coverage
-                        </th>
-
-                        <th>
-                            Recommended Reorder
-                        </th>
-
-                        <th>
-                            Alert
-                        </th>
-
-                        <th>
-                            Priority
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                    {% for alert in alert_data %}
-
-                    <tr>
-
-                        <!-- PRODUCT -->
-
-                        <td>
-
-                            <strong>
-                                {{ alert.product_id }}
-                            </strong>
-
-                        </td>
-
-
-                        <!-- STORE -->
-
-                        <td>
-
-                            {{ alert.store }}
-
-                            <small>
-                                ({{ alert.store_code }})
-                            </small>
-
-                        </td>
-
-
-                        <!-- CATEGORY -->
-
-                        <td>
-                            {{ alert.category }}
-                        </td>
-
-
-                        <!-- SUBCATEGORY -->
-
-                        <td>
-                            {{ alert.subcategory }}
-                        </td>
-
-
-                        <!-- CURRENT STOCK -->
-
-                        <td>
-
-                            <strong>
-                                {{ alert.inventory }}
-                            </strong>
-
-                            units
-
-                        </td>
-
-
-                        <!-- PREDICTED DEMAND -->
-
-                        <td>
-
-                            {% if alert.predicted_demand > 0 %}
-
-                                {{ alert.predicted_demand|floatformat:2 }}
-
-                                units
-
-                            {% else %}
-
-                                Not available
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- COVERAGE -->
-
-                        <td>
-
-                            {% if alert.predicted_demand > 0 %}
-
-                                {{ alert.demand_coverage }}%
-
-                            {% else %}
-
-                                -
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- RECOMMENDED REORDER -->
-
-                        <td>
-
-                            {% if alert.recommended_reorder > 0 %}
-
-                                <strong>
-                                    {{ alert.recommended_reorder }}
-                                </strong>
-
-                                units
-
-                            {% else %}
-
-                                -
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- ALERT -->
-
-                        <td>
-
-                            {% if alert.alert_type == "OUT_OF_STOCK" %}
-
-                                <span class="analytics-badge danger">
-
-                                    <i class="bi bi-x-circle"></i>
-
-                                    Out of Stock
-
-                                </span>
-
-
-                            {% elif alert.alert_type == "REPLENISHMENT" %}
-
-                                <span class="analytics-badge danger">
-
-                                    <i class="bi bi-arrow-repeat"></i>
-
-                                    Replenishment Needed
-
-                                </span>
-
-
-                            {% elif alert.alert_type == "LOW_STOCK" %}
-
-                                <span class="analytics-badge warning">
-
-                                    <i class="bi bi-exclamation-triangle"></i>
-
-                                    Low Stock
-
-                                </span>
-
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- PRIORITY -->
-
-                        <td>
-
-                            {% if alert.priority == "High" %}
-
-                                <span class="analytics-badge danger">
-                                    High
-                                </span>
-
-                            {% elif alert.priority == "Medium" %}
-
-                                <span class="analytics-badge warning">
-                                    Medium
-                                </span>
-
-                            {% else %}
-
-                                <span class="analytics-badge">
-                                    Normal
-                                </span>
-
-                            {% endif %}
-
-                        </td>
-
-                    </tr>
-
-                    {% empty %}
-
-                    <tr>
-
-                        <td
-                            colspan="10"
-                            class="forecast-empty"
+                        <option
+                            value="{{ category }}"
+                            {% if selected_category == category %}selected{% endif %}
                         >
-
-                            <i class="bi bi-check-circle"></i>
-
-                            <strong>
-                                No Inventory Alerts
-                            </strong>
-
-                            <span>
-                                All currently tracked products
-                                have sufficient inventory.
-                            </span>
-
-                        </td>
-
-                    </tr>
+                            {{ category }}
+                        </option>
 
                     {% endfor %}
 
-                </tbody>
+                </select>
 
-            </table>
+            </div>
 
-        </div>
+
+            <!-- Preserve alert type when changing category -->
+
+            {% if alert_filter != "ALL" %}
+
+                <input
+                    type="hidden"
+                    name="type"
+                    value="{{ alert_filter }}"
+                >
+
+            {% endif %}
+
+        </form>
+
+
+        <!-- CATEGORY-WISE ALERT REPORTS -->
+
+        {% for category_report in category_alerts %}
+
+            <div class="category-alert-section">
+
+                <!-- CATEGORY HEADER -->
+
+                <div class="category-alert-header">
+
+                    <div>
+
+                        <span class="dashboard-label">
+                            CATEGORY ALERTS
+                        </span>
+
+                        <h3>
+                            {{ category_report.category }}
+                        </h3>
+
+                        <p>
+                            {{ category_report.alerts|length }}
+                            active alert{{ category_report.alerts|length|pluralize }}
+                            in this category.
+                        </p>
+
+                    </div>
+
+                    <div class="category-alert-count">
+
+                        <i class="bi bi-bell"></i>
+
+                        {{ category_report.alerts|length }}
+
+                    </div>
+
+                </div>
+
+
+                <!-- CATEGORY TABLE -->
+
+                <div class="products-table-container">
+
+                    <table class="analytics-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Product</th>
+
+                                <th>Subcategory</th>
+
+                                <th>Store</th>
+
+                                <th>Region</th>
+
+                                <th>Current Stock</th>
+
+                                <th>Predicted Demand</th>
+
+                                <th>Coverage</th>
+
+                                <th>Recommended Reorder</th>
+
+                                <th>Alert</th>
+
+                                <th>Priority</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for alert in category_report.alerts %}
+
+                                <tr>
+
+                                    <!-- PRODUCT -->
+
+                                    <td>
+
+                                        <strong>
+                                            {{ alert.product_id }}
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- SUBCATEGORY -->
+
+                                    <td>
+                                        {{ alert.subcategory }}
+                                    </td>
+
+
+                                    <!-- STORE -->
+
+                                    <td>
+
+                                        {{ alert.store }}
+
+                                        <small>
+                                            ({{ alert.store_code }})
+                                        </small>
+
+                                    </td>
+
+
+                                    <!-- REGION -->
+
+                                    <td>
+                                        {{ alert.region }}
+                                    </td>
+
+
+                                    <!-- CURRENT STOCK -->
+
+                                    <td>
+
+                                        <strong>
+                                            {{ alert.inventory }}
+                                        </strong>
+
+                                        units
+
+                                    </td>
+
+
+                                    <!-- PREDICTED DEMAND -->
+
+                                    <td>
+
+                                        {% if alert.predicted_demand > 0 %}
+
+                                            {{ alert.predicted_demand|floatformat:2 }}
+
+                                            units
+
+                                        {% else %}
+
+                                            Not available
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- COVERAGE -->
+
+                                    <td>
+
+                                        {% if alert.predicted_demand > 0 %}
+
+                                            {{ alert.demand_coverage }}%
+
+                                        {% else %}
+
+                                            -
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- RECOMMENDED REORDER -->
+
+                                    <td>
+
+                                        {% if alert.recommended_reorder > 0 %}
+
+                                            <strong>
+                                                {{ alert.recommended_reorder }}
+                                            </strong>
+
+                                            units
+
+                                        {% else %}
+
+                                            -
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- ALERT -->
+
+                                    <td>
+
+                                        {% if alert.alert_type == "OUT_OF_STOCK" %}
+
+                                            <span class="analytics-badge danger">
+
+                                                <i class="bi bi-x-circle"></i>
+
+                                                Out of Stock
+
+                                            </span>
+
+
+                                        {% elif alert.alert_type == "REPLENISHMENT" %}
+
+                                            <span class="analytics-badge danger">
+
+                                                <i class="bi bi-arrow-repeat"></i>
+
+                                                Replenishment Needed
+
+                                            </span>
+
+
+                                        {% elif alert.alert_type == "LOW_STOCK" %}
+
+                                            <span class="analytics-badge warning">
+
+                                                <i class="bi bi-exclamation-triangle"></i>
+
+                                                Low Stock
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- PRIORITY -->
+
+                                    <td>
+
+                                        {% if alert.priority == "High" %}
+
+                                            <span class="analytics-badge danger">
+                                                High
+                                            </span>
+
+                                        {% elif alert.priority == "Medium" %}
+
+                                            <span class="analytics-badge warning">
+                                                Medium
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="analytics-badge">
+                                                Normal
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="forecast-empty">
+
+                <i class="bi bi-check-circle"></i>
+
+                <strong>
+                    No Inventory Alerts
+                </strong>
+
+                <span>
+                    No products match the selected
+                    category and alert filter.
+                </span>
+
+            </div>
+
+        {% endfor %}
 
     </div>
 

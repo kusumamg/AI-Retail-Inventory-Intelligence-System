@@ -13,7 +13,19 @@ from .ai_model import predict_demand
 from django.utils import timezone
 
 import math
+import io
 
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import mm
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle
+)
 
 
 # ============================================================
@@ -779,23 +791,49 @@ def inventory(request):
         }
     )
 
-# ============================================================
-# REPORTS
-# ============================================================
+
+
 @login_required
 def reports(request):
 
-    # ========================================================
+    # ============================================================
     # GET PRODUCTS
-    # ========================================================
+    # ============================================================
 
-    products = Product.objects.select_related(
-        "store"
-    ).all()
+    products = Product.objects.select_related("store").all()
 
-    # ========================================================
-    # BASIC INVENTORY STATISTICS
-    # ========================================================
+    # ============================================================
+    # FILTERS
+    # ============================================================
+
+    selected_category = request.GET.get("category", "")
+    selected_store = request.GET.get("store", "")
+    from_date = request.GET.get("from_date", "")
+    to_date = request.GET.get("to_date", "")
+
+    if selected_category:
+        products = products.filter(
+            category=selected_category
+        )
+
+    if selected_store:
+        products = products.filter(
+            store_id=selected_store
+        )
+
+    if from_date:
+        products = products.filter(
+            created_at__date__gte=from_date
+        )
+
+    if to_date:
+        products = products.filter(
+            created_at__date__lte=to_date
+        )
+
+    # ============================================================
+    # OVERALL REPORT SUMMARY
+    # ============================================================
 
     total_products = products.count()
 
@@ -804,168 +842,217 @@ def reports(request):
         for product in products
     )
 
-    low_stock = sum(
-        1
-        for product in products
-        if product.stock_status == "LOW_STOCK"
-    )
+    low_stock = products.filter(
+        inventory_level__gt=0,
+        inventory_level__lt=25
+    ).count()
 
-    out_of_stock = sum(
-        1
-        for product in products
-        if product.stock_status == "OUT_OF_STOCK"
-    )
+    out_of_stock = products.filter(
+        inventory_level=0
+    ).count()
 
-    # Products that are currently in stock
-    in_stock = (
-        total_products
-        - low_stock
-        - out_of_stock
-    )
+    # ============================================================
+    # CATEGORY REPORTS
+    # ============================================================
 
-    # ========================================================
-    # AI DEMAND STATISTICS
-    # ========================================================
+    category_order = [
+        "Electronics",
+        "Clothing",
+        "Groceries",
+        "Toys",
+        "Furniture",
+    ]
 
-    total_predicted_demand = sum(
-        product.predicted_demand or 0
-        for product in products
-    )
+    category_reports = []
 
-    average_predicted_demand = (
-        total_predicted_demand / total_products
-        if total_products > 0
-        else 0
-    )
+    for category_name in category_order:
 
-    # ========================================================
-    # PRODUCT REPORT DATA
-    # ========================================================
+        category_products = products.filter(
+            category=category_name
+        )
 
-    product_report = []
+        if not category_products.exists():
+            continue
 
-    for product in products:
+        # ------------------------------
+        # Category totals
+        # ------------------------------
 
-        # ----------------------------------------------------
-        # Demand Coverage
-        # ----------------------------------------------------
+        category_stock = sum(
+            product.inventory_level
+            for product in category_products
+        )
 
-        if (
-            product.predicted_demand
-            and product.predicted_demand > 0
-        ):
+        category_demand = sum(
+            product.predicted_demand or 0
+            for product in category_products
+        )
 
-            demand_coverage = (
-                product.inventory_level
-                / product.predicted_demand
+        category_low_stock = category_products.filter(
+            inventory_level__gt=0,
+            inventory_level__lt=25
+        ).count()
+
+        category_out_of_stock = category_products.filter(
+            inventory_level=0
+        ).count()
+
+        category_attention = (
+            category_low_stock +
+            category_out_of_stock
+        )
+
+        # ------------------------------
+        # Category coverage
+        # ------------------------------
+
+        if category_demand > 0:
+
+            category_coverage = (
+                category_stock /
+                category_demand
             ) * 100
 
         else:
 
-            demand_coverage = 0
+            category_coverage = 0
 
-        demand_coverage = round(
-            demand_coverage,
-            1
-        )
+        # ------------------------------
+        # Product rows
+        # ------------------------------
 
-        # ----------------------------------------------------
-        # Stock Percentage
-        # ----------------------------------------------------
+        product_rows = []
 
-        if total_stock > 0:
+        for product in category_products:
 
-            stock_percentage = (
-                product.inventory_level
-                / total_stock
-            ) * 100
+            if product.inventory_level == 0:
 
-        else:
+                status = "OUT_OF_STOCK"
 
-            stock_percentage = 0
+            elif product.inventory_level < 25:
 
-        stock_percentage = round(
-            stock_percentage,
-            1
-        )
+                status = "LOW_STOCK"
 
-        # ----------------------------------------------------
-        # Product Report
-        # ----------------------------------------------------
+            else:
 
-        product_report.append({
+                status = "IN_STOCK"
 
-            "product_id":
-                product.product_id,
+            if product.predicted_demand and product.predicted_demand > 0:
 
-            "store":
-                product.store.name,
+                demand_coverage = (
+                    product.inventory_level /
+                    product.predicted_demand
+                ) * 100
 
-            "store_code":
-                product.store.store_code,
+            else:
+
+                demand_coverage = 0
+
+            product_rows.append({
+
+                "product_id":
+                    product.product_id,
+
+                "subcategory":
+                    product.subcategory,
+
+                "store":
+                    product.store.name,
+
+                "store_code":
+                    product.store.store_code,
+
+                "region":
+                    product.region,
+
+                "inventory":
+                    product.inventory_level,
+
+                "predicted_demand":
+                    product.predicted_demand or 0,
+
+                "demand_coverage":
+                    round(
+                        demand_coverage,
+                        1
+                    ),
+
+                "status":
+                    status,
+            })
+
+        # ------------------------------
+        # Add category report
+        # ------------------------------
+
+        category_reports.append({
 
             "category":
-                product.category,
+                category_name,
 
-            "subcategory": 
-                product.subcategory,
+            "products":
+                product_rows,
 
-            "region":
-                product.region,
+            "total_products":
+                len(product_rows),
 
-            "inventory":
-                product.inventory_level,
+            "total_stock":
+                category_stock,
 
-            "price":
-                product.price,
+            "total_demand":
+                round(
+                    category_demand,
+                    2
+                ),
 
-            "discount":
-                product.discount,
+            "coverage":
+                round(
+                    category_coverage,
+                    1
+                ),
 
-            "predicted_demand":
-                product.predicted_demand,
+            "low_stock":
+                category_low_stock,
 
-            "demand_coverage":
-                demand_coverage,
+            "out_of_stock":
+                category_out_of_stock,
 
-            "stock_percentage":
-                stock_percentage,
-
-            "status":
-                product.stock_status,
-
+            "attention":
+                category_attention,
         })
 
-    # ========================================================
-    # REPORT GENERATED DATE
-    # ========================================================
+    # ============================================================
+    # AVAILABLE FILTER OPTIONS
+    # ============================================================
 
-    from django.utils import timezone
+    available_categories = (
+        Product.objects
+        .values_list(
+            "category",
+            flat=True
+        )
+        .distinct()
+        .order_by("category")
+    )
 
-    report_generated_at = timezone.now()
+    available_stores = (
+        Store.objects
+        .all()
+        .order_by("name")
+    )
 
-    # ========================================================
+    # ============================================================
     # CONTEXT
-    # ========================================================
+    # ============================================================
 
     context = {
 
-        "products":
-            products,
-
-        "product_report":
-            product_report,
-
+        # Overall summary
         "total_products":
             total_products,
 
         "total_stock":
             total_stock,
-
-        # IMPORTANT:
-        # This was missing in your previous code.
-        "in_stock":
-            in_stock,
 
         "low_stock":
             low_stock,
@@ -973,25 +1060,33 @@ def reports(request):
         "out_of_stock":
             out_of_stock,
 
-        "total_predicted_demand":
-            round(
-                total_predicted_demand,
-                2
-            ),
+        # Category reports
+        "category_reports":
+            category_reports,
 
-        "average_predicted_demand":
-            round(
-                average_predicted_demand,
-                2
-            ),
+        # Filters
+        "available_categories":
+            available_categories,
 
-        "report_generated_at":
-            report_generated_at,
+        "available_stores":
+            available_stores,
+
+        "selected_category":
+            selected_category,
+
+        "selected_store":
+            selected_store,
+
+        "from_date":
+            from_date,
+
+        "to_date":
+            to_date,
     }
 
-    # ========================================================
-    # RENDER REPORT
-    # ========================================================
+    # ============================================================
+    # RENDER
+    # ============================================================
 
     return render(
         request,
@@ -999,70 +1094,464 @@ def reports(request):
         context
     )
 
-
-# ============================================================
-# EXPORT REPORT AS CSV
-# ============================================================
-
-@login_required
 def export_report_csv(request):
+    products = Product.objects.all()
 
-    products = Product.objects.select_related("store").all()
+    selected_category = request.GET.get("category", "")
+    selected_store = request.GET.get("store", "")
+    from_date = request.GET.get("from_date", "")
+    to_date = request.GET.get("to_date", "")
 
-    response = HttpResponse(
-        content_type="text/csv"
-    )
+    if selected_category:
+        products = products.filter(category=selected_category)
 
+    if selected_store:
+        products = products.filter(store_id=selected_store)
+
+    if from_date:
+        products = products.filter(created_at__date__gte=from_date)
+
+    if to_date:
+        products = products.filter(created_at__date__lte=to_date)
+
+    response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = (
-        'attachment; filename="retail_inventory_report.csv"'
+        'attachment; filename="inventory_report.csv"'
     )
 
     writer = csv.writer(response)
 
-    # Header
     writer.writerow([
         "Product ID",
+        "Category",
+        "Subcategory",
         "Store",
         "Store Code",
-        "Category",
         "Region",
-        "Inventory Level",
-        "Price",
-        "Discount",
-        "Weather Condition",
-        "Holiday / Promotion",
-        "Competitor Pricing",
-        "Seasonality",
+        "Current Stock",
         "Predicted Demand",
-        "Stock Status",
+        "Stock Coverage (%)",
+        "Price",
+        "Discount (%)",
+        "Stock Status"
     ])
 
-    # Product data
     for product in products:
+
+        if product.inventory_level == 0:
+            status = "OUT_OF_STOCK"
+        elif product.inventory_level < 25:
+            status = "LOW_STOCK"
+        else:
+            status = "IN_STOCK"
+
+        if product.predicted_demand > 0:
+            coverage = (
+                product.inventory_level /
+                product.predicted_demand
+            ) * 100
+        else:
+            coverage = 0
 
         writer.writerow([
             product.product_id,
+            product.category,
+            product.subcategory,
             product.store.name,
             product.store.store_code,
-            product.category,
             product.region,
             product.inventory_level,
+            round(product.predicted_demand, 2),
+            round(coverage, 1),
             product.price,
             product.discount,
-            product.weather_condition,
-            "Yes" if product.holiday_promotion else "No",
-            product.competitor_pricing,
-            product.seasonality,
-            (
-                product.predicted_demand
-                if product.predicted_demand is not None
-                else ""
-            ),
-            product.stock_status,
+            status
         ])
 
     return response
+def export_report_pdf(request):
+    products = Product.objects.all()
 
+    selected_category = request.GET.get("category", "")
+    selected_store = request.GET.get("store", "")
+    from_date = request.GET.get("from_date", "")
+    to_date = request.GET.get("to_date", "")
+
+    if selected_category:
+        products = products.filter(category=selected_category)
+
+    if selected_store:
+        products = products.filter(store_id=selected_store)
+
+    if from_date:
+        products = products.filter(created_at__date__gte=from_date)
+
+    if to_date:
+        products = products.filter(created_at__date__lte=to_date)
+
+    category_order = [
+        "Electronics",
+        "Clothing",
+        "Groceries",
+        "Toys",
+        "Furniture",
+    ]
+
+    category_data = []
+
+    for category in category_order:
+        category_products = products.filter(category=category)
+
+        if not category_products.exists():
+            continue
+
+        total_stock = sum(
+            p.inventory_level for p in category_products
+        )
+
+        total_demand = sum(
+            p.predicted_demand for p in category_products
+        )
+
+        low_stock = category_products.filter(
+            inventory_level__gt=0,
+            inventory_level__lt=25
+        ).count()
+
+        out_of_stock = category_products.filter(
+            inventory_level=0
+        ).count()
+
+        category_data.append({
+            "category": category,
+            "products": category_products,
+            "stock": total_stock,
+            "demand": total_demand,
+            "low_stock": low_stock,
+            "out_of_stock": out_of_stock,
+        })
+
+    buffer = io.BytesIO()
+
+    document = SimpleDocTemplate(
+        buffer,
+        pagesize=landscape(A4),
+        rightMargin=12 * mm,
+        leftMargin=12 * mm,
+        topMargin=12 * mm,
+        bottomMargin=12 * mm,
+    )
+
+    styles = getSampleStyleSheet()
+
+    title_style = styles["Title"]
+    heading_style = styles["Heading2"]
+    normal_style = styles["Normal"]
+
+    story = []
+
+    # --------------------------------------------------
+    # TITLE
+    # --------------------------------------------------
+
+    story.append(
+        Paragraph(
+            "AI-Based Retail Inventory Intelligence Report",
+            title_style
+        )
+    )
+
+    story.append(Spacer(1, 6))
+
+    report_date = timezone.now().strftime("%d-%m-%Y %H:%M")
+
+    story.append(
+        Paragraph(
+            f"Report Generated: {report_date}",
+            normal_style
+        )
+    )
+
+    story.append(Spacer(1, 12))
+
+    # --------------------------------------------------
+    # SUMMARY
+    # --------------------------------------------------
+
+    total_products = products.count()
+
+    total_stock = sum(
+        p.inventory_level for p in products
+    )
+
+    total_demand = sum(
+        p.predicted_demand for p in products
+    )
+
+    total_low_stock = products.filter(
+        inventory_level__gt=0,
+        inventory_level__lt=25
+    ).count()
+
+    total_out_of_stock = products.filter(
+        inventory_level=0
+    ).count()
+
+    summary_data = [
+        ["Total Products", "Current Stock", "Predicted Demand",
+         "Low Stock", "Out of Stock"],
+
+        [
+            str(total_products),
+            str(total_stock),
+            f"{total_demand:.2f}",
+            str(total_low_stock),
+            str(total_out_of_stock),
+        ]
+    ]
+
+    summary_table = Table(
+        summary_data,
+        colWidths=[
+            45 * mm,
+            45 * mm,
+            50 * mm,
+            40 * mm,
+            40 * mm,
+        ]
+    )
+
+    summary_table.setStyle(
+        TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#222222")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 0), (-1, -1), 9),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+            ("BACKGROUND", (0, 1), (-1, 1), colors.whitesmoke),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+            ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ])
+    )
+
+    story.append(summary_table)
+    story.append(Spacer(1, 15))
+
+    # --------------------------------------------------
+    # CATEGORY CHART
+    # --------------------------------------------------
+
+    story.append(
+        Paragraph("Category-wise Stock vs Predicted Demand", heading_style)
+    )
+
+    chart_data = [
+        ["Category", "Current Stock", "Predicted Demand"]
+    ]
+
+    for item in category_data:
+        chart_data.append([
+            item["category"],
+            str(item["stock"]),
+            f"{item['demand']:.2f}"
+        ])
+
+    chart_table = Table(
+        chart_data,
+        colWidths=[60 * mm, 55 * mm, 60 * mm]
+    )
+
+    chart_table.setStyle(
+        TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#D4AF37")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("ALIGN", (1, 0), (-1, -1), "CENTER"),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+            ("FONTSIZE", (0, 0), (-1, -1), 9),
+            ("TOPPADDING", (0, 0), (-1, -1), 6),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ])
+    )
+
+    story.append(chart_table)
+    story.append(Spacer(1, 18))
+
+    # --------------------------------------------------
+    # CATEGORY REPORTS
+    # --------------------------------------------------
+
+    for item in category_data:
+
+        category = item["category"]
+
+        story.append(
+            Paragraph(
+                f"{category} Inventory Report",
+                heading_style
+            )
+        )
+
+        story.append(Spacer(1, 6))
+
+        category_summary = [
+            [
+                "Current Stock",
+                "Predicted Demand",
+                "Low Stock",
+                "Out of Stock"
+            ],
+            [
+                str(item["stock"]),
+                f"{item['demand']:.2f}",
+                str(item["low_stock"]),
+                str(item["out_of_stock"])
+            ]
+        ]
+
+        summary = Table(
+            category_summary,
+            colWidths=[
+                50 * mm,
+                55 * mm,
+                45 * mm,
+                45 * mm
+            ]
+        )
+
+        summary.setStyle(
+            TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#EEEEEE")),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                ("FONTSIZE", (0, 0), (-1, -1), 8),
+                ("TOPPADDING", (0, 0), (-1, -1), 5),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+            ])
+        )
+
+        story.append(summary)
+        story.append(Spacer(1, 8))
+
+        # Product table
+
+        table_data = [
+            [
+                "Product ID",
+                "Subcategory",
+                "Store",
+                "Region",
+                "Current Stock",
+                "Predicted Demand",
+                "Status"
+            ]
+        ]
+
+        status_values = []
+
+        for product in item["products"]:
+
+            if product.inventory_level == 0:
+                status = "OUT OF STOCK"
+            elif product.inventory_level < 25:
+                status = "LOW STOCK"
+            else:
+                status = "IN STOCK"
+
+            status_values.append(status)
+
+            table_data.append([
+                product.product_id,
+                product.subcategory,
+                product.store.name,
+                product.region,
+                str(product.inventory_level),
+                f"{product.predicted_demand:.2f}",
+                status
+            ])
+
+        product_table = Table(
+            table_data,
+            repeatRows=1,
+            colWidths=[
+                30 * mm,
+                40 * mm,
+                45 * mm,
+                35 * mm,
+                30 * mm,
+                40 * mm,
+                35 * mm
+            ]
+        )
+
+        table_style = [
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#222222")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ("GRID", (0, 0), (-1, -1), 0.4, colors.grey),
+            ("FONTSIZE", (0, 0), (-1, -1), 7),
+            ("TOPPADDING", (0, 0), (-1, -1), 5),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+        ]
+
+        for row_number, status in enumerate(status_values, start=1):
+
+            if status == "OUT OF STOCK":
+                table_style.append(
+                    (
+                        "BACKGROUND",
+                        (6, row_number),
+                        (6, row_number),
+                        colors.HexColor("#F8D7DA")
+                    )
+                )
+
+            elif status == "LOW STOCK":
+                table_style.append(
+                    (
+                        "BACKGROUND",
+                        (6, row_number),
+                        (6, row_number),
+                        colors.HexColor("#FFF3CD")
+                    )
+                )
+
+            else:
+                table_style.append(
+                    (
+                        "BACKGROUND",
+                        (6, row_number),
+                        (6, row_number),
+                        colors.HexColor("#D4EDDA")
+                    )
+                )
+
+        product_table.setStyle(TableStyle(table_style))
+
+        story.append(product_table)
+        story.append(Spacer(1, 18))
+
+    # --------------------------------------------------
+    # BUILD PDF
+    # --------------------------------------------------
+
+    document.build(story)
+
+    buffer.seek(0)
+
+    response = HttpResponse(
+        buffer.getvalue(),
+        content_type="application/pdf"
+    )
+
+    response["Content-Disposition"] = (
+        'attachment; filename="retail_inventory_report.pdf"'
+    )
+
+    return response
 # ============================================================
 # PRODUCTS
 # ============================================================
@@ -1896,18 +2385,32 @@ def alerts(request):
 
     products = Product.objects.select_related("store").all()
 
+    # ============================================================
+    # FILTERS
+    # ============================================================
+
     alert_filter = request.GET.get("type", "ALL")
+    selected_category = request.GET.get("category", "")
+
+    if selected_category:
+        products = products.filter(
+            category=selected_category
+        )
 
     alert_data = []
+
+    # ============================================================
+    # BUILD ALERT DATA
+    # ============================================================
 
     for product in products:
 
         predicted_demand = product.predicted_demand or 0
         current_stock = product.inventory_level
 
-        # ----------------------------------------------------
-        # Determine alert
-        # ----------------------------------------------------
+        # --------------------------------------------------------
+        # ALERT TYPE
+        # --------------------------------------------------------
 
         if current_stock == 0:
 
@@ -1940,12 +2443,11 @@ def alerts(request):
 
         else:
 
-            # No alert required for this product
             continue
 
-        # ----------------------------------------------------
-        # Demand coverage
-        # ----------------------------------------------------
+        # --------------------------------------------------------
+        # DEMAND COVERAGE
+        # --------------------------------------------------------
 
         if predicted_demand > 0:
 
@@ -1958,10 +2460,9 @@ def alerts(request):
 
             demand_coverage = 0
 
-        # ----------------------------------------------------
-        # Recommended reorder quantity
-        # 10% safety stock
-        # ----------------------------------------------------
+        # --------------------------------------------------------
+        # REORDER CALCULATION
+        # --------------------------------------------------------
 
         safety_stock = predicted_demand * 0.10
 
@@ -1969,50 +2470,69 @@ def alerts(request):
 
         recommended_reorder = max(
             0,
-            math.ceil(required_stock - current_stock)
+            math.ceil(
+                required_stock - current_stock
+            )
         )
 
-        # ----------------------------------------------------
-        # Store alert information
-        # ----------------------------------------------------
+        # --------------------------------------------------------
+        # STORE ALERT
+        # --------------------------------------------------------
 
         alert_data.append({
 
-            "product_id": product.product_id,
+            "product_id":
+                product.product_id,
 
-            "store": product.store.name,
+            "store":
+                product.store.name,
 
-            "store_code": product.store.store_code,
+            "store_code":
+                product.store.store_code,
 
-            "category": product.category,
+            "category":
+                product.category,
 
-            "subcategory": product.subcategory,
+            "subcategory":
+                product.subcategory,
 
-            "inventory": current_stock,
+            "region":
+                product.region,
 
-            "predicted_demand": predicted_demand,
+            "inventory":
+                current_stock,
 
-            "demand_coverage": demand_coverage,
+            "predicted_demand":
+                predicted_demand,
 
-            "recommended_reorder": recommended_reorder,
+            "demand_coverage":
+                demand_coverage,
 
-            "safety_stock": round(safety_stock, 2),
+            "recommended_reorder":
+                recommended_reorder,
 
-            "required_stock": required_stock,
+            "safety_stock":
+                round(safety_stock, 2),
 
-            "alert_type": alert_type,
+            "required_stock":
+                round(required_stock, 2),
 
-            "alert_title": alert_title,
+            "alert_type":
+                alert_type,
 
-            "alert_message": alert_message,
+            "alert_title":
+                alert_title,
 
-            "priority": alert_priority,
+            "alert_message":
+                alert_message,
 
+            "priority":
+                alert_priority,
         })
 
-    # ========================================================
+    # ============================================================
     # ALERT SUMMARY
-    # ========================================================
+    # ============================================================
 
     total_alerts = len(alert_data)
 
@@ -2034,9 +2554,9 @@ def alerts(request):
         if alert["alert_type"] == "LOW_STOCK"
     )
 
-    # ========================================================
-    # APPLY FILTER TO TABLE ONLY
-    # ========================================================
+    # ============================================================
+    # ALERT TYPE FILTER
+    # ============================================================
 
     filtered_alert_data = alert_data
 
@@ -2048,35 +2568,90 @@ def alerts(request):
             if alert["alert_type"] == alert_filter
         ]
 
-    # ========================================================
-    # RENDER ALERTS PAGE
-    # ========================================================
+    # ============================================================
+    # CATEGORY-WISE ALERT DATA
+    # ============================================================
+
+    category_order = [
+        "Electronics",
+        "Clothing",
+        "Groceries",
+        "Toys",
+        "Furniture",
+    ]
+
+    category_alerts = []
+
+    for category in category_order:
+
+        category_alert_data = [
+            alert
+            for alert in filtered_alert_data
+            if alert["category"] == category
+        ]
+
+        if category_alert_data:
+
+            category_alerts.append({
+
+                "category":
+                    category,
+
+                "alerts":
+                    category_alert_data,
+            })
+
+    # ============================================================
+    # AVAILABLE CATEGORIES
+    # ============================================================
+
+    available_categories = (
+        Product.objects
+        .values_list(
+            "category",
+            flat=True
+        )
+        .distinct()
+        .order_by("category")
+    )
+
+    # ============================================================
+    # RENDER
+    # ============================================================
 
     return render(
         request,
-    "ai_forecast.html",
-    {
-        "products": products,
+        "alerts.html",
+        {
 
-        "predicted_products":
-            predicted_products,
+            "alert_data":
+                filtered_alert_data,
 
-        "total_predicted_demand":
-            round(
-                total_predicted_demand,
-                2
-            ),
+            "category_alerts":
+                category_alerts,
 
-        "average_predicted_demand":
-            round(
-                average_predicted_demand,
-                2
-            ),
+            "available_categories":
+                available_categories,
 
-        "category_forecasts":
-            category_forecasts,
-    }
-)
+            "selected_category":
+                selected_category,
+
+            "total_alerts":
+                total_alerts,
+
+            "out_of_stock_alerts":
+                out_of_stock_alerts,
+
+            "replenishment_alerts":
+                replenishment_alerts,
+
+            "low_stock_alerts":
+                low_stock_alerts,
+
+            "alert_filter":
+                alert_filter,
+        }
+    )
 # ============================================================
 # USERS
 # ============================================================

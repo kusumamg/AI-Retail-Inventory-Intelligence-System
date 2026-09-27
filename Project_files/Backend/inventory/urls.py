@@ -38,11 +38,18 @@ urlpatterns = [
     ),
 
     # Export Report
-    path(
-        "reports/export/",
-        views.export_report_csv,
-        name="export_report_csv"
-    ),
+path(
+    "reports/export/",
+    views.export_report_csv,
+    name="export_report_csv"
+),
+
+# Export Report as PDF
+path(
+    "reports/export/pdf/",
+    views.export_report_pdf,
+    name="export_report_pdf"
+),
 
     # Products
     path(
