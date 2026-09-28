@@ -46,8 +46,8 @@
 
         <!-- HOME -->
 <a
-    href="{% url 'dashboard' %}"
-    class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+    href="{% url 'admin_dashboard' %}"
+   class="sidebar-link {% if request.path == '/admin-dashboard/' %}active{% endif %}"
     title="Home">
 
     <span class="sidebar-icon">
