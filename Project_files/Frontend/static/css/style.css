@@ -11247,3 +11247,38 @@ footer {
         grid-column: auto;
     }
 }
+
+.delete-product-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    position: absolute;
+    top: 72px;
+    right: 16px;
+
+    padding: 8px 13px;
+
+    background: #fff1f2;
+    color: #dc3545;
+
+    border: 1px solid #fecdd3;
+    border-radius: 8px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-product-btn:hover {
+    background: #dc3545;
+    color: #ffffff;
+    border-color: #dc3545;
+}
+
+.delete-product-btn i {
+    font-size: 14px;
+}

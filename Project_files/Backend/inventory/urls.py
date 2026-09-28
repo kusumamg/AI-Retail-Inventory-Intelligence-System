@@ -72,6 +72,12 @@ path(
         name="edit_product"
     ),
 
+    path(
+    "products/delete/<int:product_id>/",
+    views.delete_product,
+    name="delete_product"
+),
+
     
     path(
     "users/",

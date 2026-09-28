@@ -721,6 +721,8 @@ def inventory(request):
 
                     "category": category,
 
+                    "subcategory": subcategory,
+
                     "region": region,
 
                     "inventory_level": int(
@@ -1701,6 +1703,10 @@ def add_product(request):
 
         try:
 
+            # ====================================================
+            # GET FORM DATA
+            # ====================================================
+
             product_id = request.POST.get(
                 "product_id"
             ).strip()
@@ -1760,9 +1766,9 @@ def add_product(request):
             ).strip()
 
 
-            # ------------------------------------------------
-            # Validate AI model supported values
-            # ------------------------------------------------
+            # ====================================================
+            # VALIDATE MODEL-SUPPORTED VALUES
+            # ====================================================
 
             if product_id not in product_ids:
 
@@ -1796,18 +1802,18 @@ def add_product(request):
                 )
 
 
-            # ------------------------------------------------
-            # Get store
-            # ------------------------------------------------
+            # ====================================================
+            # GET STORE
+            # ====================================================
 
             store = Store.objects.get(
                 store_code=store_id
             )
 
 
-            # ------------------------------------------------
-            # Prevent duplicate product in same store
-            # ------------------------------------------------
+            # ====================================================
+            # CHECK DUPLICATE PRODUCT
+            # ====================================================
 
             if Product.objects.filter(
                 store=store,
@@ -1820,6 +1826,79 @@ def add_product(request):
                 )
 
             else:
+
+                # =================================================
+                # AI MODEL INPUT
+                # =================================================
+
+                current_date = timezone.now()
+
+                input_data = {
+
+                    "Store ID":
+                        store.store_code,
+
+                    "Product ID":
+                        product_id,
+
+                    "Category":
+                        category,
+
+                    "Region":
+                        region,
+
+                    "Inventory Level":
+                        inventory_level,
+
+                    "Price":
+                        price,
+
+                    "Discount":
+                        discount,
+
+                    "Weather Condition":
+                        weather_condition,
+
+                    "Holiday/Promotion":
+                        int(holiday_promotion),
+
+                    "Competitor Pricing":
+                        competitor_pricing,
+
+                    "Seasonality":
+                        seasonality,
+
+                    "Month":
+                        current_date.month,
+
+                    "Day":
+                        current_date.day,
+                }
+
+
+                # =================================================
+                # AI DEMAND PREDICTION
+                # =================================================
+
+                prediction = predict_demand(
+                    input_data
+                )
+
+                # Prevent negative predictions
+                prediction = max(
+                    0,
+                    prediction
+                )
+
+                prediction = round(
+                    prediction,
+                    2
+                )
+
+
+                # =================================================
+                # CREATE PRODUCT WITH AI PREDICTION
+                # =================================================
 
                 Product.objects.create(
 
@@ -1847,7 +1926,9 @@ def add_product(request):
 
                     seasonality=seasonality,
 
+                    predicted_demand=prediction,
                 )
+
 
                 return redirect(
                     "products"
@@ -1880,12 +1961,6 @@ def add_product(request):
         {
             "stores": stores,
             "error": error,
-
-            "product_ids": product_ids,
-            "categories": categories,
-            "regions": regions,
-            "weather_conditions": weather_conditions,
-            "seasons": seasons,
         }
     )
 
@@ -2002,9 +2077,20 @@ def edit_product(request, product_id):
         }
     )
 
-# ============================================================
-# AI FORECAST
-# ============================================================
+@login_required
+def delete_product(request, product_id):
+
+    if request.method == "POST":
+
+        product = Product.objects.get(
+            id=product_id
+        )
+
+        product.delete()
+
+        return redirect("products")
+
+    return redirect("products")
 
 # ============================================================
 # AI FORECAST
