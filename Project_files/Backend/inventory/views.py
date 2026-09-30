@@ -2471,34 +2471,43 @@ def alerts(request):
 
     products = Product.objects.select_related("store").all()
 
-    # ============================================================
-    # FILTERS
-    # ============================================================
-
     alert_filter = request.GET.get("type", "ALL")
-    selected_category = request.GET.get("category", "")
-
-    if selected_category:
-        products = products.filter(
-            category=selected_category
-        )
+    selected_category = request.GET.get("category", "").strip()
 
     alert_data = []
-
-    # ============================================================
-    # BUILD ALERT DATA
-    # ============================================================
 
     for product in products:
 
         predicted_demand = product.predicted_demand or 0
         current_stock = product.inventory_level
 
-        # --------------------------------------------------------
-        # ALERT TYPE
-        # --------------------------------------------------------
+        # ====================================================
+        # INVENTORY CONDITIONS
+        # ====================================================
 
-        if current_stock == 0:
+        is_out_of_stock = current_stock == 0
+
+        is_low_stock = (
+            current_stock > 0
+            and current_stock < 25
+)
+        needs_replenishment = (
+            predicted_demand > current_stock
+            and current_stock > 0
+        )
+
+        if not (
+            is_out_of_stock
+            or is_low_stock
+            or needs_replenishment
+        ):
+            continue
+
+        # ====================================================
+        # MAIN ALERT TYPE
+        # ====================================================
+
+        if is_out_of_stock:
 
             alert_type = "OUT_OF_STOCK"
             alert_title = "Out of Stock"
@@ -2507,7 +2516,7 @@ def alerts(request):
             )
             alert_priority = "High"
 
-        elif predicted_demand > current_stock:
+        elif needs_replenishment:
 
             alert_type = "REPLENISHMENT"
             alert_title = "Replenishment Needed"
@@ -2517,42 +2526,37 @@ def alerts(request):
             )
             alert_priority = "High"
 
-        elif current_stock < 25:
+        else:
 
             alert_type = "LOW_STOCK"
             alert_title = "Low Stock"
             alert_message = (
                 "Inventory level is below the "
-                "defined low-stock threshold."
+                "25-unit low-stock threshold."
             )
             alert_priority = "Medium"
 
-        else:
-
-            continue
-
-        # --------------------------------------------------------
+        # ====================================================
         # DEMAND COVERAGE
-        # --------------------------------------------------------
+        # ====================================================
 
         if predicted_demand > 0:
-
             demand_coverage = round(
                 (current_stock / predicted_demand) * 100,
                 1
             )
-
         else:
-
             demand_coverage = 0
 
-        # --------------------------------------------------------
+        # ====================================================
         # REORDER CALCULATION
-        # --------------------------------------------------------
+        # ====================================================
 
         safety_stock = predicted_demand * 0.10
 
-        required_stock = predicted_demand + safety_stock
+        required_stock = (
+            predicted_demand + safety_stock
+        )
 
         recommended_reorder = max(
             0,
@@ -2561,181 +2565,146 @@ def alerts(request):
             )
         )
 
-        # --------------------------------------------------------
-        # STORE ALERT
-        # --------------------------------------------------------
-
         alert_data.append({
 
-            "product_id":
-                product.product_id,
+            "product_id": product.product_id,
+            "store": product.store.name,
+            "store_code": product.store.store_code,
+            "region": product.region,
+            "category": product.category,
+            "subcategory": product.subcategory,
 
-            "store":
-                product.store.name,
+            "inventory": current_stock,
+            "predicted_demand": predicted_demand,
+            "demand_coverage": demand_coverage,
 
-            "store_code":
-                product.store.store_code,
+            "recommended_reorder": recommended_reorder,
+            "safety_stock": round(safety_stock, 2),
+            "required_stock": required_stock,
 
-            "category":
-                product.category,
+            "alert_type": alert_type,
+            "alert_title": alert_title,
+            "alert_message": alert_message,
+            "priority": alert_priority,
 
-            "subcategory":
-                product.subcategory,
-
-            "region":
-                product.region,
-
-            "inventory":
-                current_stock,
-
-            "predicted_demand":
-                predicted_demand,
-
-            "demand_coverage":
-                demand_coverage,
-
-            "recommended_reorder":
-                recommended_reorder,
-
-            "safety_stock":
-                round(safety_stock, 2),
-
-            "required_stock":
-                round(required_stock, 2),
-
-            "alert_type":
-                alert_type,
-
-            "alert_title":
-                alert_title,
-
-            "alert_message":
-                alert_message,
-
-            "priority":
-                alert_priority,
+            "is_low_stock": is_low_stock,
+            "needs_replenishment": needs_replenishment,
+            "is_out_of_stock": is_out_of_stock,
         })
 
-    # ============================================================
-    # ALERT SUMMARY
-    # ============================================================
+    # ========================================================
+    # SUMMARY COUNTS
+    # ========================================================
 
     total_alerts = len(alert_data)
 
     out_of_stock_alerts = sum(
-        1
-        for alert in alert_data
-        if alert["alert_type"] == "OUT_OF_STOCK"
+        1 for alert in alert_data
+        if alert["is_out_of_stock"]
     )
 
     replenishment_alerts = sum(
-        1
-        for alert in alert_data
-        if alert["alert_type"] == "REPLENISHMENT"
+        1 for alert in alert_data
+        if alert["needs_replenishment"]
     )
 
     low_stock_alerts = sum(
-        1
-        for alert in alert_data
-        if alert["alert_type"] == "LOW_STOCK"
+        1 for alert in alert_data
+        if alert["is_low_stock"]
     )
 
-    # ============================================================
-    # ALERT TYPE FILTER
-    # ============================================================
+    # ========================================================
+    # CATEGORY FILTER
+    # ========================================================
 
-    filtered_alert_data = alert_data
-
-    if alert_filter != "ALL":
-
-        filtered_alert_data = [
-            alert
+    available_categories = sorted(
+        set(
+            alert["category"]
             for alert in alert_data
-            if alert["alert_type"] == alert_filter
+        )
+    )
+
+    filtered_alerts = alert_data
+
+    if alert_filter == "LOW_STOCK":
+
+        filtered_alerts = [
+            alert
+            for alert in filtered_alerts
+            if alert["is_low_stock"]
         ]
 
-    # ============================================================
-    # CATEGORY-WISE ALERT DATA
-    # ============================================================
+    elif alert_filter == "REPLENISHMENT":
 
-    category_order = [
-        "Electronics",
-        "Clothing",
-        "Groceries",
-        "Toys",
-        "Furniture",
-    ]
+        filtered_alerts = [
+            alert
+            for alert in filtered_alerts
+            if alert["needs_replenishment"]
+        ]
+
+    elif alert_filter == "OUT_OF_STOCK":
+
+        filtered_alerts = [
+            alert
+            for alert in filtered_alerts
+            if alert["is_out_of_stock"]
+        ]
+
+    if selected_category:
+
+        filtered_alerts = [
+            alert
+            for alert in filtered_alerts
+            if alert["category"] == selected_category
+        ]
+
+    # ========================================================
+    # CATEGORY-WISE ALERT DATA
+    # ========================================================
 
     category_alerts = []
 
-    for category in category_order:
+    categories = sorted(
+        set(
+            alert["category"]
+            for alert in filtered_alerts
+        )
+    )
 
-        category_alert_data = [
+    for category in categories:
+
+        category_products = [
             alert
-            for alert in filtered_alert_data
+            for alert in filtered_alerts
             if alert["category"] == category
         ]
 
-        if category_alert_data:
+        category_alerts.append({
+            "category": category,
+            "alerts": category_products,
+        })
 
-            category_alerts.append({
-
-                "category":
-                    category,
-
-                "alerts":
-                    category_alert_data,
-            })
-
-    # ============================================================
-    # AVAILABLE CATEGORIES
-    # ============================================================
-
-    available_categories = (
-        Product.objects
-        .values_list(
-            "category",
-            flat=True
-        )
-        .distinct()
-        .order_by("category")
-    )
-
-    # ============================================================
+    # ========================================================
     # RENDER
-    # ============================================================
+    # ========================================================
 
     return render(
         request,
         "alerts.html",
         {
+            "alert_data": alert_data,
+            "alerts": filtered_alerts,
+            "category_alerts": category_alerts,
 
-            "alert_data":
-                filtered_alert_data,
+            "total_alerts": total_alerts,
+            "out_of_stock_alerts": out_of_stock_alerts,
+            "replenishment_alerts": replenishment_alerts,
+            "low_stock_alerts": low_stock_alerts,
 
-            "category_alerts":
-                category_alerts,
+            "alert_filter": alert_filter,
 
-            "available_categories":
-                available_categories,
-
-            "selected_category":
-                selected_category,
-
-            "total_alerts":
-                total_alerts,
-
-            "out_of_stock_alerts":
-                out_of_stock_alerts,
-
-            "replenishment_alerts":
-                replenishment_alerts,
-
-            "low_stock_alerts":
-                low_stock_alerts,
-
-            "alert_filter":
-                alert_filter,
+            "available_categories": available_categories,
+            "selected_category": selected_category,
         }
     )
 # ============================================================
@@ -2773,7 +2742,6 @@ def users(request):
 # ============================================================
 # STORES
 # ============================================================
-
 @login_required
 def stores(request):
 
@@ -2787,6 +2755,50 @@ def stores(request):
     except Exception:
         return redirect("login")
 
+    error = None
+
+    # Handle Add Store form
+    if request.method == "POST":
+
+        try:
+            name = request.POST.get("name", "").strip()
+            location = request.POST.get("location", "").strip()
+            store_code = request.POST.get("store_code", "").strip()
+
+            if not name:
+                raise ValueError("Please enter the store name.")
+
+            if not location:
+                raise ValueError("Please enter the store location.")
+
+            if not store_code:
+                raise ValueError("Please enter the store code.")
+
+            # Check duplicate store code
+            if Store.objects.filter(
+                store_code=store_code
+            ).exists():
+
+                raise ValueError(
+                    "A store with this store code already exists."
+                )
+
+            # Create store
+            Store.objects.create(
+                name=name,
+                location=location,
+                store_code=store_code,
+                is_active=True
+            )
+
+            return redirect("stores")
+
+        except ValueError as e:
+            error = str(e)
+
+        except Exception as e:
+            error = str(e)
+
     # Get all stores
     all_stores = Store.objects.all().order_by(
         "store_code"
@@ -2797,12 +2809,9 @@ def stores(request):
         "stores.html",
         {
             "stores": all_stores,
+            "error": error,
         }
     )
-
-# =========================================================
-# SYSTEM MANAGEMENT
-# =========================================================
 
 # =========================================================
 # SYSTEM MANAGEMENT

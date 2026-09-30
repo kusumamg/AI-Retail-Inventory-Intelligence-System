@@ -1224,218 +1224,6 @@ body.sidebar-collapsed .sidebar-link {
    LOGIN PAGE
    ============================================================ */
 
-.login-page {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 20px;
-    background: #f5f7fa;
-}
-
-.login-card {
-    width: 100%;
-    max-width: 430px;
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 18px;
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
-    text-align: center;
-}
-
-.login-logo {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 15px;
-}
-
-.logo-placeholder {
-    width: 70px;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: #c99400;
-    color: #ffffff;
-
-    border-radius: 16px;
-
-    font-size: 26px;
-    font-weight: 700;
-}
-
-.login-card h1 {
-    margin: 0;
-    font-size: 30px;
-    font-weight: 700;
-}
-
-.login-subtitle {
-    margin-top: 8px;
-    margin-bottom: 30px;
-
-    color: #718096;
-    font-size: 14px;
-}
-
-.login-card h2 {
-    margin-bottom: 8px;
-    font-size: 24px;
-}
-
-.login-description {
-    color: #718096;
-    margin-bottom: 25px;
-}
-
-.login-card form {
-    text-align: left;
-}
-
-.login-card .form-group {
-    margin-bottom: 20px;
-}
-
-.login-card label {
-    display: block;
-    margin-bottom: 7px;
-
-    font-size: 14px;
-    font-weight: 600;
-    color: #1a202c;
-}
-
-.login-card input {
-    width: 100%;
-    box-sizing: border-box;
-
-    padding: 13px 14px;
-
-    border: 1px solid #d9e0e7;
-    border-radius: 8px;
-
-    font-size: 15px;
-
-    outline: none;
-    transition: 0.2s;
-}
-
-.login-card input:focus {
-    border-color: #c99400;
-    box-shadow: 0 0 0 3px rgba(201, 148, 0, 0.12);
-}
-
-.login-button {
-    width: 100%;
-
-    padding: 14px;
-
-    border: none;
-    border-radius: 8px;
-
-    background: #c99400;
-    color: #ffffff;
-
-    font-size: 16px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition: 0.2s;
-}
-
-.login-button:hover {
-    background: #b38300;
-}
-
-.messages {
-    margin-bottom: 20px;
-}
-
-.message {
-    padding: 12px 14px;
-
-    border-radius: 8px;
-
-    background: #fff3f3;
-    color: #c53030;
-
-    font-size: 14px;
-    text-align: left;
-}
-
-.login-info {
-    margin-top: 25px;
-    padding-top: 20px;
-
-    border-top: 1px solid #edf0f2;
-}
-
-.login-info p {
-    margin: 0;
-
-    color: #718096;
-    font-size: 12px;
-    line-height: 1.6;
-}
-
-.login-info strong {
-    color: #4a5568;
-}
-
-
-/* ============================================================
-   MOBILE LOGIN
-   ============================================================ */
-
-@media (max-width: 500px) {
-
-    .login-page {
-        padding: 20px;
-    }
-
-    .login-card {
-        padding: 30px 22px;
-    }
-
-
-}
-
-/* ============================================================
-   PASSWORD SHOW / HIDE
-   ============================================================ */
-
-.password-wrapper {
-    position: relative;
-}
-
-.password-wrapper input {
-    padding-right: 70px;
-}
-
-.password-toggle {
-    position: absolute;
-
-    right: 12px;
-    top: 50%;
-
-    transform: translateY(-50%);
-
-    border: none;
-    background: transparent;
-
-    color: #c99400;
-
-    font-size: 13px;
-    font-weight: 600;
-
-    cursor: pointer;
-}
-
-.password-toggle:hover {
-    color: #9d7400;
-}
 
 
 /* ============================================================
@@ -1635,492 +1423,7 @@ footer {
     min-width: 900px;
 }
 
-/* =========================================================
-   RETAILIQ REPORT PAGE
-   ========================================================= */
 
-/* =========================================================
-   REPORT PAGE HEADER
-   ========================================================= */
-
-.report-page {
-    width: 100%;
-}
-
-.report-header {
-    margin-bottom: 28px;
-}
-
-.report-header .dashboard-label {
-    display: block;
-    margin-bottom: 8px;
-}
-
-.report-header h1 {
-    margin-bottom: 8px;
-}
-
-.report-header p {
-    max-width: 760px;
-}
-
-
-/* =========================================================
-   REPORT SUMMARY
-   ========================================================= */
-
-.report-summary-panel {
-    margin-bottom: 24px;
-}
-
-.report-summary-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-top: 24px;
-}
-
-.report-summary-card {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-
-    padding: 20px;
-
-    background: #f7f8fa;
-    border: 1px solid #e4e7ec;
-    border-radius: 14px;
-
-    min-height: 100px;
-}
-
-.report-summary-icon {
-    width: 48px;
-    height: 48px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    flex-shrink: 0;
-
-    border-radius: 12px;
-
-    background: #fff4d6;
-    color: #b88600;
-
-    font-size: 21px;
-}
-
-.report-summary-card span {
-    display: block;
-
-    margin-bottom: 5px;
-
-    font-size: 13px;
-    color: #718096;
-}
-
-.report-summary-card strong {
-    display: block;
-
-    font-size: 21px;
-    font-weight: 700;
-
-    color: #111827;
-}
-
-.report-summary-card small {
-    display: block;
-
-    margin-top: 3px;
-
-    font-size: 12px;
-    color: #94a3b8;
-}
-
-
-/* =========================================================
-   STATUS + AI REPORT GRID
-   ========================================================= */
-
-.report-status-grid {
-    margin-bottom: 24px;
-}
-
-
-/* =========================================================
-   INVENTORY STATUS LIST
-   ========================================================= */
-
-.report-status-list {
-    display: flex;
-    flex-direction: column;
-
-    gap: 12px;
-
-    margin-top: 22px;
-}
-
-.report-status-item {
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 14px 16px;
-
-    background: #f7f8fa;
-
-    border: 1px solid #e4e7ec;
-
-    border-radius: 12px;
-}
-
-.report-status-left {
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    font-size: 14px;
-    color: #334155;
-}
-
-.report-status-left span:last-child {
-    font-weight: 500;
-}
-
-.report-status-item > strong {
-    font-size: 17px;
-
-    color: #111827;
-}
-
-
-/* =========================================================
-   STATUS ICONS
-   ========================================================= */
-
-.report-status-icon {
-    width: 34px;
-    height: 34px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 9px;
-
-    font-size: 16px;
-}
-
-.report-status-icon.success {
-    background: #eaf8ef;
-    color: #239653;
-}
-
-.report-status-icon.warning {
-    background: #fff4d6;
-    color: #c99600;
-}
-
-.report-status-icon.danger {
-    background: #ffe9ec;
-    color: #e14b5a;
-}
-
-
-/* =========================================================
-   AI DEMAND REPORT
-   ========================================================= */
-
-.report-demand-grid {
-    display: grid;
-
-    grid-template-columns: repeat(2, 1fr);
-
-    gap: 16px;
-
-    margin-top: 22px;
-}
-
-.report-demand-card {
-    padding: 20px;
-
-    background: #f7f8fa;
-
-    border: 1px solid #e4e7ec;
-
-    border-radius: 14px;
-}
-
-.report-demand-card span {
-    display: block;
-
-    margin-bottom: 8px;
-
-    font-size: 13px;
-
-    color: #718096;
-}
-
-.report-demand-card strong {
-    display: block;
-
-    font-size: 28px;
-
-    line-height: 1.2;
-
-    color: #b88600;
-}
-
-.report-demand-card small {
-    display: block;
-
-    margin-top: 7px;
-
-    font-size: 12px;
-
-    color: #94a3b8;
-}
-
-
-/* =========================================================
-   PRODUCT STOCK REPORT
-   ========================================================= */
-
-.product-stock-report {
-    margin-bottom: 24px;
-}
-
-.product-report-list {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 16px;
-
-    margin-top: 22px;
-}
-
-
-/* =========================================================
-   INDIVIDUAL PRODUCT REPORT
-   ========================================================= */
-
-.product-report-item {
-    padding: 22px;
-
-    background: #f8f9fb;
-
-    border: 1px solid #e3e7ed;
-
-    border-radius: 15px;
-
-    transition: transform 0.2s ease,
-                box-shadow 0.2s ease,
-                border-color 0.2s ease;
-}
-
-.product-report-item:hover {
-    transform: translateY(-2px);
-
-    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
-
-    border-color: #d7dce4;
-}
-
-
-/* =========================================================
-   PRODUCT HEADER
-   ========================================================= */
-
-.product-report-header {
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 20px;
-
-    margin-bottom: 20px;
-}
-
-.product-report-title {
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-}
-
-.product-report-title strong {
-    font-size: 19px;
-
-    color: #111827;
-}
-
-.product-report-title span {
-    padding: 5px 10px;
-
-    border-radius: 20px;
-
-    background: #fff4d6;
-
-    color: #9b7200;
-
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.product-report-stock {
-    display: flex;
-
-    align-items: baseline;
-
-    gap: 5px;
-}
-
-.product-report-stock strong {
-    font-size: 25px;
-
-    color: #111827;
-}
-
-.product-report-stock span {
-    font-size: 13px;
-
-    color: #718096;
-}
-
-
-/* =========================================================
-   PRODUCT DETAILS
-   ========================================================= */
-
-.product-report-details {
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap: 12px;
-
-    margin-bottom: 20px;
-}
-
-.product-report-details > div {
-    padding: 13px 14px;
-
-    background: #ffffff;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 10px;
-}
-
-.product-report-details span {
-    display: block;
-
-    margin-bottom: 5px;
-
-    font-size: 11px;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.04em;
-
-    color: #94a3b8;
-}
-
-.product-report-details strong {
-    display: inline-block;
-
-    font-size: 14px;
-
-    color: #1f2937;
-}
-
-.product-report-details small {
-    margin-left: 5px;
-
-    color: #718096;
-
-    font-size: 11px;
-}
-
-
-/* =========================================================
-   PRODUCT STOCK PROGRESS
-   ========================================================= */
-
-.product-stock-progress {
-    margin-top: 8px;
-}
-
-.product-stock-progress-track {
-    width: 100%;
-
-    height: 10px;
-
-    background: #e9edf2;
-
-    border-radius: 20px;
-
-    overflow: hidden;
-}
-
-.product-stock-progress-fill {
-    height: 100%;
-
-    min-width: 2px;
-
-    background: #c99600;
-
-    border-radius: 20px;
-
-    transition: width 0.5s ease;
-}
-
-.product-stock-progress > span {
-    display: block;
-
-    margin-top: 7px;
-
-    font-size: 12px;
-
-    color: #718096;
-}
-
-
-/* =========================================================
-   PRODUCT FOOTER
-   ========================================================= */
-
-.product-report-footer {
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    margin-top: 18px;
-
-    padding-top: 15px;
-
-    border-top: 1px solid #e3e7ed;
-}
-
-.product-status-label {
-    font-size: 12px;
-
-    color: #94a3b8;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.04em;
-}
 
 
 /* =========================================================
@@ -2160,500 +1463,7 @@ footer {
 }
 
 
-/* =========================================================
-   EMPTY REPORT STATE
-   ========================================================= */
 
-.report-empty-state {
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    min-height: 220px;
-
-    text-align: center;
-
-    color: #718096;
-}
-
-.report-empty-state i {
-    margin-bottom: 12px;
-
-    font-size: 38px;
-
-    color: #c99600;
-}
-
-.report-empty-state h3 {
-    margin-bottom: 6px;
-
-    color: #1f2937;
-}
-
-.report-empty-state p {
-    margin: 0;
-
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   DETAILED REPORT TABLE
-   ========================================================= */
-
-.detailed-report-panel {
-    margin-bottom: 24px;
-}
-
-.report-table-wrapper {
-    width: 100%;
-
-    overflow-x: auto;
-
-    margin-top: 20px;
-}
-
-.report-table-wrapper .analytics-table {
-    width: 100%;
-
-    min-width: 900px;
-
-    border-collapse: collapse;
-}
-
-.report-table-wrapper .analytics-table th {
-    padding: 14px 12px;
-
-    background: #f8f9fb;
-
-    border-bottom: 1px solid #e2e6eb;
-
-    text-align: left;
-
-    font-size: 12px;
-
-    font-weight: 600;
-
-    color: #64748b;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.03em;
-}
-
-.report-table-wrapper .analytics-table td {
-    padding: 16px 12px;
-
-    border-bottom: 1px solid #edf0f3;
-
-    font-size: 13px;
-
-    color: #334155;
-}
-
-.report-table-wrapper .analytics-table tbody tr:hover {
-    background: #fafbfc;
-}
-
-.report-table-wrapper .analytics-table td strong {
-    color: #111827;
-}
-
-.report-table-wrapper .analytics-table td small {
-    display: inline;
-
-    color: #94a3b8;
-
-    font-size: 11px;
-}
-
-
-/* =========================================================
-   REPORT ACTIONS
-   ========================================================= */
-
-.report-actions {
-    margin-top: 0;
-}
-
-.report-actions h3 {
-    margin-bottom: 18px;
-}
-
-.report-actions .action-buttons {
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 14px;
-}
-
-.report-actions .action-button {
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 9px;
-
-    min-height: 50px;
-
-    border: 1px solid #e1e6ec;
-
-    border-radius: 11px;
-
-    background: #ffffff;
-
-    color: #334155;
-
-    text-decoration: none;
-
-    font-size: 13px;
-
-    font-weight: 500;
-
-    transition: all 0.2s ease;
-}
-
-.report-actions .action-button:hover {
-    border-color: #c99600;
-
-    color: #b88600;
-
-    background: #fffaf0;
-
-    transform: translateY(-1px);
-}
-
-.report-actions .action-button i {
-    color: #b88600;
-
-    font-size: 16px;
-}
-
-
-/* =========================================================
-   DARK MODE
-   ========================================================= */
-
-[data-theme="dark"] .report-summary-card,
-[data-theme="dark"] .report-status-item,
-[data-theme="dark"] .report-demand-card,
-[data-theme="dark"] .product-report-item {
-    background: #171a1f;
-
-    border-color: #2b3038;
-}
-
-[data-theme="dark"] .product-report-details > div,
-[data-theme="dark"] .report-actions .action-button {
-    background: #12151a;
-
-    border-color: #2b3038;
-}
-
-[data-theme="dark"] .report-summary-card strong,
-[data-theme="dark"] .product-report-title strong,
-[data-theme="dark"] .product-report-stock strong,
-[data-theme="dark"] .product-report-details strong,
-[data-theme="dark"] .report-status-item > strong,
-[data-theme="dark"] .report-empty-state h3 {
-    color: #f1f5f9;
-}
-
-[data-theme="dark"] .product-report-footer {
-    border-color: #2b3038;
-}
-
-[data-theme="dark"] .report-table-wrapper .analytics-table th {
-    background: #171a1f;
-
-    border-color: #2b3038;
-}
-
-[data-theme="dark"] .report-table-wrapper .analytics-table td {
-    border-color: #2b3038;
-
-    color: #cbd5e1;
-}
-
-[data-theme="dark"] .report-table-wrapper .analytics-table tbody tr:hover {
-    background: #171a1f;
-}
-
-[data-theme="dark"] .product-stock-progress-track {
-    background: #2b3038;
-}
-
-[data-theme="dark"] .report-actions .action-button {
-    color: #cbd5e1;
-}
-
-
-/* =========================================================
-   RESPONSIVE DESIGN
-   ========================================================= */
-
-@media (max-width: 1100px) {
-
-    .report-summary-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-    .product-report-details {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-}
-
-
-@media (max-width: 768px) {
-
-    .report-summary-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .report-demand-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .product-report-header {
-        align-items: flex-start;
-
-        flex-direction: column;
-    }
-
-    .product-report-details {
-        grid-template-columns: 1fr;
-    }
-
-    .report-actions .action-buttons {
-        grid-template-columns: 1fr;
-    }
-
-}
-
-
-@media (max-width: 480px) {
-
-    .product-report-item {
-        padding: 16px;
-    }
-
-    .product-report-title {
-        align-items: flex-start;
-
-        flex-direction: column;
-
-        gap: 6px;
-    }
-
-    .product-report-footer {
-        align-items: flex-start;
-
-        flex-direction: column;
-
-        gap: 10px;
-    }
-
-}
-
-/* =========================================================
-   AI FORECAST - GENERATE PANEL
-   ========================================================= */
-
-.forecast-generate-panel {
-    margin-bottom: 24px;
-}
-
-.forecast-generate-content {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-}
-
-.forecast-generate-icon {
-    width: 52px;
-    height: 52px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 14px;
-
-    background: #fff7df;
-    color: #c99600;
-
-    font-size: 23px;
-
-    flex-shrink: 0;
-}
-
-.forecast-generate-info {
-    flex: 1;
-}
-
-.forecast-generate-info h3 {
-    margin: 0 0 6px;
-    font-size: 18px;
-}
-
-.forecast-generate-info p {
-    margin: 0;
-    color: #718096;
-    font-size: 13px;
-    line-height: 1.5;
-}
-
-.forecast-generate-form {
-    margin-left: auto;
-}
-
-.forecast-generate-button {
-    border: none;
-
-    padding: 12px 20px;
-
-    border-radius: 10px;
-
-    background: #c99600;
-    color: white;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-
-    transition: all 0.2s ease;
-}
-
-.forecast-generate-button:hover {
-    transform: translateY(-1px);
-    opacity: 0.92;
-}
-
-
-/* =========================================================
-   AI FORECAST VALUES
-   ========================================================= */
-
-.forecast-demand-value {
-    color: #c99600;
-    font-size: 16px;
-}
-
-
-/* =========================================================
-   EMPTY FORECAST
-   ========================================================= */
-
-.forecast-empty {
-    padding: 45px 20px !important;
-
-    text-align: center;
-
-    color: #718096;
-}
-
-.forecast-empty i {
-    display: block;
-
-    font-size: 32px;
-
-    color: #c99600;
-
-    margin-bottom: 12px;
-}
-
-.forecast-empty strong {
-    display: block;
-
-    color: #111827;
-
-    margin-bottom: 6px;
-}
-
-.forecast-empty span {
-    display: block;
-
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   FORECAST INFORMATION
-   ========================================================= */
-
-.forecast-info-panel {
-    margin-top: 24px;
-}
-
-.forecast-info-content {
-    display: flex;
-    align-items: flex-start;
-
-    gap: 14px;
-}
-
-.forecast-info-content > i {
-    color: #c99600;
-
-    font-size: 20px;
-
-    margin-top: 2px;
-}
-
-.forecast-info-content strong {
-    display: block;
-
-    margin-bottom: 5px;
-}
-
-.forecast-info-content p {
-    margin: 0;
-
-    color: #718096;
-
-    font-size: 13px;
-
-    line-height: 1.5;
-}
-
-
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
-
-@media (max-width: 768px) {
-
-    .forecast-generate-content {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .forecast-generate-form {
-        width: 100%;
-        margin-left: 0;
-    }
-
-    .forecast-generate-button {
-        width: 100%;
-        justify-content: center;
-    }
-
-}
 
 /* ============================================================
    RETAILIQ ADMIN DASHBOARD - NEW DESIGN
@@ -11281,4 +10091,149 @@ footer {
 
 .delete-product-btn i {
     font-size: 14px;
+}
+
+/* ================================
+   ADD STORE MODAL
+================================ */
+
+.store-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 15, 15, 0.55);
+    padding: 20px;
+}
+
+.store-modal.active {
+    display: flex;
+}
+
+.store-modal-content {
+    width: 100%;
+    max-width: 520px;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+}
+
+.store-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.store-modal-header .dashboard-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #c28d00;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.store-modal-header h2 {
+    margin: 0;
+    color: #172b4d;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.store-modal-header p {
+    margin: 7px 0 0;
+    color: #7b8794;
+    font-size: 13px;
+}
+
+.store-modal-close {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #e1e5ea;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #68758a;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.store-modal-close:hover {
+    background: #f5f6f8;
+}
+
+.store-form-group {
+    margin-bottom: 18px;
+}
+
+.store-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #172b4d;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.store-form-group input {
+    width: 100%;
+    height: 46px;
+    box-sizing: border-box;
+    padding: 0 14px;
+    border: 1px solid #dfe3e8;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #172b4d;
+    font-size: 14px;
+    outline: none;
+}
+
+.store-form-group input:focus {
+    border-color: #d4a000;
+    box-shadow: 0 0 0 3px rgba(212, 160, 0, 0.10);
+}
+
+.store-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.store-cancel-btn,
+.store-save-btn {
+    height: 44px;
+    padding: 0 20px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.store-cancel-btn {
+    border: 1px solid #dfe3e8;
+    background: #ffffff;
+    color: #5f6b7a;
+}
+
+.store-save-btn {
+    border: none;
+    background: #d4a000;
+    color: #ffffff;
+}
+
+.store-save-btn:hover {
+    background: #bd8d00;
+}
+
+.store-form-error {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border-radius: 9px;
+    background: #fff1f2;
+    color: #dc3545;
+    font-size: 13px;
 }

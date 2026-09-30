@@ -153,18 +153,15 @@ Stores | RetailIQ
             <!-- ADD STORE -->
 
             <button
-                type="button"
-                class="store-add-button"
-                onclick="alert('Store creation will be added next.')"
+            type="button"
+            class="store-add-button"
+            onclick="openStoreModal()"
             >
+            <i class="bi bi-plus-lg"></i>
+            Add Store
+            </button>       
 
-                <i class="bi bi-plus-lg"></i>
-
-                Add Store
-
-            </button>
-
-        </div>
+         </div>
 
 
         <!-- ================================================= -->
@@ -1011,5 +1008,151 @@ Stores | RetailIQ
     }
 
 </style>
+
+
+<!-- ================================================= -->
+<!-- ADD STORE MODAL -->
+<!-- ================================================= -->
+
+<div id="storeModal" class="store-modal">
+
+    <div class="store-modal-content">
+
+        <div class="store-modal-header">
+
+            <div>
+                <span class="dashboard-label">
+                    STORE MANAGEMENT
+                </span>
+
+                <h2>Add New Store</h2>
+
+                <p>
+                    Register a new store in the RetailIQ system.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                class="store-modal-close"
+                onclick="closeStoreModal()"
+            >
+                &times;
+            </button>
+
+        </div>
+
+
+        {% if error %}
+
+        <div class="store-form-error">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="store-form-group">
+
+                <label for="store-name">
+                    Store Name
+                </label>
+
+                <input
+                    type="text"
+                    id="store-name"
+                    name="name"
+                    placeholder="Enter store name"
+                    required
+                >
+
+            </div>
+
+
+            <div class="store-form-group">
+
+                <label for="store-code">
+                    Store Code
+                </label>
+
+                <input
+                    type="text"
+                    id="store-code"
+                    name="store_code"
+                    placeholder="Example: S004"
+                    required
+                >
+
+            </div>
+
+
+            <div class="store-form-group">
+
+                <label for="store-location">
+                    Location
+                </label>
+
+                <input
+                    type="text"
+                    id="store-location"
+                    name="location"
+                    placeholder="Enter store location"
+                    required
+                >
+
+            </div>
+
+
+            <div class="store-modal-actions">
+
+                <button
+                    type="button"
+                    class="store-cancel-btn"
+                    onclick="closeStoreModal()"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="store-save-btn"
+                >
+                    <i class="bi bi-plus-circle"></i>
+                    Add Store
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function openStoreModal() {
+
+    document
+        .getElementById("storeModal")
+        .classList.add("active");
+
+}
+
+
+function closeStoreModal() {
+
+    document
+        .getElementById("storeModal")
+        .classList.remove("active");
+
+}
+
+</script>
 
 {% endblock %}
