@@ -163,25 +163,23 @@ img {
 }
 
 .sidebar-logo {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-
+    border-radius: 14px;
     overflow: hidden;
-    border-radius: 10px;
-    background: #fff;
+    background:transparent;
 }
 
 .sidebar-logo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
-
 .sidebar-brand-text {
     min-width: 0;
     display: flex;
@@ -760,30 +758,6 @@ img {
    14. INVENTORY OVERVIEW
    ========================= */
 
-.inventory-stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.inventory-stats div {
-    padding: 17px 14px;
-    background: var(--body-bg);
-    border: 1px solid var(--border);
-    border-radius: 11px;
-}
-
-.inventory-stats span {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--text-muted);
-    font-size: 11px;
-}
-
-.inventory-stats strong {
-    color: var(--text);
-    font-size: 20px;
-}
 
 /* =========================
    15. FORECAST
@@ -8877,9 +8851,10 @@ footer {
 .report-hero h1 {
     margin: 0 0 9px;
     color: #0c1d40;
-    font-size: clamp(34px, 3vw, 50px);
+    /* font-size: clamp(34px, 3vw, 50px); */
+    font-size: 50px;
     line-height: 1.05;
-    font-weight: 800;
+    font-weight: 795;
 }
 
 .report-hero p {
