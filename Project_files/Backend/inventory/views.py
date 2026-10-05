@@ -2253,11 +2253,32 @@ def ai_forecast(request):
 
 
     # =====================================================
+    # TOTAL REPLENISHMENT COUNT
+    # =====================================================
+    # This counts ALL products across ALL categories.
+    # A product needs replenishment when predicted demand
+    # is greater than its current stock.
+
+    replenishment_count = sum(
+
+        1
+
+        for product in predicted_products
+
+        if (
+            product.predicted_demand or 0
+        ) > product.inventory_level
+    )
+
+
+    # =====================================================
     # TOTAL PREDICTED DEMAND
     # =====================================================
 
     total_predicted_demand = sum(
+
         product.predicted_demand or 0
+
         for product in predicted_products
     )
 
@@ -2324,10 +2345,13 @@ def ai_forecast(request):
     for category in category_order:
 
         category_products = [
-    product
-    for product in predicted_products
-    if product.category == category
-]
+
+            product
+
+            for product in predicted_products
+
+            if product.category == category
+        ]
 
 
         if not category_products:
@@ -2378,10 +2402,10 @@ def ai_forecast(request):
 
 
         # -------------------------------------------------
-        # Replenishment count
+        # Category replenishment count
         # -------------------------------------------------
 
-        replenishment_count = sum(
+        category_replenishment_count = sum(
 
             1
 
@@ -2424,7 +2448,7 @@ def ai_forecast(request):
                 ),
 
             "replenishment_count":
-                replenishment_count,
+                category_replenishment_count,
         })
 
 
@@ -2445,6 +2469,9 @@ def ai_forecast(request):
 
             "predicted_products":
                 predicted_products,
+
+            "replenishment_count":
+                replenishment_count,
 
             "total_predicted_demand":
                 round(

@@ -276,18 +276,7 @@ AI Forecast | RetailIQ
 
                 <strong>
 
-                    {% widthratio 1 1 0 %}
-
-                    {% with count=0 %}
-                    {% for product in predicted_products %}
-                        {% if product.predicted_demand > product.inventory_level %}
-                            {% with count=count|add:"1" %}
-                            {% endwith %}
-                        {% endif %}
-                    {% endfor %}
-                    {% endwith %}
-
-                    {{ replenishment_count|default:"0" }}
+                    {{ replenishment_count }}
 
                 </strong>
 
