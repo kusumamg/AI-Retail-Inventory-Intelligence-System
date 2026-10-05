@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="profile-page">
+
+    <div class="profile-header">
+        <span class="profile-label">ACCOUNT</span>
+        <h1>My Profile</h1>
+        <p>View your account information and role details.</p>
+    </div>
+
+    <div class="profile-card">
+
+        <div class="profile-avatar">
+            <i class="bi bi-person"></i>
+        </div>
+
+        <div class="profile-info">
+
+            <div class="profile-info-item">
+                <span>Username</span>
+                <strong>{{ user.username }}</strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Role</span>
+                <strong>
+                    {% if user.profile.role == "ADMIN" %}
+                        Admin
+                    {% elif user.profile.role == "STORE_MANAGER" %}
+                        Stock Manager
+                    {% else %}
+                        {{ user.profile.role }}
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Email</span>
+                <strong>{{ user.email|default:"Not provided" }}</strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Account</span>
+                <strong>RetailIQ User</strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Status</span>
+                <strong class="profile-status">Active</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

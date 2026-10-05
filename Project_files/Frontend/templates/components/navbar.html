@@ -43,19 +43,6 @@
     <div class="navbar-actions">
 
 
-        <!-- Search -->
-        <button
-            type="button"
-            class="navbar-icon-button"
-            title="Search"
-            aria-label="Search">
-
-            <i class="bi bi-search"></i>
-
-        </button>
-
-
-        <!-- Notifications -->
         <!-- Notifications -->
 <a
     href="{% url 'alerts' %}"
@@ -132,14 +119,14 @@
 
 
                 <!-- Profile -->
-                <a href="#">
+                <a href="{% url 'profile' %}">
                     <i class="bi bi-person"></i>
                     <span>My Profile</span>
                 </a>
 
 
                 <!-- Settings -->
-                <a href="#">
+                <a href="{% url 'settings' %}">
                     <i class="bi bi-gear"></i>
                     <span>Settings</span>
                 </a>

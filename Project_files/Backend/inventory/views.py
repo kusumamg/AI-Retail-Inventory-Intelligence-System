@@ -3084,3 +3084,20 @@ def settings(request):
                 low_stock_threshold,
         }
     )
+
+# ============================================================
+# MY PROFILE
+# ============================================================
+
+@login_required
+def profile(request):
+
+    user = request.user
+
+    return render(
+        request,
+        "profile.html",
+        {
+            "user": user,
+        }
+    )
