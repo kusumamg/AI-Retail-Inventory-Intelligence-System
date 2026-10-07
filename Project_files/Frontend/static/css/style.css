@@ -67,7 +67,7 @@
     --card-bg: #1b1e21;
     --text: #f5f5f5;
     --text-light: #c4c8ce;
-    --text-muted: #3e4652;
+    --text-muted: #b8bec7;
     --border: #30343a;
     --gold-light: #332d18;
 }
@@ -3402,7 +3402,7 @@ footer {
 .workflow-heading h2 {
     margin: 3px 0 7px;
 
-    color: #142035;
+    color: var(--text);
 
     font-size: 25px;
 
@@ -4221,7 +4221,7 @@ footer {
 .products-header h1 {
     margin: 0 0 7px;
 
-    color: #172033;
+    color: #e7e9ed;
 
     font-size: 29px;
 
@@ -8358,7 +8358,7 @@ footer {
 
 .category-analysis-heading h2 {
     margin: 0 0 5px;
-    color: #142035;
+    color: var(--text);
     font-size: 26px;
     font-weight: 750;
 }
@@ -9157,7 +9157,7 @@ footer {
 
 .report-toolbar h2 {
     margin: 0 0 5px;
-    color: #102243;
+    color: var(--text);
     font-size: 24px;
 }
 
@@ -9726,10 +9726,46 @@ footer {
 .category-alert-section .analytics-table td {
     padding: 15px 16px;
     border-bottom: 1px solid #eee;
+    color: #17233a;
     font-size: 12px;
     white-space: nowrap;
 }
+[data-theme="dark"] .category-alert-section .analytics-table td {
+    color: #e8ebf0;
+    border-bottom-color: #30343a;
+}
 
+/* ============================================================
+   ALERTS TABLE — DARK MODE
+   ============================================================ */
+
+[data-theme="dark"] .category-alert-section {
+    background: #1b1e21;
+    border-color: #30343a;
+}
+
+[data-theme="dark"] .category-alert-header {
+    background: #1b1e21;
+    border-bottom-color: #30343a;
+}
+
+[data-theme="dark"] .category-alert-header h3 {
+    color: #f5f5f5;
+}
+
+[data-theme="dark"] .category-alert-header p {
+    color: #b8bec7;
+}
+
+[data-theme="dark"] .category-alert-section .analytics-table td {
+    color: #e8ebf0 !important;
+    border-bottom-color: #30343a;
+}
+
+[data-theme="dark"] .category-alert-section .analytics-table tbody tr:hover {
+    background: #24282c;
+}
+/* HHHHHHH */
 .category-alert-section .analytics-table tbody tr:hover {
     background: #fafafa;
 }
@@ -11040,3 +11076,4 @@ footer {
         font-size: 26px;
     }
 }
+
