@@ -1,1078 +1,418 @@
 {% extends "base.html" %}
-
-{% block title %}
-RetailIQ | Dashboard
-{% endblock %}
-
+{% block title %}RetailIQ | Dashboard{% endblock %}
 {% block content %}
 
 <div class="home-dashboard">
 
-    <!-- =====================================================
-         PREMIUM HERO
-         ===================================================== -->
-
+    <!-- PREMIUM HERO -->
     <section class="home-hero">
-
         <div class="hero-content">
-
-            <span class="hero-label">
-                RETAIL INTELLIGENCE
-            </span>
-
-            <h1>
-                Smarter Inventory.<br>
-                <span>Intelligent Decisions.</span>
-            </h1>
-
-            <p>
-                Manage inventory, predict demand, and make smarter
-                stock decisions with AI-powered retail intelligence.
-            </p>
+            <span class="hero-label">RETAIL INTELLIGENCE</span>
+            <h1>Smarter Inventory.<br><span>Intelligent Decisions.</span></h1>
+            <p>Manage inventory, predict demand, and make smarter stock decisions with AI-powered retail intelligence.</p>
 
             <div class="hero-actions">
-
                 <a href="{% url 'inventory' %}" class="hero-primary">
                     <i class="bi bi-box-seam"></i>
                     <span>Manage Inventory</span>
                 </a>
-
                 <a href="{% url 'ai_forecast' %}" class="hero-secondary">
                     <i class="bi bi-stars"></i>
                     <span>Generate Forecast</span>
                 </a>
-
             </div>
 
             <div class="hero-trust">
-
-                <span>
-                    <i class="bi bi-check-circle-fill"></i>
-                    AI Powered
-                </span>
-
-                <span>
-                    <i class="bi bi-graph-up-arrow"></i>
-                    Demand Intelligence
-                </span>
-
-                <span>
-                    <i class="bi bi-shield-check"></i>
-                    Smart Monitoring
-                </span>
-
+                <span><i class="bi bi-check-circle-fill"></i> AI Powered</span>
+                <span><i class="bi bi-graph-up-arrow"></i> Demand Intelligence</span>
+                <span><i class="bi bi-shield-check"></i> Smart Monitoring</span>
             </div>
-
         </div>
 
-
-        <!-- HERO AI VISUAL -->
-
         <div class="hero-visual">
-
             <div class="hero-orbit orbit-one"></div>
             <div class="hero-orbit orbit-two"></div>
-
             <div class="hero-glow"></div>
 
             <div class="hero-ai-card">
-
                 <div class="hero-ai-top">
-
                     <div class="hero-ai-title">
-
-                        <div class="hero-ai-icon">
-                            <i class="bi bi-cpu"></i>
-                        </div>
-
+                        <div class="hero-ai-icon"><i class="bi bi-cpu"></i></div>
                         <div>
                             <strong>AI Intelligence</strong>
                             <span>RetailIQ Engine</span>
                         </div>
-
                     </div>
-
-                    <span class="ai-live">
-                        <i class="bi bi-circle-fill"></i>
-                        LIVE
-                    </span>
-
+                    <span class="ai-live"><i class="bi bi-circle-fill"></i> LIVE</span>
                 </div>
 
-
                 <div class="hero-ai-visual">
-
                     <div class="hero-data-line line-a"></div>
                     <div class="hero-data-line line-b"></div>
                     <div class="hero-data-line line-c"></div>
-
-                    <div class="hero-data-node node-a">
-                        <i class="bi bi-box-seam"></i>
-                    </div>
-
-                    <div class="hero-data-node node-b">
-                        <i class="bi bi-bar-chart-line"></i>
-                    </div>
-
-                    <div class="hero-data-node node-c">
-                        <i class="bi bi-bell"></i>
-                    </div>
-
-                    <div class="hero-ai-center">
-                        <i class="bi bi-stars"></i>
-                    </div>
-
+                    <div class="hero-data-node node-a"><i class="bi bi-box-seam"></i></div>
+                    <div class="hero-data-node node-b"><i class="bi bi-bar-chart-line"></i></div>
+                    <div class="hero-data-node node-c"><i class="bi bi-bell"></i></div>
+                    <div class="hero-ai-center"><i class="bi bi-stars"></i></div>
                 </div>
-
 
                 <div class="hero-ai-bottom">
-
-                    <span>
-                        <i class="bi bi-lightning-charge-fill"></i>
-                        Intelligent Inventory
-                    </span>
-
+                    <span><i class="bi bi-lightning-charge-fill"></i> Intelligent Inventory</span>
                     <i class="bi bi-arrow-up-right"></i>
-
                 </div>
-
             </div>
-
 
             <div class="hero-floating-card hero-float-one">
-
-                <div class="float-card-icon">
-                    <i class="bi bi-graph-up-arrow"></i>
-                </div>
-
-                <div>
-                    <strong>AI Forecast</strong>
-                    <span>Predict Demand</span>
-                </div>
-
+                <div class="float-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                <div><strong>AI Forecast</strong><span>Predict Demand</span></div>
             </div>
-
 
             <div class="hero-floating-card hero-float-two">
-
-                <div class="float-card-icon">
-                    <i class="bi bi-bell"></i>
-                </div>
-
-                <div>
-                    <strong>Smart Alerts</strong>
-                    <span>Stay Informed</span>
-                </div>
-
+                <div class="float-card-icon"><i class="bi bi-bell"></i></div>
+                <div><strong>Smart Alerts</strong><span>Stay Informed</span></div>
             </div>
-
         </div>
-
     </section>
 
-
-    <!-- =====================================================
-         QUICK INTELLIGENCE OVERVIEW
-         ===================================================== -->
-
+    <!-- INVENTORY OVERVIEW -->
     <section class="dashboard-overview">
-
         <div class="overview-heading">
-
             <div>
-
-                <span class="section-label">
-                    INVENTORY OVERVIEW
-                </span>
-
-                <h2>
-                    Your Retail Intelligence at a Glance
-                </h2>
-
-                <p>
-                    Monitor inventory, demand and stock decisions from one place.
-                </p>
-
+                <span class="section-label">INVENTORY OVERVIEW</span>
+                <h2>Your Retail Intelligence at a Glance</h2>
+                <p>Monitor inventory, demand and stock decisions from one place.</p>
             </div>
-
             <a href="{% url 'inventory' %}" class="overview-link">
-                View Inventory
-                <i class="bi bi-arrow-right"></i>
+                View Inventory <i class="bi bi-arrow-right"></i>
             </a>
-
         </div>
 
-
         <div class="overview-grid">
-
             <a href="{% url 'products' %}" class="overview-card">
-
-                <div class="overview-icon overview-gold">
-                    <i class="bi bi-box-seam"></i>
-                </div>
-
+                <div class="overview-icon overview-gold"><i class="bi bi-box-seam"></i></div>
                 <div class="overview-content">
                     <span>PRODUCT INVENTORY</span>
                     <strong>Manage</strong>
-                    <small>Products & stock levels</small>
+                    <small>Products and stock levels</small>
                 </div>
-
                 <i class="bi bi-arrow-up-right overview-arrow"></i>
-
             </a>
 
-
             <a href="{% url 'ai_forecast' %}" class="overview-card">
-
-                <div class="overview-icon overview-blue">
-                    <i class="bi bi-graph-up-arrow"></i>
-                </div>
-
+                <div class="overview-icon overview-blue"><i class="bi bi-graph-up-arrow"></i></div>
                 <div class="overview-content">
                     <span>AI FORECAST</span>
                     <strong>Predict</strong>
                     <small>Future product demand</small>
                 </div>
-
                 <i class="bi bi-arrow-up-right overview-arrow"></i>
-
             </a>
 
-
             <a href="{% url 'alerts' %}" class="overview-card">
-
-                <div class="overview-icon overview-red">
-                    <i class="bi bi-bell"></i>
-                </div>
-
+                <div class="overview-icon overview-red"><i class="bi bi-bell"></i></div>
                 <div class="overview-content">
                     <span>SMART ALERTS</span>
                     <strong>Monitor</strong>
                     <small>Inventory conditions</small>
                 </div>
-
                 <i class="bi bi-arrow-up-right overview-arrow"></i>
-
             </a>
 
-
             <a href="{% url 'reports' %}" class="overview-card">
-
-                <div class="overview-icon overview-green">
-                    <i class="bi bi-file-earmark-bar-graph"></i>
-                </div>
-
+                <div class="overview-icon overview-green"><i class="bi bi-file-earmark-bar-graph"></i></div>
                 <div class="overview-content">
                     <span>REPORTS</span>
                     <strong>Analyze</strong>
                     <small>Inventory intelligence</small>
                 </div>
-
                 <i class="bi bi-arrow-up-right overview-arrow"></i>
-
             </a>
-
         </div>
-
     </section>
 
-
-    <!-- =====================================================
-         ONE INTELLIGENT INVENTORY FLOW
-         KEEPING YOUR EXISTING FLOW
-         ===================================================== -->
-
+    <!-- INVENTORY FLOW -->
     <section class="workflow-section">
-
         <div class="workflow-heading">
-
-            <span class="section-label">
-                HOW RETAILIQ WORKS
-            </span>
-
-            <h2>
-                One Intelligent Inventory Flow
-            </h2>
-
-            <p>
-                From inventory data to AI-powered decisions.
-            </p>
-
+            <span class="section-label">HOW RETAILIQ WORKS</span>
+            <h2>One Intelligent Inventory Flow</h2>
+            <p>From inventory data to AI-powered decisions.</p>
         </div>
-
 
         <div class="circular-flow">
-
             <div class="flow-orbit"></div>
 
-
-            <!-- CENTER -->
-
             <div class="flow-center">
-
-                <div class="flow-center-icon">
-                    <i class="bi bi-shop"></i>
-                </div>
-
-                <strong>
-                    RetailIQ
-                </strong>
-
-                <span>
-                    Smart Inventory
-                </span>
-
+                <div class="flow-center-icon"><i class="bi bi-shop"></i></div>
+                <strong>RetailIQ</strong>
+                <span>Smart Inventory</span>
             </div>
 
-
-            <!-- 01 -->
-
-            <a href="{% url 'inventory' %}"
-               class="flow-node flow-inventory">
-
-                <div class="flow-node-icon">
-                    <i class="bi bi-box-seam"></i>
-                </div>
-
+            <a href="{% url 'inventory' %}" class="flow-node flow-inventory">
+                <div class="flow-node-icon"><i class="bi bi-box-seam"></i></div>
                 <div class="flow-node-content">
-
                     <span class="flow-number">01</span>
-
-                    <strong>
-                        Inventory
-                    </strong>
-
-                    <small>
-                        Manage Stock
-                    </small>
-
+                    <strong>Inventory</strong>
+                    <small>Manage Stock</small>
                 </div>
-
             </a>
 
-
-            <!-- 02 -->
-
-            <a href="{% url 'ai_forecast' %}"
-               class="flow-node flow-forecast">
-
-                <div class="flow-node-icon">
-                    <i class="bi bi-robot"></i>
-                </div>
-
+            <a href="{% url 'ai_forecast' %}" class="flow-node flow-forecast">
+                <div class="flow-node-icon"><i class="bi bi-robot"></i></div>
                 <div class="flow-node-content">
-
                     <span class="flow-number">02</span>
-
-                    <strong>
-                        AI Forecast
-                    </strong>
-
-                    <small>
-                        Predict Demand
-                    </small>
-
+                    <strong>AI Forecast</strong>
+                    <small>Predict Demand</small>
                 </div>
-
             </a>
 
-
-            <!-- 03 -->
-
-            <a href="{% url 'analytics' %}"
-               class="flow-node flow-analytics">
-
-                <div class="flow-node-icon">
-                    <i class="bi bi-bar-chart-line"></i>
-                </div>
-
+            <a href="{% url 'analytics' %}" class="flow-node flow-analytics">
+                <div class="flow-node-icon"><i class="bi bi-bar-chart-line"></i></div>
                 <div class="flow-node-content">
-
                     <span class="flow-number">03</span>
-
-                    <strong>
-                        Analytics
-                    </strong>
-
-                    <small>
-                        Get Insights
-                    </small>
-
+                    <strong>Analytics</strong>
+                    <small>Get Insights</small>
                 </div>
-
             </a>
 
-
-            <!-- 04 -->
-
-            <a href="{% url 'alerts' %}"
-               class="flow-node flow-alerts">
-
-                <div class="flow-node-icon">
-                    <i class="bi bi-bell"></i>
-                </div>
-
+            <a href="{% url 'alerts' %}" class="flow-node flow-alerts">
+                <div class="flow-node-icon"><i class="bi bi-bell"></i></div>
                 <div class="flow-node-content">
-
                     <span class="flow-number">04</span>
-
-                    <strong>
-                        Smart Alerts
-                    </strong>
-
-                    <small>
-                        Stay Informed
-                    </small>
-
+                    <strong>Smart Alerts</strong>
+                    <small>Stay Informed</small>
                 </div>
-
             </a>
 
-
-            <!-- 05 -->
-
-            <a href="{% url 'reports' %}"
-               class="flow-node flow-reports">
-
-                <div class="flow-node-icon">
-                    <i class="bi bi-file-earmark-bar-graph"></i>
-                </div>
-
+            <a href="{% url 'reports' %}" class="flow-node flow-reports">
+                <div class="flow-node-icon"><i class="bi bi-file-earmark-bar-graph"></i></div>
                 <div class="flow-node-content">
-
                     <span class="flow-number">05</span>
-
-                    <strong>
-                        Reports
-                    </strong>
-
-                    <small>
-                        View Insights
-                    </small>
-
+                    <strong>Reports</strong>
+                    <small>View Insights</small>
                 </div>
-
             </a>
-
         </div>
-
-        <div class="workflow-bottom-space"></div>
-
     </section>
 
-
-    <!-- =====================================================
-         CATEGORY INTELLIGENCE
-         ===================================================== -->
-
+    <!-- CATEGORY SHOWCASE -->
     <section class="category-showcase">
-
         <div class="category-heading">
-
             <div>
-
-                <span class="section-label">
-                    RETAIL CATEGORIES
-                </span>
-
-                <h2>
-                    Explore Inventory by Category
-                </h2>
-
-                <p>
-                    Visualize and manage your retail inventory across every category.
-                </p>
-
+                <span class="section-label">RETAIL CATEGORIES</span>
+                <h2>Explore Inventory by Category</h2>
+                <p>Visualize and manage retail inventory across every category.</p>
             </div>
-
             <a href="{% url 'products' %}" class="category-view-link">
-                View Products
-                <i class="bi bi-arrow-right"></i>
+                View Products <i class="bi bi-arrow-right"></i>
             </a>
-
         </div>
-
 
         <div class="category-grid">
-
-
-            <!-- ELECTRONICS -->
-
-            <a href="{% url 'products' %}"
-               class="category-card category-electronics">
-
+            <a href="{% url 'products' %}" class="category-card category-electronics">
                 <div class="category-image">
-
                     <div class="category-glow"></div>
-
                     <i class="bi bi-phone category-main-icon"></i>
-
                     <i class="bi bi-laptop category-mini-icon mini-one"></i>
-
                     <i class="bi bi-headphones category-mini-icon mini-two"></i>
-
                     <span class="category-ring"></span>
-
                 </div>
-
                 <div class="category-card-content">
-
                     <span class="category-number">01</span>
-
                     <h3>Electronics</h3>
-
-                    <p>
-                        Smartphones, laptops, headphones and televisions.
-                    </p>
-
-                    <span class="category-explore">
-                        Explore Category
-                        <i class="bi bi-arrow-up-right"></i>
-                    </span>
-
+                    <p>Smartphones, laptops, headphones and televisions.</p>
+                    <span class="category-explore">Explore Category <i class="bi bi-arrow-up-right"></i></span>
                 </div>
-
             </a>
 
-
-            <!-- CLOTHING -->
-
-            <a href="{% url 'products' %}"
-               class="category-card category-clothing">
-
+            <a href="{% url 'products' %}" class="category-card category-clothing">
                 <div class="category-image">
-
                     <div class="category-glow"></div>
-
                     <i class="bi bi-person category-main-icon"></i>
-
                     <i class="bi bi-bag category-mini-icon mini-one"></i>
-
                     <i class="bi bi-tags category-mini-icon mini-two"></i>
-
                     <span class="category-ring"></span>
-
                 </div>
-
                 <div class="category-card-content">
-
                     <span class="category-number">02</span>
-
                     <h3>Clothing</h3>
-
-                    <p>
-                        Shirts, t-shirts, jeans, jackets and more.
-                    </p>
-
-                    <span class="category-explore">
-                        Explore Category
-                        <i class="bi bi-arrow-up-right"></i>
-                    </span>
-
+                    <p>Shirts, t-shirts, jeans, jackets and more.</p>
+                    <span class="category-explore">Explore Category <i class="bi bi-arrow-up-right"></i></span>
                 </div>
-
             </a>
 
-
-            <!-- GROCERIES -->
-
-            <a href="{% url 'products' %}"
-               class="category-card category-groceries">
-
+            <a href="{% url 'products' %}" class="category-card category-groceries">
                 <div class="category-image">
-
                     <div class="category-glow"></div>
-
                     <i class="bi bi-basket category-main-icon"></i>
-
                     <i class="bi bi-cup-straw category-mini-icon mini-one"></i>
-
                     <i class="bi bi-box2 category-mini-icon mini-two"></i>
-
                     <span class="category-ring"></span>
-
                 </div>
-
                 <div class="category-card-content">
-
                     <span class="category-number">03</span>
-
                     <h3>Groceries</h3>
-
-                    <p>
-                        Rice, flour, milk, cooking oil and essentials.
-                    </p>
-
-                    <span class="category-explore">
-                        Explore Category
-                        <i class="bi bi-arrow-up-right"></i>
-                    </span>
-
+                    <p>Rice, flour, milk, cooking oil and essentials.</p>
+                    <span class="category-explore">Explore Category <i class="bi bi-arrow-up-right"></i></span>
                 </div>
-
             </a>
 
-
-            <!-- TOYS -->
-
-            <a href="{% url 'products' %}"
-               class="category-card category-toys">
-
+            <a href="{% url 'products' %}" class="category-card category-toys">
                 <div class="category-image">
-
                     <div class="category-glow"></div>
-
                     <i class="bi bi-controller category-main-icon"></i>
-
                     <i class="bi bi-puzzle category-mini-icon mini-one"></i>
-
                     <i class="bi bi-dice-5 category-mini-icon mini-two"></i>
-
                     <span class="category-ring"></span>
-
                 </div>
-
                 <div class="category-card-content">
-
                     <span class="category-number">04</span>
-
                     <h3>Toys</h3>
-
-                    <p>
-                        Games, puzzles, dolls and action figures.
-                    </p>
-
-                    <span class="category-explore">
-                        Explore Category
-                        <i class="bi bi-arrow-up-right"></i>
-                    </span>
-
+                    <p>Games, puzzles, dolls and action figures.</p>
+                    <span class="category-explore">Explore Category <i class="bi bi-arrow-up-right"></i></span>
                 </div>
-
             </a>
 
-
-            <!-- FURNITURE -->
-
-            <a href="{% url 'products' %}"
-               class="category-card category-furniture">
-
+            <a href="{% url 'products' %}" class="category-card category-furniture">
                 <div class="category-image">
-
                     <div class="category-glow"></div>
-
                     <i class="bi bi-house-door category-main-icon"></i>
-
                     <i class="bi bi-lamp category-mini-icon mini-one"></i>
-
                     <i class="bi bi-grid-3x3-gap category-mini-icon mini-two"></i>
-
                     <span class="category-ring"></span>
-
                 </div>
-
                 <div class="category-card-content">
-
                     <span class="category-number">05</span>
-
                     <h3>Furniture</h3>
-
-                    <p>
-                        Chairs, tables, sofas, beds and home essentials.
-                    </p>
-
-                    <span class="category-explore">
-                        Explore Category
-                        <i class="bi bi-arrow-up-right"></i>
-                    </span>
-
+                    <p>Chairs, tables, sofas, beds and home essentials.</p>
+                    <span class="category-explore">Explore Category <i class="bi bi-arrow-up-right"></i></span>
                 </div>
-
             </a>
-
-
         </div>
-
     </section>
 
-
-    <!-- =====================================================
-         SMART INVENTORY FEATURES
-         ===================================================== -->
-
+    <!-- SMART INVENTORY FEATURES -->
     <section class="smart-features">
-
         <div class="smart-features-header">
-
             <div>
-
-                <span class="section-label">
-                    SMART INVENTORY FEATURES
-                </span>
-
-                <h2>
-                    Built for Smarter Stock Decisions
-                </h2>
-
-                <p>
-                    Intelligent tools that help maintain balanced inventory
-                    and respond to predicted demand.
-                </p>
-
+                <span class="section-label">SMART INVENTORY FEATURES</span>
+                <h2>Built for Smarter Stock Decisions</h2>
+                <p>Intelligent tools that help maintain balanced inventory and respond to predicted demand.</p>
             </div>
-
         </div>
-
 
         <div class="smart-feature-grid">
-
-
-            <!-- LOW STOCK -->
-
-            <a href="{% url 'alerts' %}"
-               class="smart-feature-card feature-warning">
-
+            <a href="{% url 'alerts' %}" class="smart-feature-card feature-warning">
                 <div class="feature-card-top">
-
-                    <div class="smart-feature-icon icon-warning">
-                        <i class="bi bi-bell"></i>
-                    </div>
-
-                    <span class="feature-index">
-                        01
-                    </span>
-
+                    <div class="smart-feature-icon icon-warning"><i class="bi bi-bell"></i></div>
+                    <span class="feature-index">01</span>
                 </div>
-
                 <div class="smart-feature-content">
-
-                    <strong>
-                        Low Stock Alerts
-                    </strong>
-
-                    <span>
-                        Get notified when inventory approaches
-                        critical stock levels.
-                    </span>
-
+                    <strong>Low Stock Alerts</strong>
+                    <span>Get notified when inventory approaches critical stock levels.</span>
                 </div>
-
                 <div class="feature-card-bottom">
-
-                    <span>
-                        Smart Monitoring
-                    </span>
-
-                    <i class="bi bi-arrow-up-right"></i>
-
+                    <span>Smart Monitoring</span><i class="bi bi-arrow-up-right"></i>
                 </div>
-
             </a>
 
-
-            <!-- OUT OF STOCK -->
-
-            <a href="{% url 'alerts' %}"
-               class="smart-feature-card feature-danger">
-
+            <a href="{% url 'alerts' %}" class="smart-feature-card feature-danger">
                 <div class="feature-card-top">
-
-                    <div class="smart-feature-icon icon-danger">
-                        <i class="bi bi-exclamation-triangle"></i>
-                    </div>
-
-                    <span class="feature-index">
-                        02
-                    </span>
-
+                    <div class="smart-feature-icon icon-danger"><i class="bi bi-exclamation-triangle"></i></div>
+                    <span class="feature-index">02</span>
                 </div>
-
                 <div class="smart-feature-content">
-
-                    <strong>
-                        Out-of-Stock Alerts
-                    </strong>
-
-                    <span>
-                        Identify products with zero available
-                        inventory instantly.
-                    </span>
-
+                    <strong>Out-of-Stock Alerts</strong>
+                    <span>Identify products with zero available inventory instantly.</span>
                 </div>
-
                 <div class="feature-card-bottom">
-
-                    <span>
-                        Critical Alerts
-                    </span>
-
-                    <i class="bi bi-arrow-up-right"></i>
-
+                    <span>Critical Alerts</span><i class="bi bi-arrow-up-right"></i>
                 </div>
-
             </a>
 
-
-            <!-- REORDER -->
-
-            <a href="{% url 'alerts' %}"
-               class="smart-feature-card feature-success">
-
+            <a href="{% url 'alerts' %}" class="smart-feature-card feature-success">
                 <div class="feature-card-top">
-
-                    <div class="smart-feature-icon icon-success">
-                        <i class="bi bi-arrow-repeat"></i>
-                    </div>
-
-                    <span class="feature-index">
-                        03
-                    </span>
-
+                    <div class="smart-feature-icon icon-success"><i class="bi bi-arrow-repeat"></i></div>
+                    <span class="feature-index">03</span>
                 </div>
-
                 <div class="smart-feature-content">
-
-                    <strong>
-                        Reorder Recommendations
-                    </strong>
-
-                    <span>
-                        Identify products that require
-                        intelligent replenishment.
-                    </span>
-
+                    <strong>Reorder Recommendations</strong>
+                    <span>Identify products that require intelligent replenishment.</span>
                 </div>
-
                 <div class="feature-card-bottom">
-
-                    <span>
-                        AI Recommendation
-                    </span>
-
-                    <i class="bi bi-arrow-up-right"></i>
-
+                    <span>AI Recommendation</span><i class="bi bi-arrow-up-right"></i>
                 </div>
-
             </a>
 
-
-            <!-- OVERSTOCK -->
-
-            <a href="{% url 'analytics' %}"
-               class="smart-feature-card feature-gold">
-
+            <a href="{% url 'analytics' %}" class="smart-feature-card feature-gold">
                 <div class="feature-card-top">
-
-                    <div class="smart-feature-icon icon-gold">
-                        <i class="bi bi-boxes"></i>
-                    </div>
-
-                    <span class="feature-index">
-                        04
-                    </span>
-
+                    <div class="smart-feature-icon icon-gold"><i class="bi bi-boxes"></i></div>
+                    <span class="feature-index">04</span>
                 </div>
-
                 <div class="smart-feature-content">
-
-                    <strong>
-                        Overstock Detection
-                    </strong>
-
-                    <span>
-                        Identify excess inventory requiring
-                        attention.
-                    </span>
-
+                    <strong>Overstock Detection</strong>
+                    <span>Identify excess inventory requiring attention.</span>
                 </div>
-
                 <div class="feature-card-bottom">
-
-                    <span>
-                        Inventory Analysis
-                    </span>
-
-                    <i class="bi bi-arrow-up-right"></i>
-
+                    <span>Inventory Analysis</span><i class="bi bi-arrow-up-right"></i>
                 </div>
-
             </a>
 
-
-            <!-- DEMAND -->
-
-            <a href="{% url 'ai_forecast' %}"
-               class="smart-feature-card feature-blue">
-
+            <a href="{% url 'ai_forecast' %}" class="smart-feature-card feature-blue">
                 <div class="feature-card-top">
-
-                    <div class="smart-feature-icon icon-blue">
-                        <i class="bi bi-graph-up-arrow"></i>
-                    </div>
-
-                    <span class="feature-index">
-                        05
-                    </span>
-
+                    <div class="smart-feature-icon icon-blue"><i class="bi bi-graph-up-arrow"></i></div>
+                    <span class="feature-index">05</span>
                 </div>
-
                 <div class="smart-feature-content">
-
-                    <strong>
-                        Demand Forecasting
-                    </strong>
-
-                    <span>
-                        Predict future product demand
-                        using AI-powered forecasting.
-                    </span>
-
+                    <strong>Demand Forecasting</strong>
+                    <span>Predict future product demand using AI-powered forecasting.</span>
                 </div>
-
                 <div class="feature-card-bottom">
-
-                    <span>
-                        AI Prediction
-                    </span>
-
-                    <i class="bi bi-arrow-up-right"></i>
-
+                    <span>AI Prediction</span><i class="bi bi-arrow-up-right"></i>
                 </div>
-
             </a>
 
-
-            <!-- COVERAGE -->
-
-            <a href="{% url 'analytics' %}"
-               class="smart-feature-card feature-green">
-
+            <a href="{% url 'analytics' %}" class="smart-feature-card feature-green">
                 <div class="feature-card-top">
-
-                    <div class="smart-feature-icon icon-green">
-                        <i class="bi bi-shield-check"></i>
-                    </div>
-
-                    <span class="feature-index">
-                        06
-                    </span>
-
+                    <div class="smart-feature-icon icon-green"><i class="bi bi-shield-check"></i></div>
+                    <span class="feature-index">06</span>
                 </div>
-
                 <div class="smart-feature-content">
-
-                    <strong>
-                        Stock Coverage
-                    </strong>
-
-                    <span>
-                        Compare inventory levels with
-                        predicted demand.
-                    </span>
-
+                    <strong>Stock Coverage</strong>
+                    <span>Compare inventory levels with predicted demand.</span>
                 </div>
-
                 <div class="feature-card-bottom">
-
-                    <span>
-                        Stock Intelligence
-                    </span>
-
-                    <i class="bi bi-arrow-up-right"></i>
-
+                    <span>Stock Intelligence</span><i class="bi bi-arrow-up-right"></i>
                 </div>
-
             </a>
 
-
-            <!-- MULTI STORE -->
-
-            <a href="{% url 'stores' %}"
-               class="smart-feature-card feature-store">
-
+            <a href="{% url 'stores' %}" class="smart-feature-card feature-store">
                 <div class="feature-card-top">
-
-                    <div class="smart-feature-icon icon-store">
-                        <i class="bi bi-shop"></i>
-                    </div>
-
-                    <span class="feature-index">
-                        07
-                    </span>
-
+                    <div class="smart-feature-icon icon-store"><i class="bi bi-shop"></i></div>
+                    <span class="feature-index">07</span>
                 </div>
-
                 <div class="smart-feature-content">
-
-                    <strong>
-                        Multi-Store Inventory
-                    </strong>
-
-                    <span>
-                        Manage inventory across
-                        multiple retail stores.
-                    </span>
-
+                    <strong>Multi-Store Inventory</strong>
+                    <span>Manage inventory across multiple retail stores.</span>
                 </div>
-
                 <div class="feature-card-bottom">
-
-                    <span>
-                        Store Management
-                    </span>
-
-                    <i class="bi bi-arrow-up-right"></i>
-
+                    <span>Store Management</span><i class="bi bi-arrow-up-right"></i>
                 </div>
-
             </a>
 
-
-            <!-- REPORTS -->
-
-            <a href="{% url 'reports' %}"
-               class="smart-feature-card feature-report">
-
+            <a href="{% url 'reports' %}" class="smart-feature-card feature-report">
                 <div class="feature-card-top">
-
-                    <div class="smart-feature-icon icon-report">
-                        <i class="bi bi-file-earmark-bar-graph"></i>
-                    </div>
-
-                    <span class="feature-index">
-                        08
-                    </span>
-
+                    <div class="smart-feature-icon icon-report"><i class="bi bi-file-earmark-bar-graph"></i></div>
+                    <span class="feature-index">08</span>
                 </div>
-
                 <div class="smart-feature-content">
-
-                    <strong>
-                        Inventory Reports
-                    </strong>
-
-                    <span>
-                        View and export detailed
-                        inventory information.
-                    </span>
-
+                    <strong>Inventory Reports</strong>
+                    <span>View and export detailed inventory information.</span>
                 </div>
-
                 <div class="feature-card-bottom">
-
-                    <span>
-                        Business Intelligence
-                    </span>
-
-                    <i class="bi bi-arrow-up-right"></i>
-
+                    <span>Business Intelligence</span><i class="bi bi-arrow-up-right"></i>
                 </div>
-
             </a>
-
-
         </div>
-
     </section>
 
 </div>
