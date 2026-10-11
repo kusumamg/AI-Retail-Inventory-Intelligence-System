@@ -10191,15 +10191,17 @@ footer {
    Five independent cards around RetailIQ
    ========================================================= */
 
+
+/* ================= WORKFLOW SECTION ================= */
+
 .home-dashboard .workflow-section {
-    margin-top: 75px;
-    margin-bottom: 80px;
-    padding: 40px 20px 20px;
+    margin: 45px 0 50px;
+    padding: 30px 20px 35px;
     overflow: visible;
     border: 1px solid var(--dash-border);
     border-radius: 26px;
     background:
-        radial-gradient(circle at 50% 60%, rgba(209, 160, 0, 0.07), transparent 33%),
+        radial-gradient(circle at 50% 55%, rgba(209, 160, 0, 0.07), transparent 35%),
         var(--dash-card);
 }
 
@@ -10209,32 +10211,35 @@ footer {
 }
 
 .home-dashboard .workflow-heading .section-label {
-    margin-bottom: 13px;
+    margin-bottom: 10px;
 }
 
+/* Main layout */
 .home-dashboard .circular-flow {
     position: relative;
     width: min(100%, 900px);
-    height: 550px;
+    height: 520px;
     margin: 0 auto;
     overflow: visible;
 }
 
+/* Outer circular orbit */
 .home-dashboard .flow-orbit {
     position: absolute;
-    top: 50%;
+    top: 52%;
     left: 50%;
-    width: 390px;
-    height: 390px;
+    width: 370px;
+    height: 370px;
     border: 1px dashed rgba(209, 160, 0, 0.38);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
 }
 
+/* Center RetailIQ circle */
 .home-dashboard .flow-center {
     position: absolute;
-    top: 50%;
+    top: 52%;
     left: 50%;
     z-index: 1;
     display: flex;
@@ -10246,8 +10251,9 @@ footer {
     border: 1px solid rgba(209, 160, 0, 0.6);
     border-radius: 50%;
     background: radial-gradient(circle, var(--dash-card), var(--dash-gold-light));
-    box-shadow: 0 0 0 15px rgba(209, 160, 0, 0.06),
-                0 18px 40px rgba(18, 32, 56, 0.08);
+    box-shadow:
+        0 0 0 15px rgba(209, 160, 0, 0.06),
+        0 18px 40px rgba(18, 32, 56, 0.08);
     transform: translate(-50%, -50%);
 }
 
@@ -10275,21 +10281,25 @@ footer {
     font-size: 11px;
 }
 
+/* All five feature cards */
 .home-dashboard .flow-node {
     position: absolute;
     z-index: 2;
     display: flex;
     align-items: center;
     gap: 14px;
-    width: 258px;
+    box-sizing: border-box;
+    width: 290px;
     min-height: 108px;
-    padding: 17px 19px;
+    padding: 17px 20px;
     border: 1px solid var(--dash-border);
     border-radius: 20px;
     background: var(--dash-card);
     box-shadow: var(--dash-shadow);
-    transition: transform 0.25s ease, border-color 0.25s ease,
-                box-shadow 0.25s ease;
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
 }
 
 .home-dashboard .flow-node:hover {
@@ -10298,52 +10308,47 @@ footer {
     box-shadow: var(--dash-shadow-hover);
 }
 
+/* Top card */
 .home-dashboard .flow-inventory {
-    top: 0;
+    top: -10px;
     left: 50%;
     transform: translateX(-50%);
 }
 
 .home-dashboard .flow-inventory:hover {
-    transform: translate(-50%, -5px);
+    transform: translate(-50%, -4px);
+}
+
+/* Middle-left and middle-right cards */
+.home-dashboard .flow-reports {
+    top: 150px;
+    left: 0;
 }
 
 .home-dashboard .flow-forecast {
-    top: 125px;
+    top: 150px;
     right: 0;
 }
 
-.home-dashboard .flow-forecast:hover {
-    transform: translateY(-5px);
+.home-dashboard .flow-reports:hover,
+.home-dashboard .flow-forecast:hover,
+.home-dashboard .flow-alerts:hover,
+.home-dashboard .flow-analytics:hover {
+    transform: translateY(-4px);
+}
+
+/* Bottom-left and bottom-right cards */
+.home-dashboard .flow-alerts {
+    bottom: 0;
+    left: 75px;
 }
 
 .home-dashboard .flow-analytics {
-    right: 0;
-    bottom: 25px;
+    bottom: 0;
+    right: 75px;
 }
 
-.home-dashboard .flow-analytics:hover {
-    transform: translateY(-5px);
-}
-
-.home-dashboard .flow-alerts {
-    bottom: 25px;
-    left: 0;
-}
-
-.home-dashboard .flow-alerts:hover {
-    transform: translateY(-5px);
-}
-
-.home-dashboard .flow-reports {
-    top: 125px;
-    left: 0;
-}
-
-.home-dashboard .flow-reports:hover {
-    transform: translateY(-5px);
-}
-
+/* Feature icons */
 .home-dashboard .flow-node-icon {
     display: grid;
     place-items: center;
@@ -10376,6 +10381,7 @@ footer {
     background: #f2ebff;
 }
 
+/* Card text */
 .home-dashboard .flow-node-content {
     display: flex;
     flex-direction: column;
@@ -10400,6 +10406,72 @@ footer {
     color: var(--dash-muted);
     font-size: 11px;
 }
+
+/* Tablet layout */
+@media (max-width: 950px) and (min-width: 769px) {
+    .home-dashboard .circular-flow {
+        width: 100%;
+        height: 500px;
+    }
+
+    .home-dashboard .flow-node {
+        width: 265px;
+    }
+
+    .home-dashboard .flow-orbit {
+        width: 330px;
+        height: 330px;
+    }
+}
+
+/* Mobile layout */
+@media (max-width: 768px) {
+    .home-dashboard .workflow-section {
+        padding: 25px 15px;
+    }
+
+    .home-dashboard .circular-flow {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+        height: auto;
+    }
+
+    .home-dashboard .flow-orbit {
+        display: none;
+    }
+
+    .home-dashboard .flow-center {
+        position: relative;
+        top: auto;
+        left: auto;
+        flex-shrink: 0;
+        transform: none;
+        margin: 10px 0;
+    }
+
+    .home-dashboard .flow-node {
+        position: relative;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        width: min(100%, 340px);
+        min-height: 95px;
+        transform: none;
+    }
+
+    .home-dashboard .flow-node:hover {
+        transform: translateY(-3px);
+    }
+
+    .home-dashboard .flow-inventory:hover {
+        transform: translateY(-3px);
+    }
+}
+
 
 /* =========================================================
    CATEGORY SHOWCASE
